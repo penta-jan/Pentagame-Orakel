@@ -1,0 +1,1285 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{pentpack}[2026/10/30 v2.1 Package to draw Pentagame diagrams]
+
+\RequirePackage[dvipsnames]{xcolor}
+\RequirePackage{xkeyval}
+\RequirePackage{environ}
+\RequirePackage{tikz}
+\RequirePackage{ifthen}
+\RequirePackage{xfp}% not needed internally any more, kept for documents using \fpeval
+\usetikzlibrary{positioning,arrows.meta,bending,shapes.geometric,calc}
+
+%%%%%%%%%% COLOURS
+
+% old color schema (now option "bunt")
+% \colorlet{my_red}{WildStrawberry}
+% \colorlet{my_yellow}{Goldenrod}
+% \colorlet{my_blue}{Cerulean}
+% \colorlet{my_green}{SpringGreen}
+% \colorlet{my_white}{white}
+
+% original color schema
+% \definecolor{my_red}{HTML}{ed1c24}
+% \definecolor{my_yellow}{HTML}{fff200}
+% \definecolor{my_blue}{HTML}{00adef}
+% \definecolor{my_green}{HTML}{40b93c}
+% \definecolor{my_white}{HTML}{f9f9f9}
+
+% m.z. color schema (default)
+\definecolor{my_red}{HTML}{ff1c24}
+\definecolor{my_yellow}{HTML}{f8f200}
+\definecolor{my_blue}{HTML}{00adff}
+\definecolor{my_green}{HTML}{40e03c}
+\definecolor{my_white}{HTML}{ffffff}
+
+\definecolor{my_blackness}{gray}{0}
+\definecolor{my_stopshade}{gray}{0.6}
+\definecolor{my_stopaccent}{gray}{0.3}
+
+% colour commands, used as [color=\myred] etc.
+\newcommand{\myred}{my_red}
+\newcommand{\myblue}{my_blue}
+\newcommand{\mywhite}{my_white}
+\newcommand{\myyellow}{my_yellow}
+\newcommand{\mygreen}{my_green}
+
+% colours of the junctions; by default the same as the corners, e.g.
+% \renewcommand{\myjred}{\myred!50} for a lighter red junction
+\newcommand{\myjwhite}{\mywhite}
+\newcommand{\myjgreen}{\mygreen}
+\newcommand{\myjyellow}{\myyellow}
+\newcommand{\myjred}{\myred}
+\newcommand{\myjblue}{\myblue}
+
+% Background and stops: by default per board type,
+%   100 stops: white stops on a gray background (the board is black)
+%   50 stops:  light gray stops on a nearly white background (marble)
+% \pentboardstyle[stops]{background=..., stopcolour=..., stopline=...}
+% changes these defaults; the options and keys of the same names (and
+% blackness, nogray) set them for both boards.
+\@namedef{pp@bg@100}{black!40}  \@namedef{pp@st@100}{white}    \@namedef{pp@ac@100}{black!70}
+\@namedef{pp@bg@50}{black!6}    \@namedef{pp@st@50}{black!22}  \@namedef{pp@ac@50}{black!55}
+\@namedef{pp@ring@100}{double}  \@namedef{pp@ring@50}{single}  % track under the outer stops
+\def\pp@ring{}                  % ring=single|double for all boards; empty = per board
+\newcommand{\blackness}{\csname pp@bg@\pp@stops\endcsname}  % board background
+\newcommand{\stopshade}{\csname pp@st@\pp@stops\endcsname}  % fill of the stops
+\newcommand{\stopaccent}{\csname pp@ac@\pp@stops\endcsname} % outline of the stops
+\newcommand{\linecolor}{black}          % default draw colour, set by option linecolor
+
+%%%%%%%%%% SWITCHES AND LENGTHS
+
+\newcommand{\rota}{90}
+
+\newboolean{details}
+\setboolean{details}{true}
+\newboolean{noring}
+\newboolean{solid}
+
+\newlength{\kvar}       % radius of the ring (Kreis)
+\newlength{\svar}       % radius of a stop
+\newlength{\jvar}       % radius of a junction
+\newlength{\cvar}       % radius of a corner
+\newlength{\fvar}       % radius of a block / size of a figure
+\newlength{\ringwidth}  % width of the light ring track
+\newlength{\pfeildicke} % width of lines and arcs
+\newlength{\nodr}       % radius of player circles
+
+\def\meinpfeil{Latex}
+
+\def\pp@stops{50}             % board type: 50 (default) or 100 stops (legacy)
+\def\pp@radius{0.3\linewidth} % default ring radius, evaluated per diagram
+\def\pp@lw{}                  % user line width; empty = scale with the board
+\def\pp@arcoff{0}             % 0: arcs numbered from 0; 1: legacy numbering from 1
+\def\pp@t{0}                 % turn: shift of all colour indices (0..4)
+\def\pp@m{1}                 % mirror: 1 = no, -1 = mirror through the white corner
+\def\pp@s{0}                 % swap: 1 = corner k <-> junction k
+\def\pp@pieces{animals}      % animals, or shapes (triangle and square of version 1)
+\def\pp@players{letters}     % letters, or animals for \addplayers
+\def\pp@facing{inwards}      % animals face the vertical axis: left of it they face right,
+                             % right of it left; outwards: the other way round;
+                             % fixed: all face left, as drawn
+
+\newcommand{\pp@setturn}[1]{%
+  \edef\pp@t{\the\numexpr #1 - 5*((#1)/5) \relax}% remainder, may be negative
+  \ifnum\pp@t<0 \edef\pp@t{\the\numexpr\pp@t+5\relax}\fi
+  \ifnum\pp@t>4 \edef\pp@t{\the\numexpr\pp@t-5\relax}\fi
+}
+\newcommand{\pp@setswap}[1]{%
+  \ifthenelse{\equal{#1}{false}}{\def\pp@s{0}}{\def\pp@s{1}}}
+\newcommand{\pp@setmirror}[1]{%
+  \ifthenelse{\equal{#1}{false}}{\def\pp@m{1}}{\def\pp@m{-1}}}
+
+\newcommand{\pp@checkstops}[1]{%
+  \ifthenelse{\equal{#1}{50}\OR\equal{#1}{100}}%
+    {\def\pp@stops{#1}}%
+    {\PackageError{pentpack}{Unknown board `stops=#1'}{Use stops=100 or stops=50.}}%
+}
+
+%%%%%%%%%% PACKAGE OPTIONS
+
+\DeclareOptionX{stops}{\pp@checkstops{#1}}
+\DeclareOptionX{brettrad}{\def\pp@radius{#1}}
+\DeclareOptionX{radius}{\def\pp@radius{#1}}
+\DeclareOptionX{rotate}{\renewcommand{\rota}{#1}}
+\DeclareOptionX{blackness}{\renewcommand{\blackness}{black!#1}}
+\DeclareOptionX{linecolor}{\renewcommand{\linecolor}{#1}}
+\DeclareOptionX{linewidth}{\def\pp@lw{#1}}
+\DeclareOptionX{simple}{\setboolean{details}{false}}
+\DeclareOptionX{noring}{\setboolean{noring}{true}}
+\DeclareOptionX{solid}{\setboolean{solid}{true}}
+\DeclareOptionX{nogray}{\renewcommand{\stopshade}{white}}
+\DeclareOptionX{background}{\renewcommand{\blackness}{#1}}
+\DeclareOptionX{stopcolour}{\renewcommand{\stopshade}{#1}}
+\DeclareOptionX{stopline}{\renewcommand{\stopaccent}{#1}}
+\DeclareOptionX{ring}{\def\pp@ring{#1}}
+\DeclareOptionX{legacyarcs}{\def\pp@arcoff{1}}
+\DeclareOptionX{turn}{\pp@setturn{#1}}
+\DeclareOptionX{pieces}{\def\pp@pieces{#1}}
+\DeclareOptionX{facing}{\def\pp@facing{#1}}
+\DeclareOptionX{players}{\def\pp@players{#1}}
+\DeclareOptionX{mirror}[true]{\pp@setmirror{#1}}
+\DeclareOptionX{swap}[true]{\pp@setswap{#1}}
+
+\DeclareOptionX{white}{%
+    \renewcommand{\myred}{white}%
+    \renewcommand{\myblue}{white}%
+    \renewcommand{\mywhite}{white}%
+    \renewcommand{\myyellow}{white}%
+    \renewcommand{\mygreen}{white}%
+}
+
+\DeclareOptionX{sw}{%
+    \renewcommand{\myred}{gray!10}%
+    \renewcommand{\myblue}{gray!15}%
+    \renewcommand{\mywhite}{gray!11}%
+    \renewcommand{\myyellow}{gray!38}%
+    \renewcommand{\mygreen}{gray!50}%
+}
+
+\DeclareOptionX{bunt}{%
+    \renewcommand{\myred}{WildStrawberry}%
+    \renewcommand{\myblue}{Cerulean}%
+    \renewcommand{\mywhite}{white}%
+    \renewcommand{\myyellow}{Goldenrod}%
+    \renewcommand{\mygreen}{SpringGreen}%
+}
+
+\ExecuteOptionsX{rotate=90,linecolor=black}
+\ProcessOptionsX\relax
+
+%%%%%%%%%% SETTINGS PER DIAGRAM: \pentsetup{...} and \begin{pentdiag}[...]
+
+\define@key{pentpack@diag}{stops}{\pp@checkstops{#1}}
+\define@key{pentpack@diag}{radius}{\def\pp@radius{#1}}
+\define@key{pentpack@diag}{rotate}{\renewcommand{\rota}{#1}}
+\define@key{pentpack@diag}{turn}{\pp@setturn{#1}}
+\define@key{pentpack@diag}{background}{\renewcommand{\blackness}{#1}}
+\define@key{pentpack@diag}{stopcolour}{\renewcommand{\stopshade}{#1}}
+\define@key{pentpack@diag}{stopline}{\renewcommand{\stopaccent}{#1}}
+\define@key{pentpack@diag}{ring}{\def\pp@ring{#1}}
+\define@key{pentpack@diag}{blackness}{\renewcommand{\blackness}{black!#1}}
+
+% defaults of one board type: \pentboardstyle[50]{background=..., ...}
+\define@key{pentpack@style}{background}{\expandafter\def\csname pp@bg@\pp@which\endcsname{#1}}
+\define@key{pentpack@style}{stopcolour}{\expandafter\def\csname pp@st@\pp@which\endcsname{#1}}
+\define@key{pentpack@style}{stopline}{\expandafter\def\csname pp@ac@\pp@which\endcsname{#1}}
+\define@key{pentpack@style}{ring}{\expandafter\def\csname pp@ring@\pp@which\endcsname{#1}}
+\newcommand{\pentboardstyle}[2][]{%
+  \ifx\relax#1\relax
+    \def\pp@which{50}\setkeys{pentpack@style}{#2}%
+    \def\pp@which{100}\setkeys{pentpack@style}{#2}%
+  \else
+    \def\pp@which{#1}\setkeys{pentpack@style}{#2}%
+  \fi}
+\define@key{pentpack@diag}{pieces}{\def\pp@pieces{#1}}
+\define@key{pentpack@diag}{facing}{\def\pp@facing{#1}}
+\define@key{pentpack@diag}{players}{\def\pp@players{#1}}
+\define@key{pentpack@diag}{mirror}[true]{\pp@setmirror{#1}}
+\define@key{pentpack@diag}{swap}[true]{\pp@setswap{#1}}
+\define@key{pentpack@diag}{simple}[true]{%
+  \ifthenelse{\equal{#1}{false}}%
+    {\setboolean{details}{true}}{\setboolean{details}{false}}}
+
+\newcommand{\pentsetup}[1]{\setkeys{pentpack@diag}{#1}}
+
+% The optional argument of pentdiag is either a bare radius (as in v1)
+% or a key list (stops=50, radius=4cm, rotate=0, turn=2, mirror, swap, simple).
+\newcommand{\pp@diagopts}[1]{%
+  \in@{=}{#1}%
+  \ifin@
+    \setkeys{pentpack@diag}{#1}%
+  \else
+    \in@{simple}{#1}%
+    \ifin@
+      \setkeys{pentpack@diag}{#1}%
+    \else
+      \in@{mirror}{#1}%
+      \ifin@
+        \setkeys{pentpack@diag}{#1}%
+      \else
+        \in@{swap}{#1}%
+        \ifin@
+          \setkeys{pentpack@diag}{#1}%
+        \else
+          \ifx\relax#1\relax\else\def\pp@radius{#1}\fi
+        \fi
+      \fi
+    \fi
+  \fi
+}
+
+% Geometry. Along straight lines the stops touch each other and the
+% corners/junctions; all sizes are multiples of the stop radius \svar.
+%   100 stops: 6 stops corner-junction, 3 junction-junction, 3 on each arc
+%              corner = sqrt5 * stop, junction = 2.02606 * stop
+%   50 stops:  3 stops corner-junction, 1 junction-junction, 1 on each arc
+%              corner = junction = sqrt5 * stop
+\newcommand{\pp@geometry}{%
+  \setlength{\kvar}{\pp@radius}%
+  \ifnum\pp@stops=50\relax
+    \setlength{\svar}{0.0693786\kvar}% ring radius = 14.41366 stops
+    \setlength{\cvar}{2.23607\svar}%
+    \setlength{\jvar}{2.23607\svar}%
+    \def\pp@nline{3}\def\pp@ninner{1}\def\pp@nring{1}%
+    \def\pp@step{36}\def\pp@ccorn{2}\def\pp@midring{1}\def\pp@midinner{1}%
+    \def\pp@autolw{0.0357441\kvar}% same width as on the 100-stop board
+  \else
+    \setlength{\svar}{0.0446801\kvar}% ring radius = 22.38133 stops
+    \setlength{\cvar}{2.23606\svar}%
+    \setlength{\jvar}{2.02606\svar}%
+    \def\pp@nline{6}\def\pp@ninner{3}\def\pp@nring{3}%
+    \def\pp@step{18}\def\pp@ccorn{3}\def\pp@midring{2}\def\pp@midinner{2}%
+    \def\pp@autolw{0.8\svar}%
+  \fi
+  \setlength{\fvar}{0.75\svar}%
+  \setlength{\pp@anilw}{0.12\svar}%
+  \pgfmathsetmacro\pp@anisc{1.25*\svar/28.45276}% animal radius 1.25 stops
+  \setlength{\ringwidth}{0.4\svar}%
+  \ifx\pp@lw\@empty
+    \setlength{\pfeildicke}{\pp@autolw}%
+  \else
+    \setlength{\pfeildicke}{\pp@lw}%
+  \fi
+}
+
+%%%%%%%%%% COLOUR SCHEME SWITCHES
+
+% remember the scheme chosen at load time, so \boardcoloured can return to it
+\let\pp@s@red\myred \let\pp@s@blue\myblue \let\pp@s@white\mywhite
+\let\pp@s@yellow\myyellow \let\pp@s@green\mygreen
+\let\pp@s@stopshade\stopshade \let\pp@s@blackness\blackness
+
+\newcommand{\boardwhite}{%
+    \renewcommand{\stopshade}{white}%
+    \renewcommand{\blackness}{white}%
+    \renewcommand{\myred}{white}%
+    \renewcommand{\myblue}{white}%
+    \renewcommand{\mywhite}{white}%
+    \renewcommand{\myyellow}{white}%
+    \renewcommand{\mygreen}{white}%
+}
+
+\newcommand{\boardcoloured}{%
+    \let\myred\pp@s@red \let\myblue\pp@s@blue \let\mywhite\pp@s@white
+    \let\myyellow\pp@s@yellow \let\mygreen\pp@s@green
+    \let\stopshade\pp@s@stopshade \let\blackness\pp@s@blackness
+}
+
+\newcommand{\boardbunt}{% the v1 meaning of \boardcoloured
+    \renewcommand{\stopshade}{gray!15}%
+    \renewcommand{\blackness}{black!55}%
+    \renewcommand{\myred}{WildStrawberry}%
+    \renewcommand{\myblue}{Cerulean}%
+    \renewcommand{\mywhite}{white}%
+    \renewcommand{\myyellow}{Goldenrod}%
+    \renewcommand{\mygreen}{SpringGreen}%
+}
+
+%%%%%%%%%% FIELDS, NAMES AND SYMMETRY
+%
+% Every field of the board is identified by its end points, coded as
+% numbers: corner k = k, junction k = 5+k (k = 0..4, white = 0, green = 1,
+% yellow = 2, red = 3, blue = 4).
+%   corner or junction  e        -> {e}{-1}{0}
+%   centre spot k       c k      -> {-2}{k}{0}
+%   a stop              a<b, d   -> {a}{b}{d}, d counted from a
+% The board's lines are: corner k -- corner k+1 (arcs), corner k --
+% junction k+2 and k+3 (long lines), junction k -- junction k+1.
+%
+% A symmetry maps every index i to m*i+t (mod 5), m = 1 or -1.
+% Names are attached to the drawn points through this map, so turning
+% or mirroring a diagram only changes which point a name refers to.
+%
+% The drawn ("physical") points are named pp-e, pp-a-b-d and pp-c-k.
+
+\ExplSyntaxOn
+
+\seq_new:N \g__pp_records_seq
+\seq_new:N \l__pp_items_seq
+\seq_new:N \l__pp_stops_seq
+\tl_new:N \l__pp_best_tl
+\tl_new:N \l__pp_cur_tl
+\tl_new:N \l__pp_name_tl
+\tl_new:N \l__pp_col_tl
+\tl_new:N \l__pp_craw_tl
+\tl_new:N \l__pp_tri_tl
+\tl_new:N \l__pp_squ_tl
+\tl_new:N \l__pp_fill_tl
+\tl_new:N \g__pp_code_tl
+\tl_new:N \g__pp_string_tl
+\int_new:N \l__pp_cidx_int
+\int_new:N \l__pp_fa_int
+\int_new:N \l__pp_fb_int
+\int_new:N \l__pp_fd_int
+\bool_new:N \l__pp_rawok_bool
+\bool_new:N \l__pp_first_bool
+\prop_new:c { g__pp_names_100_prop }
+\prop_new:c { g__pp_names_50_prop }
+\bool_new:c { g__pp_built_100_bool }
+\bool_new:c { g__pp_built_50_bool }
+
+\cs_generate_variant:Nn \prop_gput:Nnn { cee }
+\prg_generate_conditional_variant:Nnn \prop_get:NnN { ceN } { T, F, TF }
+\cs_generate_variant:Nn \clist_put_right:Nn { Ne }
+\cs_generate_variant:Nn \tl_put_right:Nn { Ne }
+\cs_generate_variant:Nn \str_range:nnn { e }
+\cs_generate_variant:Nn \str_mdfive_hash:n { V }
+
+% ---------- arithmetic
+
+\cs_new:Npn \__pp_mod:n #1 { \int_mod:nn { (#1) + 500 } { 5 } }
+
+% image of end point code #3 under i -> #1*i + #2, with corners and
+% junctions exchanged if \l__pp_s_int = 1 (corner k <-> junction k)
+\int_new:N \l__pp_s_int
+\cs_new:Npn \__pp_phi:nnn #1#2#3
+  {
+    \int_eval:n
+      { \int_mod:nn { \int_div_truncate:nn {#3} {5} + \l__pp_s_int } {2} * 5
+        + \__pp_mod:n { (#1) * \int_mod:nn {#3} {5} + (#2) } }
+  }
+
+% number of stops between two end points (on the current board)
+\cs_new:Npn \__pp_seglen:nn #1#2
+  {
+    \int_compare:nNnTF {#1} < {5}
+      { \int_compare:nNnTF {#2} < {5} { \pp@nring } { \pp@nline } }
+      { \int_compare:nNnTF {#2} < {5} { \pp@nline } { \pp@ninner } }
+  }
+
+% readable name of an end point: 3 or 3a
+\cs_new:Npn \__pp_epname:n #1
+  {
+    \int_compare:nNnTF {#1} < {5}
+      { \int_eval:n {#1} }
+      { \int_eval:n { #1 - 5 } a }
+  }
+
+% ---------- the table of names (one per board type, built once)
+
+\cs_new_protected:Npn \__pp_put:nnnn #1#2#3#4
+  { \prop_gput:cee { g__pp_names_ \pp@stops _prop } {#1} { {#2} {#3} {#4} } }
+
+% name #1 for the stop at distance #4 from end point #2 towards #3
+\cs_new_protected:Npn \__pp_add_name:nnnn #1#2#3#4
+  {
+    \int_set:Nn \l_tmpa_int { \__pp_seglen:nn {#2} {#3} }
+    \int_compare:nNnTF {#4} = {0}
+      { \__pp_put:nnnn {#1} {#2} {-1} {0} }
+      {
+        \int_compare:nNnTF {#4} = { \l_tmpa_int + 1 }
+          { \__pp_put:nnnn {#1} {#3} {-1} {0} }
+          {
+            \int_compare:nNnTF {#2} < {#3}
+              { \__pp_put:nnnn {#1} {#2} {#3} {#4} }
+              { \__pp_put:nnnn {#1} {#3} {#2} { \int_eval:n { \l_tmpa_int + 1 - #4 } } }
+          }
+      }
+  }
+
+% all names x/y/d along the line from end point #1 to end point #2
+\cs_new_protected:Npn \__pp_add_line:nn #1#2
+  {
+    \int_step_inline:nnn { 0 } { \__pp_seglen:nn {#1} {#2} + 1 }
+      {
+        \__pp_add_name:nnnn
+          { \__pp_epname:n {#1} / \__pp_epname:n {#2} / ##1 } {#1} {#2} {##1}
+      }
+  }
+
+\cs_new_protected:Npn \__pp_add_both:nn #1#2
+  { \__pp_add_line:nn {#1} {#2} \__pp_add_line:nn {#2} {#1} }
+
+% names of version 1 for corner number #1 (0..5)
+\cs_new_protected:Npn \__pp_add_old:n #1
+  {
+    \int_set:Nn \l_tmpb_int { \__pp_mod:n {#1} }
+    \exp_args:NV \__pp_add_old_aux:nn \l_tmpb_int {#1}
+  }
+\cs_new_protected:Npn \__pp_add_old_aux:nn #1#2
+  {
+    \__pp_put:nnnn {#2} {#1} {-1} {0}
+    \__pp_put:nnnn {#2a} { \int_eval:n {#1+5} } {-1} {0}
+    \__pp_put:nnnn {c#2} {-2} {#1} {0}
+    \int_step_inline:nn { \pp@nline }
+      {
+        \__pp_add_name:nnnn {#2+##1} {#1} { \int_eval:n { 5 + \__pp_mod:n {#1+2} } } {##1}
+        \__pp_add_name:nnnn {#2-##1} {#1} { \int_eval:n { 5 + \__pp_mod:n {#1+3} } } {##1}
+      }
+    \int_step_inline:nn { \pp@nring }
+      { \__pp_add_name:nnnn {#2r##1} {#1} { \__pp_mod:n {#1+1} } {##1} }
+    \int_step_inline:nn { \pp@ninner }
+      {
+        \__pp_add_name:nnnn {#2a##1}
+          { \int_eval:n {#1+5} } { \int_eval:n { 5 + \__pp_mod:n {#1+1} } } {##1}
+      }
+  }
+
+\cs_new_protected:Npn \__pp_build_names:
+  {
+    \bool_if:cF { g__pp_built_ \pp@stops _bool }
+      {
+        \int_step_inline:nnn { 0 } { 4 }
+          {
+            \__pp_put:nnnn {##1} {##1} {-1} {0}
+            \__pp_put:nnnn {##1a} { \int_eval:n {##1+5} } {-1} {0}
+            \__pp_add_both:nn {##1} { \__pp_mod:n {##1+1} }
+            \__pp_add_both:nn {##1} { \int_eval:n { 5 + \__pp_mod:n {##1+2} } }
+            \__pp_add_both:nn {##1} { \int_eval:n { 5 + \__pp_mod:n {##1+3} } }
+            \__pp_add_both:nn { \int_eval:n {##1+5} } { \int_eval:n { 5 + \__pp_mod:n {##1+1} } }
+          }
+        \int_step_inline:nnn { 0 } { 5 } { \__pp_add_old:n {##1} }
+        \bool_gset_true:c { g__pp_built_ \pp@stops _bool }
+      }
+  }
+
+% ---------- transforming a field
+
+% field #3#4#5 under i -> #1*i + #2; result in \l__pp_fa/fb/fd_int
+\cs_new_protected:Npn \__pp_tfield:nnnnn #1#2#3#4#5
+  {
+    \int_compare:nNnTF {#4} = {-1}
+      {
+        \int_set:Nn \l__pp_fa_int { \__pp_phi:nnn {#1} {#2} {#3} }
+        \int_set:Nn \l__pp_fb_int {-1}
+        \int_set:Nn \l__pp_fd_int {0}
+      }
+      {
+        \int_compare:nNnTF {#3} = {-2}
+          {
+            \int_set:Nn \l__pp_fa_int {-2}
+            \int_set:Nn \l__pp_fb_int { \__pp_mod:n { (#1) * (#4) + (#2) } }
+            \int_set:Nn \l__pp_fd_int {0}
+          }
+          {
+            \int_set:Nn \l__pp_fa_int { \__pp_phi:nnn {#1} {#2} {#3} }
+            \int_set:Nn \l__pp_fb_int { \__pp_phi:nnn {#1} {#2} {#4} }
+            \int_set:Nn \l__pp_fd_int {#5}
+            \int_compare:nNnT { \l__pp_fa_int } > { \l__pp_fb_int }
+              {
+                \int_set:Nn \l_tmpa_int { \l__pp_fa_int }
+                \int_set:Nn \l__pp_fa_int { \l__pp_fb_int }
+                \int_set:Nn \l__pp_fb_int { \l_tmpa_int }
+                \int_set:Nn \l__pp_fd_int
+                  { \__pp_seglen:nn {#3} {#4} + 1 - #5 }
+              }
+          }
+      }
+  }
+
+\cs_new:Npn \__pp_physname:
+  {
+    \int_compare:nNnTF { \l__pp_fb_int } = {-1}
+      { pp- \int_use:N \l__pp_fa_int }
+      {
+        \int_compare:nNnTF { \l__pp_fa_int } = {-2}
+          { pp-c- \int_use:N \l__pp_fb_int }
+          { pp- \int_use:N \l__pp_fa_int - \int_use:N \l__pp_fb_int - \int_use:N \l__pp_fd_int }
+      }
+  }
+
+\cs_new:Npn \__pp_readable:
+  {
+    \int_compare:nNnTF { \l__pp_fb_int } = {-1}
+      { \__pp_epname:n { \l__pp_fa_int } }
+      {
+        \int_compare:nNnTF { \l__pp_fa_int } = {-2}
+          { o }
+          {
+            \__pp_epname:n { \l__pp_fa_int } / \__pp_epname:n { \l__pp_fb_int }
+            / \int_use:N \l__pp_fd_int
+          }
+      }
+  }
+
+% ---------- the drawn points
+
+\cs_new_protected:Npn \__pp_mk_arc:nnn #1#2#3
+  { \exp_args:Nee \__pp_mk_arc_aux:nnn { \int_eval:n {#1} } { \int_eval:n {#2} } {#3} }
+\cs_new_protected:Npn \__pp_mk_arc_aux:nnn #1#2#3 % a, b, direction from a
+  {
+    \int_step_inline:nn { \pp@nring }
+      {
+        \tl_set:Ne \l__pp_name_tl { pp-#1-#2-##1 }
+        \seq_put_right:NV \l__pp_stops_seq \l__pp_name_tl
+        \pp@mkring { \l__pp_name_tl } {#1} { (#3) * ##1 }
+      }
+  }
+\cs_new_protected:Npn \__pp_mk_line:nnn #1#2#3
+  { \exp_args:Nee \__pp_mk_line_aux:nnn { \int_eval:n {#1} } { \int_eval:n {#2} } {#3} }
+\cs_new_protected:Npn \__pp_mk_line_aux:nnn #1#2#3 % a, b, radius of a
+  {
+    \int_step_inline:nn { \__pp_seglen:nn {#1} {#2} }
+      {
+        \tl_set:Ne \l__pp_name_tl { pp-#1-#2-##1 }
+        \seq_put_right:NV \l__pp_stops_seq \l__pp_name_tl
+        \pp@mkline { \l__pp_name_tl } {pp-#1} {pp-#2} {#3} {##1}
+      }
+  }
+
+\cs_new_protected:Npn \pp_make_points:
+  {
+    \seq_clear:N \l__pp_stops_seq
+    \int_step_inline:nnn { 0 } { 4 }
+      {
+        \pp@mkcorner {##1}
+        \exp_args:Ne \pp@mkjunction { \int_eval:n {##1+5} } {##1}
+        \pp@mkcentre {##1}
+      }
+    \int_step_inline:nnn { 0 } { 3 } { \__pp_mk_arc:nnn {##1} { \int_eval:n {##1+1} } {1} }
+    \__pp_mk_arc:nnn {0} {4} {-1}
+    \int_step_inline:nnn { 0 } { 4 }
+      {
+        \__pp_mk_line:nnn {##1} { \int_eval:n { 5 + \__pp_mod:n {##1+2} } } { \cvar }
+        \__pp_mk_line:nnn {##1} { \int_eval:n { 5 + \__pp_mod:n {##1+3} } } { \cvar }
+      }
+    \int_step_inline:nnn { 5 } { 8 } { \__pp_mk_line:nnn {##1} { \int_eval:n {##1+1} } { \jvar } }
+    \__pp_mk_line:nnn {5} {9} { \jvar }
+  }
+
+\cs_new_protected:Npn \pp_draw_stops:
+  { \seq_map_inline:Nn \l__pp_stops_seq { \pp@drawstop {##1} } }
+
+% attach all names, turned and mirrored as requested
+\cs_new_protected:Npn \pp_make_names:
+  {
+    \__pp_build_names:
+    \int_set:Nn \l__pp_s_int { \pp@s }
+    \prop_map_inline:cn { g__pp_names_ \pp@stops _prop }
+      { \__pp_alias:nnnn {##1} ##2 }
+  }
+\cs_new_protected:Npn \__pp_alias:nnnn #1#2#3#4
+  {
+    \__pp_tfield:nnnnn { \pp@m } { \pp@t } {#2} {#3} {#4}
+    \pgfnodealias {#1} { \__pp_physname: }
+  }
+
+% name of a field from end point numbers (used by the shortcut commands)
+\cs_new:Npn \pp_stopname:nnn #1#2#3
+  { \__pp_epname:n {#1} / \__pp_epname:n {#2} / #3 }
+\cs_new_eq:NN \pp@stopname \pp_stopname:nnn
+\cs_new:Npn \pp@mod #1 { \__pp_mod:n {#1} }
+
+% ---------- colours
+
+% ---------- colour schemes
+% The colour of each position 0-4, listed clockwise from position 0,
+% separately for both boards (\pentcolours[stops]{...}).
+
+\clist_new:c { l__pp_scheme_50_clist }
+\clist_new:c { l__pp_scheme_100_clist }
+\clist_set:cn { l__pp_scheme_50_clist }  { white, blue, green, red, yellow }
+\clist_set:cn { l__pp_scheme_100_clist } { white, blue, red, yellow, green }
+
+% colour word of position #2 on board #1 (positions count counter-clockwise)
+\cs_new:Npn \__pp_word:nn #1#2
+  { \clist_item:cn { l__pp_scheme_ #1 _clist } { \__pp_mod:n { 5 - (#2) } + 1 } }
+
+% colour command for colour word #1 (corners and pieces, or junctions)
+\cs_new:Npn \__pp_cmacro:n #1
+  {
+    \str_case_e:nnF {#1}
+      { {white} {\mywhite} {green} {\mygreen} {yellow} {\myyellow}
+        {red} {\myred} {blue} {\myblue} }
+      {#1}
+  }
+\cs_new:Npn \__pp_jmacro:n #1
+  {
+    \str_case_e:nnF {#1}
+      { {white} {\myjwhite} {green} {\myjgreen} {yellow} {\myjyellow}
+        {red} {\myjred} {blue} {\myjblue} }
+      {#1}
+  }
+
+\NewExpandableDocumentCommand { \mycolor } { O{\pp@stops} m }
+  { \__pp_cmacro:n { \__pp_word:nn {#1} {#2} } }
+\NewExpandableDocumentCommand { \myjcolor } { O{\pp@stops} m }
+  { \__pp_jmacro:n { \__pp_word:nn {#1} {#2} } }
+
+\NewDocumentCommand { \pentcolours } { o m }
+  {
+    \int_compare:nNnF { \clist_count:n {#2} } = {5}
+      { \PackageError {pentpack} { \string\pentcolours\space needs~five~colours } { } }
+    \IfNoValueTF {#1}
+      {
+        \clist_set:cn { l__pp_scheme_50_clist } {#2}
+        \clist_set:cn { l__pp_scheme_100_clist } {#2}
+      }
+      {
+        \clist_if_exist:cTF { l__pp_scheme_#1_clist }
+          { \clist_set:cn { l__pp_scheme_#1_clist } {#2} }
+          { \PackageError {pentpack} { Unknown~board~`#1' } { Use~50~or~100. } }
+      }
+  }
+
+% parse colour #1: position index (or -1) and whether to draw it raw.
+% Numbers are positions; letters, words and colour commands are looked
+% up in the scheme of the current board.
+\cs_new_protected:Npn \__pp_parse_colour:n #1
+  {
+    \tl_set:Nn \l__pp_craw_tl {#1}
+    \tl_trim_spaces:N \l__pp_craw_tl
+    \int_set:Nn \l__pp_cidx_int {-1}
+    \bool_set_true:N \l__pp_rawok_bool
+    \str_case:VnF \l__pp_craw_tl
+      {
+        {0} { \__pp_setc:nn {0} {F} }  {1} { \__pp_setc:nn {1} {F} }
+        {2} { \__pp_setc:nn {2} {F} }  {3} { \__pp_setc:nn {3} {F} }
+        {4} { \__pp_setc:nn {4} {F} }
+        {W} { \__pp_findc:nn {white} {F} }  {G} { \__pp_findc:nn {green} {F} }
+        {Y} { \__pp_findc:nn {yellow} {F} } {R} { \__pp_findc:nn {red} {F} }
+        {B} { \__pp_findc:nn {blue} {F} }
+        {white} { \__pp_findc:nn {white} {T} }  {green} { \__pp_findc:nn {green} {T} }
+        {yellow} { \__pp_findc:nn {yellow} {T} } {red} { \__pp_findc:nn {red} {T} }
+        {blue} { \__pp_findc:nn {blue} {T} }
+        {\mywhite} { \__pp_findc:nn {white} {T} }  {\mygreen} { \__pp_findc:nn {green} {T} }
+        {\myyellow} { \__pp_findc:nn {yellow} {T} } {\myred} { \__pp_findc:nn {red} {T} }
+        {\myblue} { \__pp_findc:nn {blue} {T} }
+      }
+      { }
+  }
+\cs_new_protected:Npn \__pp_findc:nn #1#2
+  {
+    \int_step_inline:nnn { 0 } { 4 }
+      {
+        \str_if_eq:eeT { \__pp_word:nn { \pp@stops } {##1} } {#1}
+          { \__pp_setc:nn {##1} {#2} }
+      }
+  }
+\cs_new_protected:Npn \__pp_setc:nn #1#2
+  {
+    \int_set:Nn \l__pp_cidx_int {#1}
+    \str_if_eq:nnTF {#2} {T}
+      { \bool_set_true:N \l__pp_rawok_bool }
+      { \bool_set_false:N \l__pp_rawok_bool }
+  }
+
+% colour to draw for input #2, stored in #1
+\cs_new_protected:Npn \__pp_drawcolour:Nn #1#2
+  {
+    \__pp_parse_colour:n {#2}
+    \int_compare:nNnTF { \l__pp_cidx_int } = {-1}
+      { \tl_set_eq:NN #1 \l__pp_craw_tl }
+      {
+        \bool_lazy_and:nnTF
+          { \l__pp_rawok_bool }
+          { \int_compare_p:nNn { \pp@t } = {0} && \int_compare_p:nNn { \pp@m } = {1} }
+          { \tl_set_eq:NN #1 \l__pp_craw_tl }
+          {
+            \tl_set:Ne #1
+              {
+                \__pp_cmacro:n
+                  { \__pp_word:nn { \pp@stops }
+                      { \__pp_mod:n { (\pp@m) * \l__pp_cidx_int + (\pp@t) } } }
+              }
+          }
+      }
+  }
+
+% ---------- recording a position
+
+% #1 kind (T, S or block), #2 colour input, #3 node name
+\cs_new_protected:Npn \pp_record:nnn #1#2#3
+  {
+    \__pp_build_names:
+    \__pp_parse_colour:n {#2}
+    \str_if_eq:nnTF {#1} {block}
+      {
+        \str_case:VnF \l__pp_craw_tl
+          { {} { \tl_set:Nn \l__pp_col_tl { x {} } } {black} { \tl_set:Nn \l__pp_col_tl { x {} } }
+            {gray} { \tl_set:Nn \l__pp_col_tl { g {} } } {grey} { \tl_set:Nn \l__pp_col_tl { g {} } } }
+          {
+            \int_compare:nNnTF { \l__pp_cidx_int } = {-1}
+              { \tl_set:Ne \l__pp_col_tl { b { r \exp_not:V \l__pp_craw_tl } } }
+              { \tl_set:Ne \l__pp_col_tl { b { i \int_use:N \l__pp_cidx_int } } }
+          }
+      }
+      {
+        \int_compare:nNnTF { \l__pp_cidx_int } = {-1}
+          { \tl_set:Ne \l__pp_col_tl { #1 { r \exp_not:V \l__pp_craw_tl } } }
+          { \tl_set:Ne \l__pp_col_tl { #1 { i \int_use:N \l__pp_cidx_int } } }
+      }
+    \prop_get:ceNTF { g__pp_names_ \pp@stops _prop } {#3} \l_tmpa_tl
+      { \seq_gput_right:Ne \g__pp_records_seq { { \exp_not:V \l__pp_col_tl } \exp_not:V \l_tmpa_tl } }
+      { }
+  }
+
+% item string of record #3 (kind+colour) #4#5#6 (field) under m=#1, t=#2
+\cs_new_protected:Npn \__pp_item:nnnnnn #1#2#3#4#5#6
+  {
+    \__pp_tfield:nnnnn {#1} {#2} {#4} {#5} {#6}
+    \seq_put_right:Ne \l__pp_items_seq
+      { \__pp_item_colour:nnnn {#1} {#2} #3 : \__pp_readable: }
+  }
+% #3 kind, #4 colour (i<n>, r<raw>) or nothing
+\cs_new:Npn \__pp_item_colour:nnnn #1#2#3#4
+  { #3 \tl_if_empty:nF {#4} { \__pp_item_colour_aux:nnw {#1} {#2} #4 \q_stop } }
+\cs_new:Npn \__pp_item_colour_aux:nnw #1#2#3#4 \q_stop
+  {
+    \str_if_eq:nnTF {#3} {i}
+      { \__pp_mod:n { (#1) * (#4) + (#2) } }
+      { \tl_to_str:n {#4} }
+  }
+
+% the sorted items of all records under the map (\l__pp_s_int, #1, #2)
+\cs_new_protected:Npn \__pp_items_for:nn #1#2
+  {
+    \seq_clear:N \l__pp_items_seq
+    \seq_map_inline:Nn \g__pp_records_seq
+      { \__pp_record_item:nnn {#1} {#2} {##1} }
+    \seq_sort:Nn \l__pp_items_seq
+      {
+        \str_compare:nNnTF {##1} > {##2}
+          { \sort_return_swapped: } { \sort_return_same: }
+      }
+    \tl_set:Ne \l__pp_cur_tl { \pp@stops : ~ \seq_use:Nn \l__pp_items_seq { ~ } }
+  }
+\cs_new_protected:Npn \__pp_try:nn #1#2
+  {
+    \__pp_items_for:nn {#1} {#2}
+    \bool_if:NTF \l__pp_first_bool
+      { \tl_set_eq:NN \l__pp_best_tl \l__pp_cur_tl \bool_set_false:N \l__pp_first_bool }
+      {
+        \str_compare:eNeTF { \l__pp_cur_tl } < { \l__pp_best_tl }
+          { \tl_set_eq:NN \l__pp_best_tl \l__pp_cur_tl } { }
+      }
+  }
+\cs_new_protected:Npn \__pp_try_mt:
+  {
+    \clist_map_inline:nn { 1, -1 }
+      { \int_step_inline:nnn { 0 } { 4 } { \__pp_try:nn {##1} {####1} } }
+  }
+
+% the smallest form over all 20 symmetries
+\cs_new_protected:Npn \pp_compute_code:
+  {
+    \tl_gclear:N \g__pp_code_tl
+    \tl_gclear:N \g__pp_string_tl
+    \seq_if_empty:NF \g__pp_records_seq
+      {
+        \group_begin:
+          \bool_set_true:N \l__pp_first_bool
+          \int_step_inline:nnn { 0 } { 1 }
+            { \int_set:Nn \l__pp_s_int {##1} \__pp_try_mt: }
+          \tl_gset_eq:NN \g__pp_string_tl \l__pp_best_tl
+          \tl_gset:Ne \g__pp_code_tl
+            { \str_range:enn { \str_mdfive_hash:V \l__pp_best_tl } {1} {8} }
+        \group_end:
+      }
+  }
+\cs_new_protected:Npn \__pp_record_item:nnn #1#2#3
+  { \__pp_item:nnnnnn {#1} {#2} #3 }
+
+\iow_new:N \g__pp_codes_iow
+\bool_new:N \g__pp_writecodes_bool
+
+\cs_new_protected:Npn \pp_write_codes:
+  {
+    \bool_if:NF \g__pp_writecodes_bool
+      {
+        \iow_open:Nn \g__pp_codes_iow { \c_sys_jobname_str .ppos }
+        \bool_gset_true:N \g__pp_writecodes_bool
+      }
+  }
+
+\cs_new_protected:Npn \pp_log_code:
+  {
+    \tl_if_empty:NF \g__pp_code_tl
+      {
+        \iow_log:e
+          {
+            Package ~ pentpack ~ Info: ~ position ~ \g__pp_code_tl \c_space_tl
+            on ~ input ~ line ~ \int_use:N \inputlineno : ~ \g__pp_string_tl
+          }
+        \bool_if:NT \g__pp_writecodes_bool
+          {
+            \exp_args:NNe \iow_shipout_x:Nn \g__pp_codes_iow
+              {
+                \exp_not:V \g__pp_code_tl \c_space_tl
+                page ~ \exp_not:N \thepage , ~ line ~ \int_use:N \inputlineno : ~
+                \exp_not:V \g__pp_string_tl
+              }
+          }
+      }
+  }
+
+% ---------- drawing with swap: arcs become inner lines and vice versa
+
+\tl_new:N \pp@path
+\int_new:N \l__pp_rr_int
+\int_new:N \l__pp_rk_int
+\clist_new:N \l__pp_sa_clist
+\clist_new:N \l__pp_sb_clist
+
+% append the name of ring position #2 (in stops) counted from corner #1
+\cs_new_protected:Npn \__pp_put_ringname:nn #1#2
+  {
+    \int_set:Nn \l__pp_rr_int
+      { \int_mod:nn { (#2) + 100 * ( \pp@nring + 1 ) } { \pp@nring + 1 } }
+    \int_set:Nn \l__pp_rk_int
+      { \__pp_mod:n { (#1) + ( (#2) - \l__pp_rr_int ) / ( \pp@nring + 1 ) } }
+    \int_compare:nNnTF { \l__pp_rr_int } = {0}
+      { \tl_put_right:Ne \pp@path { ( \int_use:N \l__pp_rk_int ) } }
+      {
+        \tl_put_right:Ne \pp@path
+          {
+            ( \int_use:N \l__pp_rk_int / \__pp_mod:n { \l__pp_rk_int + 1 }
+              / \int_use:N \l__pp_rr_int )
+          }
+      }
+  }
+
+% path along the ring from position #2 to #3 of arc #1, through the
+% names of the stops and corners, so it follows the map like any name
+\cs_new_protected:Npn \pp_ringpath:nnn #1#2#3
+  {
+    \tl_clear:N \pp@path
+    \__pp_put_ringname:nn {#1} {#2}
+    \int_compare:nNnF {#2} = {#3}
+      {
+        \int_set:Nn \l_tmpa_int { \int_sign:n { (#3) - (#2) } }
+        \int_step_inline:nnnn { (#2) + \l_tmpa_int } { \l_tmpa_int } { (#3) - \l_tmpa_int }
+          {
+            \int_compare:nNnT
+              { \int_mod:nn { ##1 + 100 * ( \pp@nring + 1 ) } { \pp@nring + 1 } } = {0}
+              { \tl_put_right:Nn \pp@path { -- } \__pp_put_ringname:nn {#1} {##1} }
+          }
+        \tl_put_right:Nn \pp@path { -- }
+        \__pp_put_ringname:nn {#1} {#3}
+      }
+  }
+
+% inner lines a field lies on (as "a-b"), for \plinie
+\cs_new_protected:Npn \__pp_inner_segs:Nn #1#2
+  {
+    \clist_clear:N #1
+    \prop_get:ceNT { g__pp_names_ \pp@stops _prop } {#2} \l_tmpa_tl
+      { \exp_after:wN \__pp_inner_segs_aux:Nnnn \exp_after:wN #1 \l_tmpa_tl }
+  }
+\cs_new_protected:Npn \__pp_inner_segs_aux:Nnnn #1#2#3#4
+  {
+    \int_compare:nNnTF {#3} = {-1}
+      {
+        \int_compare:nNnT {#2} > {4}
+          {
+            \__pp_add_seg:Nnn #1 {#2} { 5 + \__pp_mod:n { #2 - 5 + 1 } }
+            \__pp_add_seg:Nnn #1 {#2} { 5 + \__pp_mod:n { #2 - 5 + 4 } }
+          }
+      }
+      {
+        \bool_lazy_and:nnT { \int_compare_p:nNn {#2} > {4} } { \int_compare_p:nNn {#3} > {4} }
+          { \__pp_add_seg:Nnn #1 {#2} {#3} }
+      }
+  }
+\cs_new_protected:Npn \__pp_add_seg:Nnn #1#2#3
+  {
+    \clist_put_right:Ne #1
+      { \int_eval:n { \int_min:nn {#2} {#3} } - \int_eval:n { \int_max:nn {#2} {#3} } }
+  }
+
+% true if #1 and #2 lie on a common inner line
+\prg_new_protected_conditional:Npnn \pp_same_inner:nn #1#2 { T, F, TF }
+  {
+    \__pp_inner_segs:Nn \l__pp_sa_clist {#1}
+    \__pp_inner_segs:Nn \l__pp_sb_clist {#2}
+    \bool_set_false:N \l_tmpa_bool
+    \clist_map_inline:Nn \l__pp_sa_clist
+      { \clist_if_in:NnT \l__pp_sb_clist {##1} { \bool_set_true:N \l_tmpa_bool } }
+    \bool_if:NTF \l_tmpa_bool { \prg_return_true: } { \prg_return_false: }
+  }
+
+% LaTeX2e names for the functions above
+\cs_new_eq:NN \pp@makepoints \pp_make_points:
+\cs_new_protected:Npn \pp@ringpath #1#2#3
+  { \pp_ringpath:nnn { \int_eval:n { (#1) - \pp@arcoff } } {#2} {#3} }
+\cs_new_eq:NN \pp@ifsameinnerTF \pp_same_inner:nnTF
+\cs_new_eq:NN \pp@drawstops \pp_draw_stops:
+\cs_new_eq:NN \pp@makenames \pp_make_names:
+\cs_new_eq:NN \pp@record \pp_record:nnn
+\cs_new_eq:NN \pp@computecode \pp_compute_code:
+\cs_new_eq:NN \pp@logcode \pp_log_code:
+\cs_new_eq:NN \pentwritecodes \pp_write_codes:
+\cs_new_protected:Npn \pp@resetrecords { \seq_gclear:N \g__pp_records_seq }
+\tl_new:N \pp@fillcolour
+\tl_new:N \pp@tricolour
+\tl_new:N \pp@squcolour
+\cs_new_protected:Npn \pp@setfill #1 { \__pp_drawcolour:Nn \pp@fillcolour {#1} }
+\cs_new_protected:Npn \pp@settri #1 { \__pp_drawcolour:Nn \pp@tricolour {#1} }
+\cs_new_protected:Npn \pp@setsqu #1 { \__pp_drawcolour:Nn \pp@squcolour {#1} }
+\cs_new:Npn \ppositioncode { \g__pp_code_tl }
+\cs_new:Npn \ppositionstring { \g__pp_string_tl }
+
+\ExplSyntaxOff
+
+% helpers that create the drawn points
+\newcommand{\pp@mkcorner}[1]{\coordinate (pp-#1) at ({\rota+72*#1}:\kvar);}
+\newcommand{\pp@mkjunction}[2]{\coordinate (pp-#1) at ({\rota+72*#2}:{-0.381966*\kvar});}
+\newcommand{\pp@mkcentre}[1]{\coordinate (pp-c-#1) at ({\rota+72*#1}:\cvar);}
+\newcommand{\pp@mkring}[3]{\coordinate (#1) at ({\rota+72*#2+(#3)*\pp@step}:\kvar);}
+\newcommand{\pp@mkline}[5]{\coordinate (#1) at ($(#2)!{#4+(2*#5-1)*\svar}!(#3)$);}
+\newcommand{\pp@drawstop}[1]{\filldraw[small] (#1) circle (\svar);}
+
+%%%%%%%%%% LINES AND ARCS
+% None of the drawing commands ends in ";" -- close them yourself.
+
+% With swap, a line along an inner line of the logical diagram lies on
+% the ring and is drawn as an arc.
+\newcommand{\plinie}[3]{%
+    \ifnum\pp@s=1
+      \pp@ifsameinnerTF{#1}{#2}{\pp@ringlinie{#1}{#2}{#3}}{\pp@straightlinie{#1}{#2}{#3}}%
+    \else
+      \pp@straightlinie{#1}{#2}{#3}%
+    \fi}
+\newcommand{\pp@straightlinie}[3]{%
+    \draw[#3,line width=\pfeildicke,>=\meinpfeil,cap=round] (#1.center) -- (#2.center)}
+\newcommand{\pp@ringlinie}[3]{%
+    \draw[#3,line width=\pfeildicke,>=\meinpfeil,cap=round]
+      let \p1=(#1), \p2=(#2), \n1={atan2(\y1,\x1)}, \n2={atan2(\y2,\x2)},
+          \n3={mod(\n2-\n1+540,360)-180}
+      in (#1) arc[start angle=\n1, delta angle=\n3, radius=\kvar]}
+
+% With swap, arcs lie on the inner pentagon and are drawn as straight lines.
+\newcommand{\pp@swaparc}[4]{% arc, from, to, options
+    \pp@ringpath{#1}{#2}{#3}%
+    \expandafter\pp@drawpath\expandafter{\pp@path}{#4}}
+\def\pp@drawpath#1#2{%
+    \draw[#2,>=\meinpfeil,line width=\pfeildicke,cap=round,join=round] #1}
+
+% angle of corner #1 after turning and mirroring
+\newcommand{\pp@cangle}[1]{(\rota+72*(\pp@t+(\pp@m)*((#1)-\pp@arcoff)))}
+
+% arc #1 runs counter-clockwise from corner #1 to corner #1+1
+\newcommand{\pbogen}[2]{%
+    \ifnum\pp@s=1 \pp@swaparc{#1}{0}{\pp@nring+1}{#2}\else\pp@pbogen{#1}{#2}\fi}
+\newcommand{\pp@pbogen}[2]{%
+    \draw[#2,>=\meinpfeil,line width=\pfeildicke,cap=round]
+      ({\pp@cangle{#1}}:\kvar) arc ({\pp@cangle{#1}}:{\pp@cangle{#1}+(\pp@m)*72}:\kvar)}
+
+\newcommand{\pbogenx}[2]{%
+    \ifnum\pp@s=1 \pp@swaparc{#1}{0}{\pp@nring+1}{#2}\else\pp@pbogenx{#1}{#2}\fi}
+\newcommand{\pp@pbogenx}[2]{%
+    \draw[#2,>=\meinpfeil,line width=\pfeildicke,cap=round]
+      ({\pp@cangle{#1}}:\kvar+\pfeildicke) arc
+      ({\pp@cangle{#1}}:{\pp@cangle{#1}+(\pp@m)*72}:\kvar+\pfeildicke)}
+
+% part of arc #1 from stop #2 to stop #3; stop 0 is corner #1, and the
+% next corner is stop 4 (100 stops) or stop 2 (50 stops).
+% If #3 < #2 the arc runs clockwise.
+\newcommand{\pkbogen}[4]{%
+    \ifnum\pp@s=1 \pp@swaparc{#1}{#2}{#3}{#4}\else\pp@pkbogen{#1}{#2}{#3}{#4}\fi}
+\newcommand{\pp@pkbogen}[4]{%
+    \draw[#4,>=\meinpfeil,line width=\pfeildicke,cap=round]
+      ({\pp@cangle{#1}+(\pp@m)*(#2)*\pp@step}:\kvar) arc
+      ({\pp@cangle{#1}+(\pp@m)*(#2)*\pp@step}:{\pp@cangle{#1}+(\pp@m)*(#3)*\pp@step}:\kvar)}
+
+%%%%%%%%%% BLOCKS
+
+\tikzset{
+    small/.style={line width=0.3pt,draw=\stopaccent,fill=\stopshade},
+}
+
+% #1 style, #2 colour, #3 node
+\newcommand{\pp@block}[3]{%
+    \pp@record{block}{#2}{#3}%
+    \pp@setfill{#2}%
+    \ifx\pp@fillcolour\@empty\def\pp@fillcolour{black}\fi
+    \filldraw[#1,fill=\pp@fillcolour] (#3) circle (\fvar)}
+
+\newcommand{\pblock}[2][]{\pp@block{draw=black}{#1}{#2}}
+
+% block arc #1 (from corner #1 to corner #1+1) in the middle
+\newcommand{\pcbog}[1]{%
+    \edef\pp@tmp{\pp@stopname{\pp@mod{#1}}{\pp@mod{#1+1}}{\pp@midring}}%
+    \pp@block{draw=black}{}{\pp@tmp}}
+
+% block the long line from corner #1 clockwise (l) or counter-clockwise (r)
+\newcommand{\pccornl}[1]{%
+    \edef\pp@tmp{\pp@stopname{\pp@mod{#1}}{\the\numexpr\pp@mod{#1+2}+5\relax}{\pp@ccorn}}%
+    \pp@block{small}{}{\pp@tmp}}
+
+\newcommand{\pccornr}[1]{%
+    \edef\pp@tmp{\pp@stopname{\pp@mod{#1}}{\the\numexpr\pp@mod{#1+3}+5\relax}{\pp@ccorn}}%
+    \pp@block{small}{}{\pp@tmp}}
+
+% block the short line opposite corner #1, in the middle
+\newcommand{\pcjunct}[1]{%
+    \edef\pp@tmp{\pp@stopname{\the\numexpr\pp@mod{#1+2}+5\relax}{\the\numexpr\pp@mod{#1+3}+5\relax}{\pp@midinner}}%
+    \pp@block{draw=black}{}{\pp@tmp}}
+
+\tikzset{
+    ccorn/.pic={
+        \filldraw[small,fill=black] (-162+\rota:\cvar+\pp@ccorn*2*\svar-\svar) circle (\fvar);
+    },
+    cjunc/.pic={
+        \filldraw[small,fill=black] (\rota:0.309017*\kvar) circle (\fvar);
+    },
+}
+
+%%%%%%%%%% PIECES
+% Pieces are animals: rabbit (Hase), hedgehog (Igel), goose (Gans) and
+% cat (Katze), drawn as pics and scaled to the stops.
+%   \phase[colour]{node}, \pigel, \pgans, \pkatze
+%   \ptri = \phase, \psqu = \pigel (with pieces=shapes: triangle, square)
+% Version-1 syntax \phase{node}{colour} works as well. Colours are
+% 0-4, W G Y R B, white green yellow red blue, \mywhite ... \myblue,
+% or any other TikZ colour (which is not changed by turn and mirror).
+
+\newlength{\pp@anilw}
+
+\tikzset{
+    triangle/.style = {line width=1pt,inner sep=0.5\fvar,regular polygon,regular polygon sides=3},
+    square/.style = {line width=1pt,inner sep=0.7\fvar,regular polygon,regular polygon sides=4},
+    pp animal/.style = {draw=black,line width=\pp@anilw,line join=round},
+    pp hase/.pic = {\filldraw[pp animal] (-0.679,0.002) -- (-0.615,0.186) -- (-0.407,0.300) -- (-0.347,0.538) -- (-0.094,0.835) -- (0.089,0.890) -- (0.213,0.845) -- (0.293,0.672) -- (0.273,0.558) -- (0.020,0.240) -- (0.079,0.136) -- (0.213,0.037) -- (0.471,-0.082) -- (0.679,-0.568) -- (0.679,-0.702) -- (0.456,-0.890) -- (0.055,-0.880) -- (-0.094,-0.825) -- (-0.302,-0.885) -- (-0.421,-0.830) -- (-0.337,-0.692) -- (-0.203,-0.553) -- (-0.342,-0.394) -- (-0.397,-0.191) -- (-0.530,-0.121) -- cycle;},
+    pp igel/.pic = {\filldraw[pp animal] (-0.917,-0.310) -- (-0.603,-0.021) -- (-0.591,0.163) -- (-0.375,0.209) -- (-0.237,0.394) -- (-0.113,0.371) -- (0.090,0.540) -- (0.209,0.452) -- (0.522,0.526) -- (0.568,0.398) -- (0.848,0.222) -- (0.779,0.130) -- (0.917,-0.140) -- (0.811,-0.237) -- (0.702,-0.490) -- (0.614,-0.522) -- (0.406,-0.444) -- (-0.044,-0.461) -- (-0.153,-0.540) -- (-0.371,-0.387) -- (-0.687,-0.448) -- (-0.917,-0.398) -- cycle;},
+    pp gans/.pic = {\filldraw[pp animal] (-0.656,0.755) -- (-0.532,0.828) -- (-0.382,0.837) -- (-0.238,0.782) -- (-0.178,0.684) -- (-0.160,0.319) -- (-0.142,0.136) -- (0.027,0.038) -- (0.196,0.029) -- (0.487,-0.122) -- (0.715,-0.122) -- (0.528,-0.319) -- (0.409,-0.456) -- (0.258,-0.579) -- (0.286,-0.650) -- (0.418,-0.746) -- (0.354,-0.833) -- (-0.224,-0.837) -- (-0.288,-0.787) -- (-0.242,-0.664) -- (-0.119,-0.613) -- (-0.128,-0.517) -- (-0.441,-0.246) -- (-0.523,-0.168) -- (-0.487,0.093) -- (-0.414,0.410) -- (-0.427,0.483) -- (-0.468,0.565) -- (-0.660,0.629) -- (-0.715,0.675) -- cycle;},
+    pp katze/.pic = {\filldraw[pp animal] (-0.836,0.549) -- (-0.753,0.451) -- (-0.593,0.467) -- (-0.464,0.451) -- (-0.418,0.560) -- (-0.315,0.235) -- (-0.211,0.147) -- (0.366,0.188) -- (0.640,0.204) -- (0.769,0.018) -- (0.861,-0.281) -- (0.867,-0.405) -- (0.753,-0.405) -- (0.629,-0.209) -- (0.552,-0.209) -- (0.418,-0.554) -- (0.325,-0.554) -- (0.232,-0.266) -- (-0.170,-0.255) -- (-0.294,-0.333) -- (-0.428,-0.560) -- (-0.552,-0.549) -- (-0.516,-0.286) -- (-0.671,0.054) -- (-0.825,0.214) -- (-0.867,0.389) -- cycle;},
+}
+
+% letters in the position code
+\def\pp@kind@hase{H}
+\def\pp@kind@igel{I}
+\def\pp@kind@gans{G}
+\def\pp@kind@katze{K}
+
+% style pp flip: xscale=-1 if the animal at node #1 has to face right.
+% The drawn animals face left; the side of the board decides.
+\newlength{\pp@px}
+\newcommand{\pp@setflip}[1]{%
+    \tikzset{pp flip/.style={}}%
+    \ifthenelse{\equal{\pp@facing}{fixed}}{}{%
+      \pgfextractx{\pp@px}{\pgfpointanchor{#1}{center}}%
+      \ifthenelse{\equal{\pp@facing}{inwards}}%
+        {\ifdim\pp@px<-1pt \tikzset{pp flip/.style={xscale=-1}}\fi}%
+        {\ifdim\pp@px>1pt \tikzset{pp flip/.style={xscale=-1}}\fi}}}
+
+% #1 animal, #2 colour (already mapped), #3 node, #4 size factor, #5 x shift
+\newcommand{\pp@drawpiece}[5]{%
+    \pp@setflip{#3}%
+    \ifthenelse{\equal{\pp@pieces}{shapes}\AND\equal{#1}{hase}}%
+      {\node[triangle,draw,fill=#2,xshift=#5] at (#3) {}}%
+      {\ifthenelse{\equal{\pp@pieces}{shapes}\AND\equal{#1}{igel}}%
+        {\node[square,draw,fill=#2,xshift=#5] at (#3) {}}%
+        {\path ([xshift=#5]#3) pic[fill=#2,scale=#4*\pp@anisc,pp flip] {pp #1}}}}
+
+\newcommand{\pp@piece}[3]{% #1 animal, #2 colour, #3 node
+    \pp@record{\csname pp@kind@#1\endcsname}{#2}{#3}%
+    \pp@setfill{#2}%
+    \pp@drawpiece{#1}{\pp@fillcolour}{#3}{1}{0pt}}
+\newcommand{\pp@oldpiece}[3]{\pp@piece{#1}{#3}{#2}}
+
+\NewDocumentCommand{\phase}{om}{%
+    \IfNoValueTF{#1}{\pp@oldpiece{hase}{#2}}{\pp@piece{hase}{#1}{#2}}}
+\NewDocumentCommand{\pigel}{om}{%
+    \IfNoValueTF{#1}{\pp@oldpiece{igel}{#2}}{\pp@piece{igel}{#1}{#2}}}
+\NewDocumentCommand{\pgans}{om}{%
+    \IfNoValueTF{#1}{\pp@oldpiece{gans}{#2}}{\pp@piece{gans}{#1}{#2}}}
+\NewDocumentCommand{\pkatze}{om}{%
+    \IfNoValueTF{#1}{\pp@oldpiece{katze}{#2}}{\pp@piece{katze}{#1}{#2}}}
+\NewDocumentCommand{\ptri}{om}{%
+    \IfNoValueTF{#1}{\pp@oldpiece{hase}{#2}}{\pp@piece{hase}{#1}{#2}}}
+\NewDocumentCommand{\psqu}{om}{%
+    \IfNoValueTF{#1}{\pp@oldpiece{igel}{#2}}{\pp@piece{igel}{#1}{#2}}}
+
+% rabbit and hedgehog at one node: \ptwo[rabbit,hedgehog]{node} or
+% \ptwo{node}{rabbit}{hedgehog}
+\NewDocumentCommand{\ptwo}{om}{%
+    \IfNoValueTF{#1}{\pp@oldtwo{#2}}{\pp@twosplit#1\@nil{#2}}}
+\newcommand{\pp@oldtwo}[3]{\pp@two{#2}{#3}{#1}}
+\def\pp@twosplit#1,#2\@nil#3{\pp@two{#1}{#2}{#3}}
+\newcommand{\pp@two}[3]{%
+    \pp@record{H}{#1}{#3}\pp@record{I}{#2}{#3}%
+    \pp@settri{#1}\pp@setsqu{#2}%
+    \ifthenelse{\equal{\pp@pieces}{shapes}}%
+      {\def\pp@twoscale{1}\def\pp@twoshift{\svar}}%
+      {\def\pp@twoscale{0.72}\def\pp@twoshift{0.85\svar}}%
+    \pp@drawpiece{hase}{\pp@tricolour}{#3}{\pp@twoscale}{-\pp@twoshift};
+    \pp@drawpiece{igel}{\pp@squcolour}{#3}{\pp@twoscale}{\pp@twoshift}}
+
+%%%%%%%%%% HIGHLIGHTING AND PLAYERS
+
+\newcommand{\phighlight}[1]{%
+    \ifthenelse{\boolean{details}}%
+      {\draw (#1) circle (3\svar);\def\pp@hl{3}}%
+      {\def\pp@hl{1.5}}%
+    \draw[line width=0.5\pfeildicke,->,>=\meinpfeil]
+      ($(#1)!\pp@hl*\svar+5*\svar!(0,0)$) -- ($(#1)!\pp@hl*\svar!(0,0)$)}
+
+\newcommand{\pp@letter}[1]{\ifcase#1\or A\or B\or C\or D\or E\fi}
+
+\newcommand{\addplayers}[2][]{%
+    \ifnum#2<2 \PackageError{pentpack}{\string\addplayers\space needs 2 to 5 players}{}\fi
+    \ifnum#2>5 \PackageError{pentpack}{\string\addplayers\space needs 2 to 5 players}{}\fi
+    \setlength{\nodr}{2\cvar}%
+    \def\margin{12}% in degrees
+    \foreach \xi in {1,...,#2} {
+        \pgfmathsetmacro\pp@pa{360/#2*\xi+\rota-90}
+        \ifthenelse{\equal{\pp@players}{animals}\AND\xi<5}%
+          {\node (p\xi) at (\pp@pa:\kvar+1.3\nodr+\cvar) {\Large\phantom{$\mathcal{A}$}};
+           \pp@setflip{p\xi}%
+           \path (p\xi) pic[fill=white,scale=0.75*\nodr/28.45276,pp flip]
+             {pp \ifcase\xi\or hase\or igel\or gans\or katze\fi};}%
+          {\node (p\xi) at (\pp@pa:\kvar+1.3\nodr+\cvar) {\Large$\mathcal{\pp@letter{\xi}}$};}%
+        \draw (p\xi) circle (\nodr);
+        \draw[#1] ({\pp@pa-360/#2+\margin}:\kvar+1.3\nodr+\cvar)
+           arc ({\pp@pa-360/#2+\margin}:{\pp@pa-\margin}:\kvar+1.3\nodr+\cvar);
+    }
+    \path}% the user's ";" closes this empty path
+
+%%%%%%%%%% NODE NAMES (for reference and debugging)
+
+\NewDocumentCommand{\pnodenames}{s O{}}{%
+    \IfBooleanTF{#1}{\pp@newnames{#2}}{\pp@oldnames{#2}}}
+
+\newcommand{\pp@oldnames}[1]{%
+    \pgfmathsetmacro\pp@lsc{\svar/5.2}%
+    \foreach \s in {0,...,4} {
+        \foreach \q in {1,...,\pp@nline} {
+            \node[font=\tiny\ttfamily,scale=\pp@lsc,#1] at (\s+\q) {\s+\q};
+            \node[font=\tiny\ttfamily,scale=\pp@lsc,#1] at (\s-\q) {\s-\q};
+        }
+        \foreach \q in {1,...,\pp@ninner} {
+            \node[font=\tiny\ttfamily,scale=\pp@lsc,#1] at (\s a\q) {\s a\q};
+        }
+        \foreach \t in {1,...,\pp@nring} {
+            \node[font=\tiny\ttfamily,scale=\pp@lsc,#1] at (\s r\t) {\s r\t};
+        }
+        \node[font=\tiny\ttfamily,scale=1.4*\pp@lsc,#1] at (\s) {\s};
+        \node[font=\tiny\ttfamily,scale=1.4*\pp@lsc,#1] at (\s a) {\s a};
+    }
+    \path}
+
+% one name per stop: long lines from the corner, arcs and inner lines
+% counter-clockwise
+\newcommand{\pp@newnames}[1]{%
+    \pgfmathsetmacro\pp@lsc{\svar/8.5}%
+    \foreach \s in {0,...,4} {
+        \foreach \q in {1,...,\pp@nline} {
+            \edef\pp@n{\pp@stopname{\s}{\the\numexpr\pp@mod{\s+2}+5\relax}{\q}}%
+            \node[font=\tiny\ttfamily,scale=\pp@lsc,#1] at (\pp@n) {\pp@n};
+            \edef\pp@n{\pp@stopname{\s}{\the\numexpr\pp@mod{\s+3}+5\relax}{\q}}%
+            \node[font=\tiny\ttfamily,scale=\pp@lsc,#1] at (\pp@n) {\pp@n};
+        }
+        \foreach \q in {1,...,\pp@ninner} {
+            \edef\pp@n{\pp@stopname{\the\numexpr\s+5\relax}{\the\numexpr\pp@mod{\s+1}+5\relax}{\q}}%
+            \node[font=\tiny\ttfamily,scale=\pp@lsc,#1] at (\pp@n) {\pp@n};
+        }
+        \foreach \t in {1,...,\pp@nring} {
+            \edef\pp@n{\pp@stopname{\s}{\pp@mod{\s+1}}{\t}}%
+            \node[font=\tiny\ttfamily,scale=\pp@lsc,#1] at (\pp@n) {\pp@n};
+        }
+        \node[font=\tiny\ttfamily,scale=2*\pp@lsc,#1] at (\s) {\s};
+        \node[font=\tiny\ttfamily,scale=2*\pp@lsc,#1] at (\s a) {\s a};
+    }
+    \path}
+
+%%%%%%%%%% META DATA
+
+\newcommand{\pdatum}{unknown date}
+\newcommand{\pspieler}{unknown players}
+\newcommand{\port}{unknown location}
+\newcommand{\ptomove}{unknown who to move}
+
+\newcommand{\pdata}[4]{%
+    \renewcommand{\pspieler}{#1}%
+    \renewcommand{\pdatum}{#2}%
+    \renewcommand{\port}{#3}%
+    \renewcommand{\ptomove}{#4}%
+}
+
+% \pshowdata and \pshowcode go below the board; whichever comes second
+% is placed below the first.
+\newcommand{\pp@below}{(0,-\kvar-\cvar)}
+\newcommand{\pp@ifshown}[1]{\pgfutil@ifundefined{pgf@sh@ns@#1}{\@secondoftwo}{\@firstoftwo}}
+\newcommand{\pp@forget}[1]{\expandafter\let\csname pgf@sh@ns@#1\endcsname\relax}
+
+\newcommand{\pshowdata}{%
+    \pp@ifshown{pp-code}%
+      {\def\pp@y{pp-code.south}}{\def\pp@y{0,-\kvar-\cvar}}%
+    \node[name=pp-data,anchor=north,text width=2\kvar,align=center]
+      at (0,0 |- \pp@y) {%
+        \pspieler;\\ \pdatum, \port\\ \ptomove\ to move}}
+
+\newcommand{\pshowcode}[1][]{%
+    \pp@computecode
+    \pp@ifshown{pp-data}%
+      {\def\pp@y{pp-data.south}}{\def\pp@y{0,-\kvar-\cvar}}%
+    \node[name=pp-code,anchor=north east,inner sep=1pt,font=\scriptsize\ttfamily,#1]
+      at (\kvar+\cvar,0 |- \pp@y) {\ppositioncode}}
+
+%%%%%%%%%% THE BOARD
+
+\tikzset{
+    corn/.pic={
+        \filldraw[draw=\stopaccent, fill, line width=0.3pt] (0,0) circle (\cvar);
+        \filldraw[draw=\stopaccent, fill=\stopshade, line width=0.3pt] (0,0) circle (0.8\cvar);
+    },
+    junc/.pic={
+        \filldraw[draw=\stopaccent, fill, line width=0.3pt] (0,0) circle (\jvar);
+    },
+}
+
+\tikzset{
+    mypboard/.pic={
+        \ifthenelse{\boolean{details}}{
+            \fill[color=\blackness] (0,0) circle (\kvar+\cvar);
+            \ifthenelse{\boolean{noring}}{}{\draw (0,0) circle (\kvar+\cvar);}
+            \ifx\pp@ring\@empty\edef\pp@rg{\csname pp@ring@\pp@stops\endcsname}\else\let\pp@rg\pp@ring\fi
+            \ifthenelse{\equal{\pp@rg}{single}}
+              {\draw[line width=0.3pt,color=black] (0,0) circle (\kvar);}
+              {\draw[line width=\ringwidth,color=gray!15] (0,0) circle (\kvar);
+               \draw[line width=0.3pt,color=black] (0,0) circle (\kvar+0.5\ringwidth);
+               \draw[line width=0.3pt,color=black] (0,0) circle (\kvar-0.5\ringwidth);}
+        }{
+            \ifthenelse{\boolean{solid}}
+                {\draw (0,0) circle (\kvar);}
+                {\draw[dashed] (0,0) circle (\kvar);}
+            \ifthenelse{\boolean{solid}}{\def\pp@ls{solid}}{\def\pp@ls{dotted}}
+            \draw[\pp@ls] (pp-0) -- (pp-2) -- (pp-4) -- (pp-1) -- (pp-3) -- cycle;
+        }
+        \foreach \s in {0,...,4} {
+            \edef\pp@cc{\mycolor{\s}}%
+            \draw (pp-\s) pic[color=\pp@cc] {corn};
+            \edef\pp@cc{\myjcolor{\s}}%
+            \draw (pp-\the\numexpr\s+5\relax) pic[color=\pp@cc] {junc};
+        }
+        \ifthenelse{\boolean{details}}{\pp@drawstops}{}
+    }
+}
+
+\NewEnviron{pentdiag}[1][]{%
+    \pp@diagopts{#1}%
+    \pp@geometry
+    \pp@resetrecords
+    \pp@forget{pp-data}\pp@forget{pp-code}%
+    \begin{tikzpicture}[draw=\linecolor]%
+        \pp@makepoints
+        \pic{mypboard};%
+        \pp@makenames
+        \BODY
+    \end{tikzpicture}%
+    \pp@computecode
+    \pp@logcode
+}
+
+\endinput

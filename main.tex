@@ -155,7 +155,7 @@
   \renewcommand{\mywhite}{\mustergrau}\renewcommand{\myblue}{\mustergrau}%
   \renewcommand{\mygreen}{\mustergrau}\renewcommand{\myred}{\mustergrau}%
   \renewcommand{\myyellow}{\mustergrau}%
-  \begin{pentdiag}[stops=100, radius=0.17\textwidth, background=white]
+  \begin{pentdiag}[stops=100, radius=0.15\textwidth, background=white]
     \renewcommand{\pfeilfarbe}{pfeilaussen}%
     \gdef\musterpos{0}\gdef\mustertyp{c}%   von der weißen Ecke
     \musterschritt{#1}{}
@@ -265,7 +265,7 @@
    {\small\element{#1}\,$\rightarrow$\,\element{#2}}\par
    \medskip
    {\large\bfseries #3}\par
-   \hyperlink{beziehung:\paarnr}{\textit{+\paarnr\ \csname bzname\paarnr\endcsname}}\par
+   {\small Beziehung:}~\hyperlink{beziehung:\paarnr}{\textit{+\paarnr~\csname bzname\paarnr\endcsname}}\par
    \smallskip
    \textbf{#4}\par
    \smallskip
@@ -279,8 +279,21 @@
 \expandafter\def\csname bzname3\endcsname{Sich stellen}
 \expandafter\def\csname bzname4\endcsname{Heimkehren}
 
-% \musterref XI Rückhalt\endmusterref -> kursiver Link zum Muster XI
-\def\musterref#1 #2\endmusterref{\hyperlink{muster:#1}{\textit{#1 #2}}}
+% \musterref XI Rückhalt\endmusterref -> "Muster: XI. Der Rückhalt" als Link zum Muster XI
+\expandafter\def\csname mustername I\endcsname{Der Strom}
+\expandafter\def\csname mustername II\endcsname{Die Prüfung}
+\expandafter\def\csname mustername III\endcsname{Die Lehrzeit}
+\expandafter\def\csname mustername IV\endcsname{Der Damm}
+\expandafter\def\csname mustername V\endcsname{Der strenge Weg}
+\expandafter\def\csname mustername VI\endcsname{Die Abkürzung}
+\expandafter\def\csname mustername VII\endcsname{Die Läuterung}
+\expandafter\def\csname mustername VIII\endcsname{Der Aufstand}
+\expandafter\def\csname mustername IX\endcsname{Die List}
+\expandafter\def\csname mustername X\endcsname{Die gesammelte Kraft}
+\expandafter\def\csname mustername XI\endcsname{Der Rückhalt}
+\expandafter\def\csname mustername XII\endcsname{Die Wurzelsuche}
+% Ausgabe: "Muster: II. Die Prüfung", Nummer und Name als Link
+\def\musterref#1 #2\endmusterref{{\small Muster:}~\hyperlink{muster:#1}{\textit{#1.~\csname mustername #1\endcsname}}}
 
 % Kleine Kreispfeile für die Drehrichtung
 \newcommand{\uzs}{\tikz[baseline=-0.6ex]\draw[-{Stealth[scale=0.6]}, line width=0.7pt] (90:1.1ex) arc (90:-210:1.1ex);}  % im Uhrzeigersinn
@@ -363,7 +376,7 @@ Jedes Paar und jedes Tripel hat seinen Spruch: oben, fett gesetzt, das knappe Ur
 
 Das Vorbild ist das \href{https://en.wikipedia.org/wiki/Lingqijing}{Lingqijing} ({\cjk 靈棋經}, „Klassiker der göttlichen Spielsteine“), ein chinesisches Orakel, das wohl in der frühen Wei-Jin-Zeit entstanden ist. Dort ergeben drei Positionen (Himmel, Mensch, Erde) mit je fünf Zuständen 125 Sprüche. Beim Pentagame-Orakel kommt keine Farbe doppelt vor, deshalb sind es 60.
 
-Die Sprüche sind keine Übersetzung eines alten Textes. Sie sind eine moderne Dichtung entlang der Wu-Xing-Zyklen. Überliefert sind die fünf Elemente, ihre Reihenfolge, das Nähren und das Bändigen sowie die meisten Zuordnungen in der Tabelle der Elemente. Die Namen der vier Beziehungen und der zwölf Muster und alle Sprüche sind für dieses Buch geschrieben. Jeder Spruch eines Tripels verbindet das Thema seines Ausgangselements mit seinem Muster und greift dafür die klassischen Bilder der Zyklen auf: Holz nährt das Feuer, Wasser löscht es, die Axt fällt den Baum. Zwei Tripel mit demselben Muster erzählen deshalb dieselbe Geschichte in anderen Bildern.
+Die Sprüche sind keine Übersetzung eines alten Textes. Sie sind eine moderne Dichtung entlang der Wu-Xing-Zyklen. Überliefert sind die fünf Elemente, ihre Reihenfolge, die vier Beziehungen mit ihren chinesischen Namen und die meisten Zuordnungen in der Tabelle der Elemente. Die deutschen Namen der Beziehungen, die zwölf Muster und alle Sprüche sind für dieses Buch geschrieben. Jeder Spruch eines Tripels verbindet das Thema seines Ausgangselements mit seinem Muster und greift dafür die klassischen Bilder der Zyklen auf: Holz nährt das Feuer, Wasser löscht es, die Axt fällt den Baum. Zwei Tripel mit demselben Muster erzählen deshalb dieselbe Geschichte in anderen Bildern.
 
 \addsec{Befragung}\markright{Befragung}
 
@@ -418,7 +431,7 @@ Im Wandlungskreis folgen die Elemente aufeinander:
 \end{tikzpicture}
 
 \smallskip
-{\small\itshape Außen: Nähren (Sheng-Zyklus). Innen: Bändigen (Ke-Zyklus).}
+{\small\itshape Außen: Nähren ({\cjk 生} shēng). Innen: Bändigen ({\cjk 克} kè).}
 \end{orakelblock}
 
 \begin{center}
@@ -428,13 +441,15 @@ Im Wandlungskreis folgen die Elemente aufeinander:
 \textbf{Element} & \textbf{Zeit, Richtung} & \textbf{Thema} & \textbf{Licht} & \textbf{Schatten} \\
 \midrule
 \elementmitfarbe{Holz}{Grün} & Frühling, Osten    & Aufbruch, Plan, Wachstum           & Wille, Güte         & Ungeduld, Zorn \\
-\elementmitfarbe{Feuer}{Rot} & Sommer, Süden      & Ausdruck, Begeisterung, Begegnung  & Freude, Wärme       & Hast, Verausgabung \\
-\elementmitfarbe{Erde}{Gelb} & Spät\-sommer, Mitte  & Sammlung, Fürsorge, Halt           & Vertrauen, Treue    & Grübeln, Trägheit \\
+\elementmitfarbe{Feuer}{Rot} & Sommer, Süden      & Ausdruck, Begeisterung, Begegnung  & Freude, Anstand     & Übermut, Verausgabung \\
+\elementmitfarbe{Erde}{Gelb} & Spätsommer, Übergänge, Mitte & Sammlung, Fürsorge, Halt           & Vertrauen, Treue    & Grübeln, Trägheit \\
 \elementmitfarbe{Metall}{Weiß} & Herbst, Westen     & Ernte, Klarheit, Abschied          & Maß, Gerechtigkeit  & Strenge, Trauer \\
 \elementmitfarbe{Wasser}{Blau} & Winter, Norden     & Ruhe, Tiefe, Ursprung              & Weisheit, Ausdauer  & Furcht, Rückzug \\
 \bottomrule
 \end{tabularx}
 \end{center}
+
+{\small Die Spalte „Licht“ folgt den fünf konfuzianischen Tugenden ({\cjk 仁}, {\cjk 禮}, {\cjk 信}, {\cjk 義}, {\cjk 智}), die Spalte „Schatten“ den fünf Gemütsbewegungen der chinesischen Medizin: Zorn, Übermut, Grübeln, Trauer, Furcht. Die Erde hat keine eigene Jahreszeit: Ihr gehören der Spätsommer und die Übergänge am Ende jeder Jahreszeit.\par}
 
 
 
@@ -448,25 +463,29 @@ Im Wandlungskreis folgen die Elemente aufeinander:
 \addchap{Die vier Beziehungen}\markboth{Die vier Beziehungen}{\mbox{}}\label{kap:beziehungen}
 
 \begin{einleitung}
-Zwischen zwei Elementen besteht immer genau eine von vier Beziehungen. Welche es ist, hängt davon ab, wie viele Schritte man im Wandlungskreis vorwärts geht. Jede Beziehung hat, wie Yin und Yang, eine Seite im Licht und eine im Schatten.
-
-Das Bild über jeder Beziehung zeigt sie auf dem Pentagame-Brett mit 50 Feldern. Dort liegen die Farben im Uhrzeigersinn in derselben Reihenfolge wie im Wandlungskreis: \element*{Metall}, \element*{Wasser}, \element*{Holz}, \element*{Feuer}, \element*{Erde}. Das gilt für die Ecken und für die Kreuzungen. Deshalb ist jede Beziehung eine einzige Linie. Jedes Bild zeigt sie zweimal: schwarz von außen, von der Ecke oben, und rot von innen, von der Kreuzung unten in der Mitte. Die Bilder sind bewusst grau: Die Ecke oben kann jedes der fünf Elemente sein, und die Beziehung sieht für alle gleich aus.
+Zwischen zwei Elementen besteht immer genau eine von vier Beziehungen. Welche es ist, hängt davon ab, wie viele Schritte man im Wandlungskreis vorwärts geht. Jede Beziehung hat, wie Yin und Yang, eine Seite im Licht und eine im Schatten. Die chinesische Tradition kennt sie unter eigenen Namen: Nähren ist {\cjk 生} shēng, Bändigen {\cjk 克} kè. Die Gegenrichtungen heißen {\cjk 侮} wǔ, die Auflehnung des Gebändigten gegen seinen Bändiger, und {\cjk 泄} xiè, das Ableiten, bei dem das Kind an der Mutter zehrt. Das Übermaß des Bändigens heißt {\cjk 乘} chéng, das Überwältigen.
 \end{einleitung}
 
 \medskip
 \begin{center}
-\footnotesize\setlength{\tabcolsep}{3pt}\renewcommand{\arraystretch}{1.3}
+\footnotesize\setlength{\tabcolsep}{2pt}\renewcommand{\arraystretch}{1.3}
 \begin{tabularx}{\textwidth}{@{}lLcll@{}}
 \toprule
 \textbf{Beziehung} & \textbf{Im Kreis} & \textbf{Richtung} & \textbf{Weg} & \textbf{Strecke} \\
 \midrule
-\hyperlink{beziehung:1}{\textbf{+1} Nähren}       & 1 vor \mbox{(Sheng)}\newline\strut & \uzs  & innen oder außen & kurz \\
-\hyperlink{beziehung:2}{\textbf{+2} Bändigen}     & 2 vor \mbox{(Ke)}\newline\strut & \guzs & innen und außen  & lang \\
-\hyperlink{beziehung:3}{\textbf{+3} Sich stellen} & 2 zurück\newline \mbox{(gegen Ke)} & \uzs  & innen und außen  & lang \\
-\hyperlink{beziehung:4}{\textbf{+4} Heimkehren}   & 1 zurück\newline \mbox{(gegen Sheng)} & \guzs & innen oder außen & kurz \\
+\hyperlink{beziehung:1}{\textbf{+1} Nähren}       & 1 vor \mbox{({\cjk 生} shēng)} & \uzs  & innen oder außen & kurz \\
+\hyperlink{beziehung:2}{\textbf{+2} Bändigen}     & 2 vor \mbox{({\cjk 克} kè)} & \guzs & innen und außen  & lang \\
+\hyperlink{beziehung:3}{\textbf{+3} Sich stellen} & 2 zurück \mbox{({\cjk 侮} wǔ)} & \uzs  & innen und außen  & lang \\
+\hyperlink{beziehung:4}{\textbf{+4} Heimkehren}   & 1 zurück \mbox{({\cjk 泄} xiè)} & \guzs & innen oder außen & kurz \\
 \bottomrule
 \end{tabularx}
 \end{center}
+
+\begin{einleitung}
+
+Das Bild über jeder Beziehung zeigt sie auf dem Pentagame-Brett mit 50 Feldern. Dort liegen die Farben im Uhrzeigersinn in derselben Reihenfolge wie im Wandlungskreis: \element*{Metall}, \element*{Wasser}, \element*{Holz}, \element*{Feuer}, \element*{Erde}. Das gilt für die Ecken und für die Kreuzungen. Deshalb ist jede Beziehung eine einzige Linie. Jedes Bild zeigt sie zweimal: schwarz von außen, von der Ecke oben, und rot von innen, von der Kreuzung unten in der Mitte. Die Bilder sind bewusst grau: Die Ecke oben kann jedes der fünf Elemente sein, und die Beziehung sieht für alle gleich aus.
+\end{einleitung}
+
 
 \newpage
 \markright{+1 \quad Nähren}
@@ -477,9 +496,10 @@ Das Bild über jeder Beziehung zeigt sie auf dem Pentagame-Brett mit 50 Feldern.
 \beziehungsbrett{1}\par
 \smallskip
 {\large\bfseries\color{ueberschriftfarbe} Nähren}\par
+{\cjk 生}~shēng\par
 \smallskip
 
-\textit{Im Wandlungskreis: ein Schritt vorwärts (Sheng-Zyklus).}\\
+\textit{Im Wandlungskreis: ein Schritt vorwärts, der Sheng-Zyklus.}\\
 \textit{Auf dem Brett: im Uhrzeigersinn außen auf dem Ring oder innen auf dem Pentagon voran.}\par
 \smallskip
 
@@ -502,16 +522,17 @@ Das Bild über jeder Beziehung zeigt sie auf dem Pentagame-Brett mit 50 Feldern.
 \beziehungsbrett{2}\par
 \smallskip
 {\large\bfseries\color{ueberschriftfarbe} Bändigen}\par
+{\cjk 克}~kè\par
 \smallskip
 
-\textit{Im Wandlungskreis: zwei Schritte vorwärts (Ke-Zyklus).}\\
+\textit{Im Wandlungskreis: zwei Schritte vorwärts, der Ke-Zyklus.}\\
 \textit{Auf dem Brett: gegen den Uhrzeigersinn vom Ring nach innen oder von innen zum Ring.}\par
 \smallskip
 
 \textbf{Du setzt Grenzen und gibst Form. Was du bändigst, braucht deine Ordnung.}\par
 \smallskip
 \lichtschatten{Bändigen heißt Form geben. Das Wasser braucht ein Ufer, das Feuer einen Herd, das Wachstum einen Schnitt. Wer bändigt, schützt das Lebendige davor, sich selbst zu zerstören. Gute Grenzen sind ein Ausdruck von Fürsorge.}
-  {Aus Bändigen wird Beherrschen. Wer nur noch kontrolliert, erstickt, was er schützen wollte. Auch das Gegenteil gilt: Wer gar keine Grenzen setzt, lässt das Gegenüber allein. Frag dich ehrlich, ob deine Ordnung dient oder ob sie nur dich beruhigt.}
+  {Aus Bändigen wird Beherrschen, in der Tradition {\cjk 乘} chéng, das Überwältigen. Wer nur noch kontrolliert, erstickt, was er schützen wollte. Auch das Gegenteil gilt: Wer gar keine Grenzen setzt, lässt das Gegenüber allein. Frag dich ehrlich, ob deine Ordnung dient oder ob sie nur dich beruhigt.}
 \smallskip
 
 {\small Alle fünf Paare:}\\[0.5ex] \mbox{\hyperlink{paar:Holz-Erde}{\mypair{Holz}{Erde}}} \hfill \mbox{\hyperlink{paar:Feuer-Metall}{\mypair{Feuer}{Metall}}} \hfill \mbox{\hyperlink{paar:Erde-Wasser}{\mypair{Erde}{Wasser}}} \hfill \mbox{\hyperlink{paar:Metall-Holz}{\mypair{Metall}{Holz}}} \hfill \mbox{\hyperlink{paar:Wasser-Feuer}{\mypair{Wasser}{Feuer}}}\par
@@ -527,16 +548,17 @@ Das Bild über jeder Beziehung zeigt sie auf dem Pentagame-Brett mit 50 Feldern.
 \beziehungsbrett{3}\par
 \smallskip
 {\large\bfseries\color{ueberschriftfarbe} Sich stellen}\par
+{\cjk 侮}~wǔ\par
 \smallskip
 
-\textit{Im Wandlungskreis: drei Schritte vorwärts, also zwei zurück: gegen den Ke-Zyklus.}\\
+\textit{Im Wandlungskreis: drei Schritte vorwärts, also zwei zurück, gegen den Ke-Zyklus.}\\
 \textit{Auf dem Brett: im Uhrzeigersinn vom Ring nach innen oder von innen nach außen.}\par
 \smallskip
 
 \textbf{Du gehst auf das zu, was dich bändigt. Dort wirst du geprüft.}\par
 \smallskip
-\lichtschatten{Sich stellen heißt, der eigenen Prüfung nicht auszuweichen. Du gehst auf das zu, was dich begrenzt, und schaust ihm in die Augen. Das braucht Mut, und es macht frei. Oft verliert das, was uns bändigt, seine Macht, sobald wir es ansehen.}
-  {Aus dem Sich-Stellen wird Auflehnung um jeden Preis. Du forderst jede Grenze heraus, auch die, die dich schützt. Oder du stellst dich nie und lässt dich ein Leben lang von dem bändigen, was du nicht ansehen willst. Wähle deine Prüfungen mit Bedacht.}
+\lichtschatten{Sich stellen heißt, der eigenen Prüfung nicht auszuweichen. Du gehst auf das zu, was dich begrenzt, und schaust ihm in die Augen. Oft verliert das, was uns bändigt, seine Macht, sobald wir es ansehen. Die Tradition sieht in dieser Richtung vor allem eine Störung; hier ist sie auch Mut zur eigenen Prüfung.}
+  {Aus dem Sich-Stellen wird Auflehnung um jeden Preis, wie die Tradition sie beschreibt: Das Gebändigte verhöhnt seinen Bändiger und fordert jede Grenze heraus, auch die schützende. Oder du stellst dich nie und lässt dich ein Leben lang bändigen. Wähle deine Prüfungen mit Bedacht.}
 \smallskip
 
 {\small Alle fünf Paare:}\\[0.5ex] \mbox{\hyperlink{paar:Holz-Metall}{\mypair{Holz}{Metall}}} \hfill \mbox{\hyperlink{paar:Feuer-Wasser}{\mypair{Feuer}{Wasser}}} \hfill \mbox{\hyperlink{paar:Erde-Holz}{\mypair{Erde}{Holz}}} \hfill \mbox{\hyperlink{paar:Metall-Feuer}{\mypair{Metall}{Feuer}}} \hfill \mbox{\hyperlink{paar:Wasser-Erde}{\mypair{Wasser}{Erde}}}\par
@@ -552,16 +574,17 @@ Das Bild über jeder Beziehung zeigt sie auf dem Pentagame-Brett mit 50 Feldern.
 \beziehungsbrett{4}\par
 \smallskip
 {\large\bfseries\color{ueberschriftfarbe} Heimkehren}\par
+{\cjk 泄}~xiè\par
 \smallskip
 
-\textit{Im Wandlungskreis: vier Schritte vorwärts, also einer zurück: gegen den Sheng-Zyklus.}\\
+\textit{Im Wandlungskreis: vier Schritte vorwärts, also einer zurück, gegen den Sheng-Zyklus.}\\
 \textit{Auf dem Brett: gegen den Uhrzeigersinn außen auf dem Ring oder innen auf dem Pentagon voran.}\par
 \smallskip
 
 \textbf{Du kehrst zu deiner „Mutter“ zurück, zu der Quelle, die dich nährt.}\par
 \smallskip
-\lichtschatten{Heimkehren heißt, zur Quelle zurückzugehen: zu dem, was dich genährt hat, zu Menschen, Orten, Erinnerungen, zur Stille. Dort holst du Kraft, bevor du weitergehst. Heimkehren ist kein Rückschritt, sondern ein Atemholen.}
-  {Heimkehren wird zur Flucht in die Vergangenheit. Du bleibst im Vertrauten, in den alten Geschichten, und das Leben zieht an dir vorbei. Oder du kappst alle Wurzeln und verlierst den Halt. Kehr heim, um aufzutanken, nicht um zu bleiben.}
+\lichtschatten{Heimkehren heißt, zur Quelle zurückzugehen: zu dem, was dich genährt hat, zu Menschen, Orten, Erinnerungen, zur Stille. Dort holst du Kraft, bevor du weitergehst. Zugleich nimmst du der Mutter etwas von ihrer Fülle ab: In der Tradition ist das der sanfteste Weg, ein Übermaß auszugleichen.}
+  {Das Kind zehrt an der Mutter. Wer immer nur zurückkommt, um zu nehmen, erschöpft die Quelle, die ihn nährt. Oder du kappst alle Wurzeln und verlierst den Halt. Kehr heim, um aufzutanken und zu danken, nicht um auszuzehren.}
 \smallskip
 
 {\small Alle fünf Paare:}\\[0.5ex] \mbox{\hyperlink{paar:Holz-Wasser}{\mypair{Holz}{Wasser}}} \hfill \mbox{\hyperlink{paar:Feuer-Holz}{\mypair{Feuer}{Holz}}} \hfill \mbox{\hyperlink{paar:Erde-Feuer}{\mypair{Erde}{Feuer}}} \hfill \mbox{\hyperlink{paar:Metall-Erde}{\mypair{Metall}{Erde}}} \hfill \mbox{\hyperlink{paar:Wasser-Metall}{\mypair{Wasser}{Metall}}}\par
@@ -581,28 +604,44 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \paar{Holz}{Feuer}{Der Funke}{Holz nährt Feuer. Aus einem Plan wird Begeisterung.}
   {Was du dir vorgenommen hast, fängt Feuer. Andere spüren deine Freude und lassen sich anstecken. Jetzt ist die Zeit, deinen Ideen Ausdruck zu geben.}
   {Feuer verzehrt das Holz. Wenn du nur noch brennst, ist dein Plan bald aufgebraucht. Oder du hältst deine Begeisterung zurück, und der Funke springt nie über.}
-  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:1}{\mycombination[0.5em]{Holz}{Feuer}{Erde}~1}} \hfill \mbox{\hyperlink{spruch:2}{\mycombination[0.5em]{Holz}{Feuer}{Metall}~2}} \hfill \mbox{\hyperlink{spruch:3}{\mycombination[0.5em]{Holz}{Feuer}{Wasser}~3}}\\[0.3ex] \mbox{\hyperlink{spruch:31}{\mycombination[0.5em]{Erde}{Holz}{Feuer}~31}} \hfill \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Holz}{Feuer}~40}} \hfill \mbox{\hyperlink{spruch:49}{\mycombination[0.5em]{Wasser}{Holz}{Feuer}~49}}\par}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:1}{\mycombination[0.5em]{Holz}{Feuer}{Erde}~1}} & \mbox{\hyperlink{spruch:2}{\mycombination[0.5em]{Holz}{Feuer}{Metall}~2}} & \mbox{\hyperlink{spruch:3}{\mycombination[0.5em]{Holz}{Feuer}{Wasser}~3}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:31}{\mycombination[0.5em]{Erde}{Holz}{Feuer}~31}} & \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Holz}{Feuer}~40}} & \mbox{\hyperlink{spruch:49}{\mycombination[0.5em]{Wasser}{Holz}{Feuer}~49}}
+   \end{tabular*}\par}
 \vspace*{\fill}
 \newpage
 \vspace*{\fill}
 \paar{Holz}{Erde}{Der Keim}{Holz bändigt Erde. Der Wille dringt in festen Grund.}
-  {Dein Vorhaben schlägt Wurzeln und lockert, was festgefahren war. Wo du wächst, kommt Bewegung in alte Gewohnheiten.}
+  {Dein Vorhaben schlägt Wurzeln und lockert, was festgefahren war. Wo du wächst, kommt Bewegung in alte Gewohnheiten. Und wie Wurzeln den Boden vor dem Abtragen schützen, gibst du dem Festen neuen Halt.}
   {Wurzeln können auch sprengen, was sie durchdringen. Wer nur seinen Willen durchsetzt, laugt den Boden aus, der ihn trägt. Oder du wagst es nicht, das Sichere infrage zu stellen.}
-  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Erde}{Metall}~4}} \hfill \mbox{\hyperlink{spruch:5}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~5}} \hfill \mbox{\hyperlink{spruch:6}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~6}}\\[0.3ex] \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~22}} \hfill \mbox{\hyperlink{spruch:41}{\mycombination[0.5em]{Metall}{Holz}{Erde}~41}} \hfill \mbox{\hyperlink{spruch:50}{\mycombination[0.5em]{Wasser}{Holz}{Erde}~50}}\par}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Erde}{Metall}~4}} & \mbox{\hyperlink{spruch:5}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~5}} & \mbox{\hyperlink{spruch:6}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~6}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~22}} & \mbox{\hyperlink{spruch:41}{\mycombination[0.5em]{Metall}{Holz}{Erde}~41}} & \mbox{\hyperlink{spruch:50}{\mycombination[0.5em]{Wasser}{Holz}{Erde}~50}}
+   \end{tabular*}\par}
 \vspace*{\fill}
 \newpage
 \vspace*{\fill}
 \paar{Holz}{Metall}{Die Schere}{Holz stellt sich dem Metall. Das Wachsen trifft auf den Schnitt.}
   {Du stellst dich dem, was dich zurechtstutzt: Kritik, Regeln, Grenzen. Das macht dich klarer und stärker, wie einen beschnittenen Baum.}
   {Du wächst trotzig gegen jede Grenze an und verletzt dich daran. Oder du lässt dich so sehr beschneiden, dass nichts Eigenes mehr bleibt.}
-  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:7}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~7}} \hfill \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~8}} \hfill \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Metall}{Erde}~9}}\\[0.3ex] \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Holz}{Metall}~23}} \hfill \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Holz}{Metall}~32}} \hfill \mbox{\hyperlink{spruch:51}{\mycombination[0.5em]{Wasser}{Holz}{Metall}~51}}\par}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:7}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~7}} & \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~8}} & \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Metall}{Erde}~9}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Holz}{Metall}~23}} & \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Holz}{Metall}~32}} & \mbox{\hyperlink{spruch:51}{\mycombination[0.5em]{Wasser}{Holz}{Metall}~51}}
+   \end{tabular*}\par}
 \vspace*{\fill}
 \newpage
 \vspace*{\fill}
 \paar{Holz}{Wasser}{Der Durst}{Holz kehrt heim zum Wasser. Der Trieb sucht seine Wurzeln.}
   {Bevor du weiterwächst, trinkst du. Du gehst zurück zu dem, was dich nährt, und kommst gestärkt wieder.}
   {Der Rückzug wird zur Ausrede, nicht zu wachsen. Oder du vergisst die Quelle ganz und vertrocknest im Eifer.}
-  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Wasser}{Feuer}~10}} \hfill \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Wasser}{Erde}~11}} \hfill \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~12}}\\[0.3ex] \mbox{\hyperlink{spruch:24}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~24}} \hfill \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~33}} \hfill \mbox{\hyperlink{spruch:42}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~42}}\par}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Wasser}{Feuer}~10}} & \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Wasser}{Erde}~11}} & \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~12}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:24}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~24}} & \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~33}} & \mbox{\hyperlink{spruch:42}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~42}}
+   \end{tabular*}\par}
 \vspace*{\fill}
 
 \newpage
@@ -611,28 +650,44 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \paar{Feuer}{Erde}{Die Asche}{Feuer nährt Erde. Aus Begeisterung wird Halt.}
   {Was du mit Leidenschaft begonnen hast, setzt sich und wird tragfähig. Deine Wärme gibt anderen einen Ort, an dem sie bleiben können.}
   {Wenn alles Feuer zu Erde wird, bleibt nur Routine. Oder du brennst immer weiter und lässt nie etwas Beständiges zurück.}
-  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:13}{\mycombination[0.5em]{Feuer}{Erde}{Metall}~13}} \hfill \mbox{\hyperlink{spruch:14}{\mycombination[0.5em]{Feuer}{Erde}{Wasser}~14}} \hfill \mbox{\hyperlink{spruch:15}{\mycombination[0.5em]{Feuer}{Erde}{Holz}~15}}\\[0.3ex] \mbox{\hyperlink{spruch:1}{\mycombination[0.5em]{Holz}{Feuer}{Erde}~1}} \hfill \mbox{\hyperlink{spruch:43}{\mycombination[0.5em]{Metall}{Feuer}{Erde}~43}} \hfill \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Feuer}{Erde}~52}}\par}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:13}{\mycombination[0.5em]{Feuer}{Erde}{Metall}~13}} & \mbox{\hyperlink{spruch:14}{\mycombination[0.5em]{Feuer}{Erde}{Wasser}~14}} & \mbox{\hyperlink{spruch:15}{\mycombination[0.5em]{Feuer}{Erde}{Holz}~15}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:1}{\mycombination[0.5em]{Holz}{Feuer}{Erde}~1}} & \mbox{\hyperlink{spruch:43}{\mycombination[0.5em]{Metall}{Feuer}{Erde}~43}} & \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Feuer}{Erde}~52}}
+   \end{tabular*}\par}
 \vspace*{\fill}
 \newpage
 \vspace*{\fill}
 \paar{Feuer}{Metall}{Die Schmiede}{Feuer bändigt Metall. Leidenschaft gibt der Härte Form.}
   {Mit deiner Wärme bringst du Starres in Form. Wo andere nur Regeln sehen, entdeckst du, was man daraus machen kann.}
   {Zu viel Hitze schmilzt, was Halt gibt, und deine Leidenschaft zerstört klare Strukturen. Oder sie fehlt, und alles bleibt kalt und unbeweglich.}
-  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Metall}{Wasser}~16}} \hfill \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~17}} \hfill \mbox{\hyperlink{spruch:18}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~18}}\\[0.3ex] \mbox{\hyperlink{spruch:2}{\mycombination[0.5em]{Holz}{Feuer}{Metall}~2}} \hfill \mbox{\hyperlink{spruch:34}{\mycombination[0.5em]{Erde}{Feuer}{Metall}~34}} \hfill \mbox{\hyperlink{spruch:53}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~53}}\par}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Metall}{Wasser}~16}} & \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~17}} & \mbox{\hyperlink{spruch:18}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~18}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:2}{\mycombination[0.5em]{Holz}{Feuer}{Metall}~2}} & \mbox{\hyperlink{spruch:34}{\mycombination[0.5em]{Erde}{Feuer}{Metall}~34}} & \mbox{\hyperlink{spruch:53}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~53}}
+   \end{tabular*}\par}
 \vspace*{\fill}
 \newpage
 \vspace*{\fill}
 \paar{Feuer}{Wasser}{Der Regen}{Feuer stellt sich dem Wasser. Die Begeisterung trifft auf Kühle.}
   {Du stellst dich der Ernüchterung, statt ihr auszuweichen. Was danach noch brennt, ist echt.}
   {Du kämpfst gegen jede Kühle an und verdampfst dabei. Oder du lässt dich vom ersten kalten Wort löschen.}
-  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:19}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~19}} \hfill \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Wasser}{Erde}~20}} \hfill \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~21}}\\[0.3ex] \mbox{\hyperlink{spruch:3}{\mycombination[0.5em]{Holz}{Feuer}{Wasser}~3}} \hfill \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Feuer}{Wasser}~35}} \hfill \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Feuer}{Wasser}~44}}\par}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:19}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~19}} & \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Wasser}{Erde}~20}} & \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~21}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:3}{\mycombination[0.5em]{Holz}{Feuer}{Wasser}~3}} & \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Feuer}{Wasser}~35}} & \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Feuer}{Wasser}~44}}
+   \end{tabular*}\par}
 \vspace*{\fill}
 \newpage
 \vspace*{\fill}
 \paar{Feuer}{Holz}{Das Brennholz}{Feuer kehrt heim zum Holz. Die Flamme sucht, was sie nährt.}
   {Du erinnerst dich, warum du brennst: an die Ideen, Menschen und Pläne, die dich entzündet haben. Daraus schöpfst du neue Kraft.}
   {Du zehrst nur noch von alten Erfolgen. Oder du vergisst, woher deine Glut kommt, und brennst ins Leere.}
-  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~22}} \hfill \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Holz}{Metall}~23}} \hfill \mbox{\hyperlink{spruch:24}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~24}}\\[0.3ex] \mbox{\hyperlink{spruch:36}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~36}} \hfill \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~45}} \hfill \mbox{\hyperlink{spruch:54}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~54}}\par}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~22}} & \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Holz}{Metall}~23}} & \mbox{\hyperlink{spruch:24}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~24}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:36}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~36}} & \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~45}} & \mbox{\hyperlink{spruch:54}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~54}}
+   \end{tabular*}\par}
 \vspace*{\fill}
 
 \newpage
@@ -641,28 +696,44 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \paar{Erde}{Metall}{Der Schatz}{Erde nährt Metall. Aus Fürsorge wird Klarheit.}
   {Was du geduldig gepflegt hast, bringt etwas Kostbares hervor. Aus deiner Sorgfalt entstehen klare Formen und gute Ergebnisse.}
   {Du gibst so viel von deiner Substanz, dass du selbst leer wirst. Oder du hältst alles fest und lässt nichts zu Ende reifen.}
-  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:25}{\mycombination[0.5em]{Erde}{Metall}{Wasser}~25}} \hfill \mbox{\hyperlink{spruch:26}{\mycombination[0.5em]{Erde}{Metall}{Holz}~26}} \hfill \mbox{\hyperlink{spruch:27}{\mycombination[0.5em]{Erde}{Metall}{Feuer}~27}}\\[0.3ex] \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Erde}{Metall}~4}} \hfill \mbox{\hyperlink{spruch:13}{\mycombination[0.5em]{Feuer}{Erde}{Metall}~13}} \hfill \mbox{\hyperlink{spruch:55}{\mycombination[0.5em]{Wasser}{Erde}{Metall}~55}}\par}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:25}{\mycombination[0.5em]{Erde}{Metall}{Wasser}~25}} & \mbox{\hyperlink{spruch:26}{\mycombination[0.5em]{Erde}{Metall}{Holz}~26}} & \mbox{\hyperlink{spruch:27}{\mycombination[0.5em]{Erde}{Metall}{Feuer}~27}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Erde}{Metall}~4}} & \mbox{\hyperlink{spruch:13}{\mycombination[0.5em]{Feuer}{Erde}{Metall}~13}} & \mbox{\hyperlink{spruch:55}{\mycombination[0.5em]{Wasser}{Erde}{Metall}~55}}
+   \end{tabular*}\par}
 \vspace*{\fill}
 \newpage
 \vspace*{\fill}
 \paar{Erde}{Wasser}{Das Bett}{Erde bändigt Wasser. Der Halt gibt dem Fluss eine Richtung.}
   {Du gibst dem Fließenden ein Bett. Gefühle, Ideen und Menschen finden bei dir Halt und Richtung.}
   {Aus Halt wird Stau: Wer alles eindämmt, lässt nichts mehr fließen. Oder das Bett fehlt, und alles läuft davon.}
-  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Wasser}{Holz}~28}} \hfill \mbox{\hyperlink{spruch:29}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~29}} \hfill \mbox{\hyperlink{spruch:30}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~30}}\\[0.3ex] \mbox{\hyperlink{spruch:5}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~5}} \hfill \mbox{\hyperlink{spruch:14}{\mycombination[0.5em]{Feuer}{Erde}{Wasser}~14}} \hfill \mbox{\hyperlink{spruch:46}{\mycombination[0.5em]{Metall}{Erde}{Wasser}~46}}\par}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Wasser}{Holz}~28}} & \mbox{\hyperlink{spruch:29}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~29}} & \mbox{\hyperlink{spruch:30}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~30}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:5}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~5}} & \mbox{\hyperlink{spruch:14}{\mycombination[0.5em]{Feuer}{Erde}{Wasser}~14}} & \mbox{\hyperlink{spruch:46}{\mycombination[0.5em]{Metall}{Erde}{Wasser}~46}}
+   \end{tabular*}\par}
 \vspace*{\fill}
 \newpage
 \vspace*{\fill}
 \paar{Erde}{Holz}{Die Lockerung}{Erde stellt sich dem Holz. Die Ruhe trifft auf Wachstum.}
   {Du lässt dich aufbrechen von etwas, das wachsen will. Deine Ruhe bekommt neues Leben.}
   {Du wehrst dich gegen jede Veränderung und wirst hart. Oder du lässt dich so durchwurzeln, dass du dich selbst verlierst.}
-  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:31}{\mycombination[0.5em]{Erde}{Holz}{Feuer}~31}} \hfill \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Holz}{Metall}~32}} \hfill \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~33}}\\[0.3ex] \mbox{\hyperlink{spruch:15}{\mycombination[0.5em]{Feuer}{Erde}{Holz}~15}} \hfill \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Erde}{Holz}~47}} \hfill \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Erde}{Holz}~56}}\par}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:31}{\mycombination[0.5em]{Erde}{Holz}{Feuer}~31}} & \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Holz}{Metall}~32}} & \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~33}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:15}{\mycombination[0.5em]{Feuer}{Erde}{Holz}~15}} & \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Erde}{Holz}~47}} & \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Erde}{Holz}~56}}
+   \end{tabular*}\par}
 \vspace*{\fill}
 \newpage
 \vspace*{\fill}
 \paar{Erde}{Feuer}{Die Feuerstelle}{Erde kehrt heim zum Feuer. Der Halt sucht seine Wärme.}
   {Du gehst zurück zu dem, was dich einmal begeistert hat. Die alte Wärme gibt deiner Beständigkeit neuen Sinn.}
   {Du wärmst dich nur noch an Erinnerungen. Oder du vergisst ganz, dass deine Ruhe einmal aus Leidenschaft entstand.}
-  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:34}{\mycombination[0.5em]{Erde}{Feuer}{Metall}~34}} \hfill \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Feuer}{Wasser}~35}} \hfill \mbox{\hyperlink{spruch:36}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~36}}\\[0.3ex] \mbox{\hyperlink{spruch:6}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~6}} \hfill \mbox{\hyperlink{spruch:48}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~48}} \hfill \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~57}}\par}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:34}{\mycombination[0.5em]{Erde}{Feuer}{Metall}~34}} & \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Feuer}{Wasser}~35}} & \mbox{\hyperlink{spruch:36}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~36}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:6}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~6}} & \mbox{\hyperlink{spruch:48}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~48}} & \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~57}}
+   \end{tabular*}\par}
 \vspace*{\fill}
 
 \newpage
@@ -671,28 +742,44 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \paar{Metall}{Wasser}{Die Klärung}{Metall nährt Wasser. Aus Klarheit wird Weisheit.}
   {Eine klare Entscheidung bringt Ruhe und Tiefe. Was du geklärt hast, kann jetzt frei fließen.}
   {Klarheit wird zur Kälte und Weisheit zur Distanz. Oder du entscheidest nie und kommst nie zur Ruhe.}
-  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:37}{\mycombination[0.5em]{Metall}{Wasser}{Holz}~37}} \hfill \mbox{\hyperlink{spruch:38}{\mycombination[0.5em]{Metall}{Wasser}{Feuer}~38}} \hfill \mbox{\hyperlink{spruch:39}{\mycombination[0.5em]{Metall}{Wasser}{Erde}~39}}\\[0.3ex] \mbox{\hyperlink{spruch:7}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~7}} \hfill \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Metall}{Wasser}~16}} \hfill \mbox{\hyperlink{spruch:25}{\mycombination[0.5em]{Erde}{Metall}{Wasser}~25}}\par}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:37}{\mycombination[0.5em]{Metall}{Wasser}{Holz}~37}} & \mbox{\hyperlink{spruch:38}{\mycombination[0.5em]{Metall}{Wasser}{Feuer}~38}} & \mbox{\hyperlink{spruch:39}{\mycombination[0.5em]{Metall}{Wasser}{Erde}~39}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:7}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~7}} & \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Metall}{Wasser}~16}} & \mbox{\hyperlink{spruch:25}{\mycombination[0.5em]{Erde}{Metall}{Wasser}~25}}
+   \end{tabular*}\par}
 \vspace*{\fill}
 \newpage
 \vspace*{\fill}
 \paar{Metall}{Holz}{Das Beil}{Metall bändigt Holz. Die Klarheit schneidet das Wuchernde.}
   {Du trennst, was zu viel ist, und schaffst Raum. Ein klarer Schnitt hilft dem Wachstum.}
   {Wer zu viel schneidet, lässt nichts mehr wachsen. Oder du scheust jeden Schnitt, und alles wuchert durcheinander.}
-  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Holz}{Feuer}~40}} \hfill \mbox{\hyperlink{spruch:41}{\mycombination[0.5em]{Metall}{Holz}{Erde}~41}} \hfill \mbox{\hyperlink{spruch:42}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~42}}\\[0.3ex] \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~17}} \hfill \mbox{\hyperlink{spruch:26}{\mycombination[0.5em]{Erde}{Metall}{Holz}~26}} \hfill \mbox{\hyperlink{spruch:58}{\mycombination[0.5em]{Wasser}{Metall}{Holz}~58}}\par}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Holz}{Feuer}~40}} & \mbox{\hyperlink{spruch:41}{\mycombination[0.5em]{Metall}{Holz}{Erde}~41}} & \mbox{\hyperlink{spruch:42}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~42}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~17}} & \mbox{\hyperlink{spruch:26}{\mycombination[0.5em]{Erde}{Metall}{Holz}~26}} & \mbox{\hyperlink{spruch:58}{\mycombination[0.5em]{Wasser}{Metall}{Holz}~58}}
+   \end{tabular*}\par}
 \vspace*{\fill}
 \newpage
 \vspace*{\fill}
 \paar{Metall}{Feuer}{Die Hitze}{Metall stellt sich dem Feuer. Die Form trifft auf die Leidenschaft.}
   {Du setzt dich der Leidenschaft aus, die dich verformen kann. So wird deine Klarheit lebendig und beweglich.}
   {Du schmilzt unter jedem Druck und verlierst deine Form. Oder du verhärtest dich so, dass dich nichts mehr berührt.}
-  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:43}{\mycombination[0.5em]{Metall}{Feuer}{Erde}~43}} \hfill \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Feuer}{Wasser}~44}} \hfill \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~45}}\\[0.3ex] \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~8}} \hfill \mbox{\hyperlink{spruch:27}{\mycombination[0.5em]{Erde}{Metall}{Feuer}~27}} \hfill \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Metall}{Feuer}~59}}\par}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:43}{\mycombination[0.5em]{Metall}{Feuer}{Erde}~43}} & \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Feuer}{Wasser}~44}} & \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~45}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~8}} & \mbox{\hyperlink{spruch:27}{\mycombination[0.5em]{Erde}{Metall}{Feuer}~27}} & \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Metall}{Feuer}~59}}
+   \end{tabular*}\par}
 \vspace*{\fill}
 \newpage
 \vspace*{\fill}
 \paar{Metall}{Erde}{Der Berg}{Metall kehrt heim zur Erde. Die Klarheit sucht ihren Grund.}
   {Du gehst zurück zu dem, was dich hervorgebracht hat. Dort findest du Halt und Wärme hinter deiner Strenge.}
   {Du versteckst dich im Vertrauten und meidest jede Entscheidung. Oder du hast deine Herkunft ganz vergessen und stehst ohne Boden da.}
-  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:46}{\mycombination[0.5em]{Metall}{Erde}{Wasser}~46}} \hfill \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Erde}{Holz}~47}} \hfill \mbox{\hyperlink{spruch:48}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~48}}\\[0.3ex] \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Metall}{Erde}~9}} \hfill \mbox{\hyperlink{spruch:18}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~18}} \hfill \mbox{\hyperlink{spruch:60}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~60}}\par}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:46}{\mycombination[0.5em]{Metall}{Erde}{Wasser}~46}} & \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Erde}{Holz}~47}} & \mbox{\hyperlink{spruch:48}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~48}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Metall}{Erde}~9}} & \mbox{\hyperlink{spruch:18}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~18}} & \mbox{\hyperlink{spruch:60}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~60}}
+   \end{tabular*}\par}
 \vspace*{\fill}
 
 \newpage
@@ -701,28 +788,44 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \paar{Wasser}{Holz}{Der Frühling}{Wasser nährt Holz. Aus Stille wird Wachstum.}
   {Aus der Ruhe steigt ein neuer Plan. Dein Wissen gibt etwas Neuem Nahrung.}
   {Du gießt und gießt und lässt das Neue nie allein stehen. Oder du bleibst so still, dass nichts aus dir wächst.}
-  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:49}{\mycombination[0.5em]{Wasser}{Holz}{Feuer}~49}} \hfill \mbox{\hyperlink{spruch:50}{\mycombination[0.5em]{Wasser}{Holz}{Erde}~50}} \hfill \mbox{\hyperlink{spruch:51}{\mycombination[0.5em]{Wasser}{Holz}{Metall}~51}}\\[0.3ex] \mbox{\hyperlink{spruch:19}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~19}} \hfill \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Wasser}{Holz}~28}} \hfill \mbox{\hyperlink{spruch:37}{\mycombination[0.5em]{Metall}{Wasser}{Holz}~37}}\par}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:49}{\mycombination[0.5em]{Wasser}{Holz}{Feuer}~49}} & \mbox{\hyperlink{spruch:50}{\mycombination[0.5em]{Wasser}{Holz}{Erde}~50}} & \mbox{\hyperlink{spruch:51}{\mycombination[0.5em]{Wasser}{Holz}{Metall}~51}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:19}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~19}} & \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Wasser}{Holz}~28}} & \mbox{\hyperlink{spruch:37}{\mycombination[0.5em]{Metall}{Wasser}{Holz}~37}}
+   \end{tabular*}\par}
 \vspace*{\fill}
 \newpage
 \vspace*{\fill}
 \paar{Wasser}{Feuer}{Das Löschen}{Wasser bändigt Feuer. Die Ruhe dämpft die Hitze.}
   {Du bringst Ruhe in eine aufgeheizte Lage. Deine Gelassenheit hilft anderen, zur Besinnung zu kommen.}
   {Aus Dämpfen wird Ersticken: Wer jede Begeisterung löscht, macht das Leben grau. Oder du lässt alles lodern, bis es niederbrennt.}
-  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Feuer}{Erde}~52}} \hfill \mbox{\hyperlink{spruch:53}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~53}} \hfill \mbox{\hyperlink{spruch:54}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~54}}\\[0.3ex] \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Wasser}{Feuer}~10}} \hfill \mbox{\hyperlink{spruch:29}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~29}} \hfill \mbox{\hyperlink{spruch:38}{\mycombination[0.5em]{Metall}{Wasser}{Feuer}~38}}\par}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Feuer}{Erde}~52}} & \mbox{\hyperlink{spruch:53}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~53}} & \mbox{\hyperlink{spruch:54}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~54}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Wasser}{Feuer}~10}} & \mbox{\hyperlink{spruch:29}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~29}} & \mbox{\hyperlink{spruch:38}{\mycombination[0.5em]{Metall}{Wasser}{Feuer}~38}}
+   \end{tabular*}\par}
 \vspace*{\fill}
 \newpage
 \vspace*{\fill}
 \paar{Wasser}{Erde}{Die Küste}{Wasser stellt sich der Erde. Der Fluss trifft auf seine Grenze.}
   {Du nimmst deine Grenzen an und gewinnst dadurch Richtung. Am Ufer wird das Wasser klar.}
   {Du stößt dich immer wieder an denselben Grenzen. Oder du gibst nach und versickerst.}
-  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:55}{\mycombination[0.5em]{Wasser}{Erde}{Metall}~55}} \hfill \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Erde}{Holz}~56}} \hfill \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~57}}\\[0.3ex] \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Wasser}{Erde}~11}} \hfill \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Wasser}{Erde}~20}} \hfill \mbox{\hyperlink{spruch:39}{\mycombination[0.5em]{Metall}{Wasser}{Erde}~39}}\par}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:55}{\mycombination[0.5em]{Wasser}{Erde}{Metall}~55}} & \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Erde}{Holz}~56}} & \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~57}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Wasser}{Erde}~11}} & \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Wasser}{Erde}~20}} & \mbox{\hyperlink{spruch:39}{\mycombination[0.5em]{Metall}{Wasser}{Erde}~39}}
+   \end{tabular*}\par}
 \vspace*{\fill}
 \newpage
 \vspace*{\fill}
 \paar{Wasser}{Metall}{Das Gestein}{Wasser kehrt heim zum Metall. Die Tiefe sucht ihre Klarheit.}
   {Du gehst zurück zu deinen Grundsätzen, zu dem, was du klar weißt. Von dort aus fließt dein Handeln rein.}
   {Du klammerst dich an alte Gewissheiten und wirst starr. Oder du verlierst jeden Halt und treibst ziellos.}
-  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:58}{\mycombination[0.5em]{Wasser}{Metall}{Holz}~58}} \hfill \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Metall}{Feuer}~59}} \hfill \mbox{\hyperlink{spruch:60}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~60}}\\[0.3ex] \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~12}} \hfill \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~21}} \hfill \mbox{\hyperlink{spruch:30}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~30}}\par}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:58}{\mycombination[0.5em]{Wasser}{Metall}{Holz}~58}} & \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Metall}{Feuer}~59}} & \mbox{\hyperlink{spruch:60}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~60}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~12}} & \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~21}} & \mbox{\hyperlink{spruch:30}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~30}}
+   \end{tabular*}\par}
 \vspace*{\fill}
 
 \newpage
@@ -749,7 +852,7 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 \lichtschatten{Manchmal setzt man etwas in Gang, und es läuft wie von selbst weiter, Stufe um Stufe. Das ist ein Glück. Aber was du anstößt, bekommt ein eigenes Leben und zeigt dir irgendwann deine Grenzen. Freu dich daran, statt dich zu wehren: Es ist das Zeichen, dass es wirklich gewachsen ist.}
   {Der Strom reißt dich mit: Was du angestoßen hast, läuft ohne dich weiter, schneller, als dir lieb ist. Oder das Gegenteil: Du traust dich gar nicht erst, etwas in Gang zu setzen, weil du die Kontrolle nicht abgeben willst. Beides kommt aus derselben Angst. Gib den Anstoß, aber halte das Steuer locker.}
 \smallskip
-{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:1}{\mycombination[0.5em]{Holz}{Feuer}{Erde}~1}} \hfill \mbox{\hyperlink{spruch:13}{\mycombination[0.5em]{Feuer}{Erde}{Metall}~13}} \hfill \mbox{\hyperlink{spruch:25}{\mycombination[0.5em]{Erde}{Metall}{Wasser}~25}} \hfill \mbox{\hyperlink{spruch:37}{\mycombination[0.5em]{Metall}{Wasser}{Holz}~37}} \hfill \mbox{\hyperlink{spruch:49}{\mycombination[0.5em]{Wasser}{Holz}{Feuer}~49}}\par
+{\small Alle fünf Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:1}{\mycombination[0.5em]{Holz}{Feuer}{Erde}~1}} \hfill \mbox{\hyperlink{spruch:13}{\mycombination[0.5em]{Feuer}{Erde}{Metall}~13}} \hfill \mbox{\hyperlink{spruch:25}{\mycombination[0.5em]{Erde}{Metall}{Wasser}~25}} \hfill \mbox{\hyperlink{spruch:37}{\mycombination[0.5em]{Metall}{Wasser}{Holz}~37}} \hfill \mbox{\hyperlink{spruch:49}{\mycombination[0.5em]{Wasser}{Holz}{Feuer}~49}}\par
 \end{orakelblock}
 \vspace*{\fill}
 \newpage
@@ -763,7 +866,7 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 \lichtschatten{Du gibst etwas von dir, und das Beschenkte ordnet sich, bis es dir schließlich gegenübersteht und Fragen stellt. Das kann sich undankbar anfühlen. Doch eine Prüfung ist auch eine Form von Respekt: Geprüft wird nur, was zählt.}
   {Die Prüfung wird zum Misstrauen. Du gibst nur noch, wenn sicher ist, dass nichts zurückkommt, das dich infrage stellt. Oder du prüfst selbst alles, was du genährt hast, so streng, dass nichts mehr wachsen mag. Lass Fragen zu, aber mach aus ihnen kein Tribunal.}
 \smallskip
-{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:2}{\mycombination[0.5em]{Holz}{Feuer}{Metall}~2}} \hfill \mbox{\hyperlink{spruch:14}{\mycombination[0.5em]{Feuer}{Erde}{Wasser}~14}} \hfill \mbox{\hyperlink{spruch:26}{\mycombination[0.5em]{Erde}{Metall}{Holz}~26}} \hfill \mbox{\hyperlink{spruch:38}{\mycombination[0.5em]{Metall}{Wasser}{Feuer}~38}} \hfill \mbox{\hyperlink{spruch:50}{\mycombination[0.5em]{Wasser}{Holz}{Erde}~50}}\par
+{\small Alle fünf Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:2}{\mycombination[0.5em]{Holz}{Feuer}{Metall}~2}} \hfill \mbox{\hyperlink{spruch:14}{\mycombination[0.5em]{Feuer}{Erde}{Wasser}~14}} \hfill \mbox{\hyperlink{spruch:26}{\mycombination[0.5em]{Erde}{Metall}{Holz}~26}} \hfill \mbox{\hyperlink{spruch:38}{\mycombination[0.5em]{Metall}{Wasser}{Feuer}~38}} \hfill \mbox{\hyperlink{spruch:50}{\mycombination[0.5em]{Wasser}{Holz}{Erde}~50}}\par
 \end{orakelblock}
 \vspace*{\fill}
 \newpage
@@ -777,7 +880,7 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 \lichtschatten{Wer anderen beim Wachsen hilft, lernt selbst am meisten. Du förderst etwas, begleitest es durch seine Prüfung, und plötzlich stehst du an deiner eigenen Quelle. Lehrzeit heißt: Geben und Lernen sind hier dasselbe.}
   {Man bleibt ewig Schüler oder ewig Lehrer. Wer nur fördert, ohne selbst zu lernen, wird belehrend. Wer nur nimmt, ohne zu geben, kommt nie an der eigenen Quelle an. Achte darauf, ob der Austausch noch in beide Richtungen fließt.}
 \smallskip
-{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:3}{\mycombination[0.5em]{Holz}{Feuer}{Wasser}~3}} \hfill \mbox{\hyperlink{spruch:15}{\mycombination[0.5em]{Feuer}{Erde}{Holz}~15}} \hfill \mbox{\hyperlink{spruch:27}{\mycombination[0.5em]{Erde}{Metall}{Feuer}~27}} \hfill \mbox{\hyperlink{spruch:39}{\mycombination[0.5em]{Metall}{Wasser}{Erde}~39}} \hfill \mbox{\hyperlink{spruch:51}{\mycombination[0.5em]{Wasser}{Holz}{Metall}~51}}\par
+{\small Alle fünf Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:3}{\mycombination[0.5em]{Holz}{Feuer}{Wasser}~3}} \hfill \mbox{\hyperlink{spruch:15}{\mycombination[0.5em]{Feuer}{Erde}{Holz}~15}} \hfill \mbox{\hyperlink{spruch:27}{\mycombination[0.5em]{Erde}{Metall}{Feuer}~27}} \hfill \mbox{\hyperlink{spruch:39}{\mycombination[0.5em]{Metall}{Wasser}{Erde}~39}} \hfill \mbox{\hyperlink{spruch:51}{\mycombination[0.5em]{Wasser}{Holz}{Metall}~51}}\par
 \end{orakelblock}
 \vspace*{\fill}
 \newpage
@@ -791,7 +894,7 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 \lichtschatten{Grenzen sind schöpferisch. Wo du etwas aufhältst, staut sich Kraft, und daraus entsteht Neues. Nur will dieses Neue nicht ewig in deinen Grenzen bleiben. Sei bereit, dich von deinem eigenen Werk herausfordern zu lassen.}
   {Der Damm wird zur Mauer. Du hältst fest, weil du Angst vor dem hast, was entstehen könnte, und das Gestaute wird faul statt fruchtbar. Oder der Damm bricht, weil du nichts mehr halten willst, und alles fließt ungeformt davon. Jede gute Grenze braucht ein Tor.}
 \smallskip
-{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Erde}{Metall}~4}} \hfill \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Metall}{Wasser}~16}} \hfill \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Wasser}{Holz}~28}} \hfill \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Holz}{Feuer}~40}} \hfill \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Feuer}{Erde}~52}}\par
+{\small Alle fünf Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Erde}{Metall}~4}} \hfill \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Metall}{Wasser}~16}} \hfill \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Wasser}{Holz}~28}} \hfill \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Holz}{Feuer}~40}} \hfill \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Feuer}{Erde}~52}}\par
 \end{orakelblock}
 \vspace*{\fill}
 \newpage
@@ -805,7 +908,7 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 \lichtschatten{Es gibt Zeiten, in denen Ordnung vor Gefühl geht. Strenge wird weitergegeben, Regel folgt auf Regel. Das klingt hart, aber am Ende dieses Weges wartet etwas Weiches: die Rückkehr zu dem, was dich trägt. Disziplin kann ein Heimweg sein.}
   {Aus Strenge wird Härte, gegen andere und gegen dich selbst. Regel folgt auf Regel, und keiner weiß mehr, wofür. Das Gegenteil ist ebenso gefährlich: Wer jede Disziplin scheut, findet nie den Weg nach Hause. Frag bei jeder Regel, ob sie dich noch zu deinen Wurzeln führt.}
 \smallskip
-{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:5}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~5}} \hfill \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~17}} \hfill \mbox{\hyperlink{spruch:29}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~29}} \hfill \mbox{\hyperlink{spruch:41}{\mycombination[0.5em]{Metall}{Holz}{Erde}~41}} \hfill \mbox{\hyperlink{spruch:53}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~53}}\par
+{\small Alle fünf Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:5}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~5}} \hfill \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~17}} \hfill \mbox{\hyperlink{spruch:29}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~29}} \hfill \mbox{\hyperlink{spruch:41}{\mycombination[0.5em]{Metall}{Holz}{Erde}~41}} \hfill \mbox{\hyperlink{spruch:53}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~53}}\par
 \end{orakelblock}
 \vspace*{\fill}
 \newpage
@@ -819,7 +922,7 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 \lichtschatten{Manchmal ist der direkte Weg der richtige. Du siehst klar, was zu tun ist, greifst ein und gehst ohne Umschweife weiter. So kommst du schneller ans Ziel, als alle dachten, und ersparst dir und anderen viele Zwischenschritte. Vertrau deinem Blick, wenn er wirklich klar ist.}
   {Wer nur geradeaus stürmt, lässt unterwegs etwas liegen: Menschen, die mitkommen wollten, Erfahrungen, die man nur auf dem längeren Weg macht. Das Ziel ist erreicht, aber nichts trägt dich weiter. Oder das Gegenteil: Du traust dem kurzen Weg nie und verlierst dich in Umständlichkeit. Frag dich, was du auf der Abkürzung zurücklässt.}
 \smallskip
-{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:6}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~6}} \hfill \mbox{\hyperlink{spruch:18}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~18}} \hfill \mbox{\hyperlink{spruch:30}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~30}} \hfill \mbox{\hyperlink{spruch:42}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~42}} \hfill \mbox{\hyperlink{spruch:54}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~54}}\par
+{\small Alle fünf Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:6}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~6}} \hfill \mbox{\hyperlink{spruch:18}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~18}} \hfill \mbox{\hyperlink{spruch:30}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~30}} \hfill \mbox{\hyperlink{spruch:42}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~42}} \hfill \mbox{\hyperlink{spruch:54}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~54}}\par
 \end{orakelblock}
 \vspace*{\fill}
 \newpage
@@ -833,7 +936,7 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 \lichtschatten{Wenn du dich dem stellst, was dich bedrängt, verwandelt es sich. Aus der Krise wird Nahrung, aus dem Widerstand eine Quelle. Läuterung heißt nicht, dass es nicht wehtut. Es heißt, dass der Schmerz zu etwas wird.}
   {Du suchst die Krise, weil nur sie dich lebendig fühlen lässt, und verwechselst Leiden mit Wachsen. Oder du meidest jede Konfrontation und bleibst, wo du bist. Nicht jeder Schmerz läutert. Prüfe, ob er dich nährt oder nur verbraucht.}
 \smallskip
-{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:7}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~7}} \hfill \mbox{\hyperlink{spruch:19}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~19}} \hfill \mbox{\hyperlink{spruch:31}{\mycombination[0.5em]{Erde}{Holz}{Feuer}~31}} \hfill \mbox{\hyperlink{spruch:43}{\mycombination[0.5em]{Metall}{Feuer}{Erde}~43}} \hfill \mbox{\hyperlink{spruch:55}{\mycombination[0.5em]{Wasser}{Erde}{Metall}~55}}\par
+{\small Alle fünf Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:7}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~7}} \hfill \mbox{\hyperlink{spruch:19}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~19}} \hfill \mbox{\hyperlink{spruch:31}{\mycombination[0.5em]{Erde}{Holz}{Feuer}~31}} \hfill \mbox{\hyperlink{spruch:43}{\mycombination[0.5em]{Metall}{Feuer}{Erde}~43}} \hfill \mbox{\hyperlink{spruch:55}{\mycombination[0.5em]{Wasser}{Erde}{Metall}~55}}\par
 \end{orakelblock}
 \vspace*{\fill}
 \newpage
@@ -847,7 +950,7 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 \lichtschatten{Zweimal Widerstand, zweimal Mut: Das ist der wildeste aller Wege, und er ist fruchtbar, wenn er ein Ziel hat. Ein Aufstand aus Liebe zu etwas baut auf, ein Aufstand nur gegen etwas reißt nieder. Frag dich, wofür dein Herz schlägt.}
   {Der Aufstand wird zum Selbstzweck. Du kämpfst gegen alles, was dich begrenzt, und merkst nicht, wie du dich dabei aufreibst. Oder du schluckst jeden Widerstand und wirst bitter. Beides verbrennt dich. Fruchtbar wird der Widerstand erst, wenn er auch etwas aufbauen will.}
 \smallskip
-{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~8}} \hfill \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Wasser}{Erde}~20}} \hfill \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Holz}{Metall}~32}} \hfill \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Feuer}{Wasser}~44}} \hfill \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Erde}{Holz}~56}}\par
+{\small Alle fünf Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~8}} \hfill \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Wasser}{Erde}~20}} \hfill \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Holz}{Metall}~32}} \hfill \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Feuer}{Wasser}~44}} \hfill \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Erde}{Holz}~56}}\par
 \end{orakelblock}
 \vspace*{\fill}
 \newpage
@@ -861,7 +964,7 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 \lichtschatten{Klugheit ist auch eine Form von Stärke. Du stellst dich, weichst dann aus, sammelst dich und kommst gestärkt zurück. Das ist kein Davonlaufen, sondern Strategie. Wer den richtigen Moment abwarten kann, gewinnt, ohne kämpfen zu müssen.}
   {List wird zur Unehrlichkeit. Du weichst so geschickt aus, dass niemand mehr weiß, wo du stehst, nicht einmal du selbst. Oder du verachtest jede Taktik und rennst mit dem Kopf gegen die Wand. Klugheit braucht ein gutes Herz, sonst wird sie zur Manipulation.}
 \smallskip
-{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Metall}{Erde}~9}} \hfill \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~21}} \hfill \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~33}} \hfill \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~45}} \hfill \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~57}}\par
+{\small Alle fünf Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Metall}{Erde}~9}} \hfill \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~21}} \hfill \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~33}} \hfill \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~45}} \hfill \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~57}}\par
 \end{orakelblock}
 \vspace*{\fill}
 \newpage
@@ -875,7 +978,7 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 \lichtschatten{Bevor du handelst, kehr heim. Hol dir, was dich stärkt, und dann greif ein, ruhig und bestimmt. Was aus gesammelter Kraft geschieht, nährt am Ende alle, auch dich. Das ist die Kunst, aus Fülle zu handeln statt aus Not.}
   {Du sammelst und sammelst, und der richtige Moment zum Handeln kommt nie. Oder du stürmst los, ohne aufzutanken, und brennst aus, bevor etwas wächst. Kraft will gesammelt und verschenkt werden. Beides gehört zusammen wie Ein- und Ausatmen.}
 \smallskip
-{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Wasser}{Feuer}~10}} \hfill \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~22}} \hfill \mbox{\hyperlink{spruch:34}{\mycombination[0.5em]{Erde}{Feuer}{Metall}~34}} \hfill \mbox{\hyperlink{spruch:46}{\mycombination[0.5em]{Metall}{Erde}{Wasser}~46}} \hfill \mbox{\hyperlink{spruch:58}{\mycombination[0.5em]{Wasser}{Metall}{Holz}~58}}\par
+{\small Alle fünf Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Wasser}{Feuer}~10}} \hfill \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~22}} \hfill \mbox{\hyperlink{spruch:34}{\mycombination[0.5em]{Erde}{Feuer}{Metall}~34}} \hfill \mbox{\hyperlink{spruch:46}{\mycombination[0.5em]{Metall}{Erde}{Wasser}~46}} \hfill \mbox{\hyperlink{spruch:58}{\mycombination[0.5em]{Wasser}{Metall}{Holz}~58}}\par
 \end{orakelblock}
 \vspace*{\fill}
 \newpage
@@ -889,7 +992,7 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 \lichtschatten{Niemand muss sich allein stellen. Hinter dir stehen deine Herkunft, deine Geschichte, deine Menschen. Mit diesem Rückhalt kannst du dich dem Schweren zuwenden, und am Ende bist du es, der die Richtung bestimmt.}
   {Der Rückhalt wird zur Ausrede: Du stellst dich nur, wenn alle hinter dir stehen, oder du stützt dich so sehr auf deine Herkunft, dass du nichts Eigenes wagst. Das Gegenteil ist der einsame Held, der niemanden braucht und daran zerbricht. Lass dich tragen, aber geh deine Schritte selbst.}
 \smallskip
-{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Wasser}{Erde}~11}} \hfill \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Holz}{Metall}~23}} \hfill \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Feuer}{Wasser}~35}} \hfill \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Erde}{Holz}~47}} \hfill \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Metall}{Feuer}~59}}\par
+{\small Alle fünf Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Wasser}{Erde}~11}} \hfill \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Holz}{Metall}~23}} \hfill \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Feuer}{Wasser}~35}} \hfill \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Erde}{Holz}~47}} \hfill \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Metall}{Feuer}~59}}\par
 \end{orakelblock}
 \vspace*{\fill}
 \newpage
@@ -903,7 +1006,7 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 \lichtschatten{Zweimal zurück, ganz nach unten. Dort, wo alles anfing, wartet oft auch das, was uns bis heute klein hält. Schau es dir mit Mitgefühl an, auch dich selbst von damals. Dann kannst du es dort lassen und mit leichterem Gepäck weitergehen.}
   {Du gräbst immer tiefer und kommst nicht mehr heraus. Die Vergangenheit wird zur Erklärung für alles und zur Ausrede für nichts. Oder du willst gar nicht zurückschauen, und das Alte bestimmt dich unbemerkt weiter. Schau hin, aber kehr zurück ins Heute.}
 \smallskip
-{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~12}} \hfill \mbox{\hyperlink{spruch:24}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~24}} \hfill \mbox{\hyperlink{spruch:36}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~36}} \hfill \mbox{\hyperlink{spruch:48}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~48}} \hfill \mbox{\hyperlink{spruch:60}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~60}}\par
+{\small Alle fünf Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~12}} \hfill \mbox{\hyperlink{spruch:24}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~24}} \hfill \mbox{\hyperlink{spruch:36}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~36}} \hfill \mbox{\hyperlink{spruch:48}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~48}} \hfill \mbox{\hyperlink{spruch:60}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~60}}\par
 \end{orakelblock}
 \vspace*{\fill}
 \newpage

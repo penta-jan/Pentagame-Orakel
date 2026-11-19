@@ -164,6 +164,31 @@
     \musterschritt{#1}{}
   \end{pentdiag}}}
 
+% \paarbrett{A}{B}{Schritte}: graues Brett (Geometrie 100, Farbfolge 50), nur Ecke und Kreuzung von A und B in ihren Farben;
+% die Beziehung schwarz von der Ecke, rot von der Kreuzung von A aus
+% Lage der Elemente auf dem 50er-Brett (gegen den Uhrzeigersinn ab Weiß oben)
+\newcommand{\elposMetall}{0}\newcommand{\elposErde}{1}\newcommand{\elposFeuer}{2}
+\newcommand{\elposHolz}{3}\newcommand{\elposWasser}{4}
+% welche pentpack-Farbe zu welchem Element gehört
+\newcommand{\pfarbHolz}{mygreen}\newcommand{\pfarbFeuer}{myred}\newcommand{\pfarbErde}{myyellow}
+\newcommand{\pfarbMetall}{mywhite}\newcommand{\pfarbWasser}{myblue}
+\newcommand{\paarbrett}[3]{{%
+  \boardwhite
+  \renewcommand{\mywhite}{\mustergrau}\renewcommand{\myblue}{\mustergrau}%
+  \renewcommand{\mygreen}{\mustergrau}\renewcommand{\myred}{\mustergrau}%
+  \renewcommand{\myyellow}{\mustergrau}%
+  \expandafter\renewcommand\csname\csname pfarb#1\endcsname\endcsname{#1}%
+  \expandafter\renewcommand\csname\csname pfarb#2\endcsname\endcsname{#2}%
+  \pentcolours[100]{white,blue,green,red,yellow}% Farbfolge wie auf dem 50er-Brett
+  \begin{pentdiag}[stops=100, radius=0.17\textwidth, background=white]
+    \renewcommand{\pfeilfarbe}{pfeilaussen}%
+    \xdef\musterpos{\csname elpos#1\endcsname}\gdef\mustertyp{c}%
+    \musterschritt{#3}{}
+    \renewcommand{\pfeilfarbe}{pfeilinnen}%
+    \xdef\musterpos{\csname elpos#1\endcsname}\gdef\mustertyp{j}%
+    \musterschritt{#3}{}
+  \end{pentdiag}}}
+
 % \mypair[Radius]{Holz}{Feuer}: zwei Kreise mit Pfeil dazwischen
 \newcommand{\mypair}[3][0.5em]{%
   \tikz[baseline=-0.6ex]{%
@@ -225,13 +250,15 @@
 \newcommand{\rlink}[2]{%
   \hyperlink{paar:#1-#2}{\element{#1}\,$\rightarrow$\,}\allowbreak}
 
-% \paar{A}{B}{Titel}{Urteil}{Licht}{Schatten}: Eintrag eines der 20 Paare,
+% \paar{A}{B}{Titel}{Urteil}{Licht}{Schatten}{Tripel}: Eintrag eines der 20 Paare,
 % Nummer (rot, arabisch) = 4 * Position von A im Wandlungskreis + Beziehung
-\newcommand{\paar}[6]{%
+\newcommand{\paar}[7]{%
   \pgfmathtruncatemacro{\paarnr}{mod(\csname elnum#2\endcsname-\csname elnum#1\endcsname+5,5)}%
   \pgfmathtruncatemacro{\paarnum}{4*\csname elnum#1\endcsname+\paarnr}%
   \begin{orakelblock}
    \hypertarget{paar:#1-#2}{{\Large\bfseries\color{ueberschriftfarbe}\paarnum}}\par
+   \smallskip
+   \paarbrett{#1}{#2}{\paarnr}\par
    \smallskip
    \mypair[1em]{#1}{#2}\par
    \smallskip
@@ -243,6 +270,8 @@
    \textbf{#4}\par
    \smallskip
    \lichtschatten{#5}{#6}
+   \smallskip
+   #7
   \end{orakelblock}
 }
 \expandafter\def\csname bzname1\endcsname{Nähren}
@@ -548,93 +577,153 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 
 \newpage
 \addsec{\texorpdfstring{\element{Holz}}{Holz}}\markright{\element{Holz}}
+\vfill
 \paar{Holz}{Feuer}{Der Funke}{Holz nährt Feuer. Aus einem Plan wird Begeisterung.}
   {Was du dir vorgenommen hast, fängt Feuer. Andere spüren deine Freude und lassen sich anstecken. Jetzt ist die Zeit, deinen Ideen Ausdruck zu geben.}
   {Feuer verzehrt das Holz. Wenn du nur noch brennst, ist dein Plan bald aufgebraucht. Oder du hältst deine Begeisterung zurück, und der Funke springt nie über.}
-\medskip\vfill
+  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:1}{\mycombination[0.5em]{Holz}{Feuer}{Erde}~1}} \hfill \mbox{\hyperlink{spruch:2}{\mycombination[0.5em]{Holz}{Feuer}{Metall}~2}} \hfill \mbox{\hyperlink{spruch:3}{\mycombination[0.5em]{Holz}{Feuer}{Wasser}~3}}\\[0.3ex] \mbox{\hyperlink{spruch:31}{\mycombination[0.5em]{Erde}{Holz}{Feuer}~31}} \hfill \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Holz}{Feuer}~40}} \hfill \mbox{\hyperlink{spruch:49}{\mycombination[0.5em]{Wasser}{Holz}{Feuer}~49}}\par}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \paar{Holz}{Erde}{Der Keim}{Holz bändigt Erde. Der Wille dringt in festen Grund.}
   {Dein Vorhaben schlägt Wurzeln und lockert, was festgefahren war. Wo du wächst, kommt Bewegung in alte Gewohnheiten.}
   {Wurzeln können auch sprengen, was sie durchdringen. Wer nur seinen Willen durchsetzt, laugt den Boden aus, der ihn trägt. Oder du wagst es nicht, das Sichere infrage zu stellen.}
+  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Erde}{Metall}~4}} \hfill \mbox{\hyperlink{spruch:5}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~5}} \hfill \mbox{\hyperlink{spruch:6}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~6}}\\[0.3ex] \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~22}} \hfill \mbox{\hyperlink{spruch:41}{\mycombination[0.5em]{Metall}{Holz}{Erde}~41}} \hfill \mbox{\hyperlink{spruch:50}{\mycombination[0.5em]{Wasser}{Holz}{Erde}~50}}\par}
+\vspace*{\fill}
 \newpage
+\vspace*{\fill}
 \paar{Holz}{Metall}{Die Schere}{Holz stellt sich dem Metall. Das Wachsen trifft auf den Schnitt.}
   {Du stellst dich dem, was dich zurechtstutzt: Kritik, Regeln, Grenzen. Das macht dich klarer und stärker, wie einen beschnittenen Baum.}
   {Du wächst trotzig gegen jede Grenze an und verletzt dich daran. Oder du lässt dich so sehr beschneiden, dass nichts Eigenes mehr bleibt.}
-\medskip\vfill
+  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:7}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~7}} \hfill \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~8}} \hfill \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Metall}{Erde}~9}}\\[0.3ex] \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Holz}{Metall}~23}} \hfill \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Holz}{Metall}~32}} \hfill \mbox{\hyperlink{spruch:51}{\mycombination[0.5em]{Wasser}{Holz}{Metall}~51}}\par}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \paar{Holz}{Wasser}{Der Durst}{Holz kehrt heim zum Wasser. Der Trieb sucht seine Wurzeln.}
   {Bevor du weiterwächst, trinkst du. Du gehst zurück zu dem, was dich nährt, und kommst gestärkt wieder.}
   {Der Rückzug wird zur Ausrede, nicht zu wachsen. Oder du vergisst die Quelle ganz und vertrocknest im Eifer.}
+  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Wasser}{Feuer}~10}} \hfill \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Wasser}{Erde}~11}} \hfill \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~12}}\\[0.3ex] \mbox{\hyperlink{spruch:24}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~24}} \hfill \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~33}} \hfill \mbox{\hyperlink{spruch:42}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~42}}\par}
+\vspace*{\fill}
 
 \newpage
 \addsec{\texorpdfstring{\element{Feuer}}{Feuer}}\markright{\element{Feuer}}
+\vfill
 \paar{Feuer}{Erde}{Die Asche}{Feuer nährt Erde. Aus Begeisterung wird Halt.}
   {Was du mit Leidenschaft begonnen hast, setzt sich und wird tragfähig. Deine Wärme gibt anderen einen Ort, an dem sie bleiben können.}
   {Wenn alles Feuer zu Erde wird, bleibt nur Routine. Oder du brennst immer weiter und lässt nie etwas Beständiges zurück.}
-\medskip\vfill
+  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:13}{\mycombination[0.5em]{Feuer}{Erde}{Metall}~13}} \hfill \mbox{\hyperlink{spruch:14}{\mycombination[0.5em]{Feuer}{Erde}{Wasser}~14}} \hfill \mbox{\hyperlink{spruch:15}{\mycombination[0.5em]{Feuer}{Erde}{Holz}~15}}\\[0.3ex] \mbox{\hyperlink{spruch:1}{\mycombination[0.5em]{Holz}{Feuer}{Erde}~1}} \hfill \mbox{\hyperlink{spruch:43}{\mycombination[0.5em]{Metall}{Feuer}{Erde}~43}} \hfill \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Feuer}{Erde}~52}}\par}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \paar{Feuer}{Metall}{Die Schmiede}{Feuer bändigt Metall. Leidenschaft gibt der Härte Form.}
   {Mit deiner Wärme bringst du Starres in Form. Wo andere nur Regeln sehen, entdeckst du, was man daraus machen kann.}
   {Zu viel Hitze schmilzt, was Halt gibt, und deine Leidenschaft zerstört klare Strukturen. Oder sie fehlt, und alles bleibt kalt und unbeweglich.}
+  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Metall}{Wasser}~16}} \hfill \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~17}} \hfill \mbox{\hyperlink{spruch:18}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~18}}\\[0.3ex] \mbox{\hyperlink{spruch:2}{\mycombination[0.5em]{Holz}{Feuer}{Metall}~2}} \hfill \mbox{\hyperlink{spruch:34}{\mycombination[0.5em]{Erde}{Feuer}{Metall}~34}} \hfill \mbox{\hyperlink{spruch:53}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~53}}\par}
+\vspace*{\fill}
 \newpage
+\vspace*{\fill}
 \paar{Feuer}{Wasser}{Der Regen}{Feuer stellt sich dem Wasser. Die Begeisterung trifft auf Kühle.}
   {Du stellst dich der Ernüchterung, statt ihr auszuweichen. Was danach noch brennt, ist echt.}
   {Du kämpfst gegen jede Kühle an und verdampfst dabei. Oder du lässt dich vom ersten kalten Wort löschen.}
-\medskip\vfill
+  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:19}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~19}} \hfill \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Wasser}{Erde}~20}} \hfill \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~21}}\\[0.3ex] \mbox{\hyperlink{spruch:3}{\mycombination[0.5em]{Holz}{Feuer}{Wasser}~3}} \hfill \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Feuer}{Wasser}~35}} \hfill \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Feuer}{Wasser}~44}}\par}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \paar{Feuer}{Holz}{Das Brennholz}{Feuer kehrt heim zum Holz. Die Flamme sucht, was sie nährt.}
   {Du erinnerst dich, warum du brennst: an die Ideen, Menschen und Pläne, die dich entzündet haben. Daraus schöpfst du neue Kraft.}
   {Du zehrst nur noch von alten Erfolgen. Oder du vergisst, woher deine Glut kommt, und brennst ins Leere.}
+  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~22}} \hfill \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Holz}{Metall}~23}} \hfill \mbox{\hyperlink{spruch:24}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~24}}\\[0.3ex] \mbox{\hyperlink{spruch:36}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~36}} \hfill \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~45}} \hfill \mbox{\hyperlink{spruch:54}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~54}}\par}
+\vspace*{\fill}
 
 \newpage
 \addsec{\texorpdfstring{\element{Erde}}{Erde}}\markright{\element{Erde}}
+\vfill
 \paar{Erde}{Metall}{Der Schatz}{Erde nährt Metall. Aus Fürsorge wird Klarheit.}
   {Was du geduldig gepflegt hast, bringt etwas Kostbares hervor. Aus deiner Sorgfalt entstehen klare Formen und gute Ergebnisse.}
   {Du gibst so viel von deiner Substanz, dass du selbst leer wirst. Oder du hältst alles fest und lässt nichts zu Ende reifen.}
-\medskip\vfill
+  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:25}{\mycombination[0.5em]{Erde}{Metall}{Wasser}~25}} \hfill \mbox{\hyperlink{spruch:26}{\mycombination[0.5em]{Erde}{Metall}{Holz}~26}} \hfill \mbox{\hyperlink{spruch:27}{\mycombination[0.5em]{Erde}{Metall}{Feuer}~27}}\\[0.3ex] \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Erde}{Metall}~4}} \hfill \mbox{\hyperlink{spruch:13}{\mycombination[0.5em]{Feuer}{Erde}{Metall}~13}} \hfill \mbox{\hyperlink{spruch:55}{\mycombination[0.5em]{Wasser}{Erde}{Metall}~55}}\par}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \paar{Erde}{Wasser}{Das Bett}{Erde bändigt Wasser. Der Halt gibt dem Fluss eine Richtung.}
   {Du gibst dem Fließenden ein Bett. Gefühle, Ideen und Menschen finden bei dir Halt und Richtung.}
   {Aus Halt wird Stau: Wer alles eindämmt, lässt nichts mehr fließen. Oder das Bett fehlt, und alles läuft davon.}
+  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Wasser}{Holz}~28}} \hfill \mbox{\hyperlink{spruch:29}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~29}} \hfill \mbox{\hyperlink{spruch:30}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~30}}\\[0.3ex] \mbox{\hyperlink{spruch:5}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~5}} \hfill \mbox{\hyperlink{spruch:14}{\mycombination[0.5em]{Feuer}{Erde}{Wasser}~14}} \hfill \mbox{\hyperlink{spruch:46}{\mycombination[0.5em]{Metall}{Erde}{Wasser}~46}}\par}
+\vspace*{\fill}
 \newpage
+\vspace*{\fill}
 \paar{Erde}{Holz}{Die Lockerung}{Erde stellt sich dem Holz. Die Ruhe trifft auf Wachstum.}
   {Du lässt dich aufbrechen von etwas, das wachsen will. Deine Ruhe bekommt neues Leben.}
   {Du wehrst dich gegen jede Veränderung und wirst hart. Oder du lässt dich so durchwurzeln, dass du dich selbst verlierst.}
-\medskip\vfill
+  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:31}{\mycombination[0.5em]{Erde}{Holz}{Feuer}~31}} \hfill \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Holz}{Metall}~32}} \hfill \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~33}}\\[0.3ex] \mbox{\hyperlink{spruch:15}{\mycombination[0.5em]{Feuer}{Erde}{Holz}~15}} \hfill \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Erde}{Holz}~47}} \hfill \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Erde}{Holz}~56}}\par}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \paar{Erde}{Feuer}{Die Feuerstelle}{Erde kehrt heim zum Feuer. Der Halt sucht seine Wärme.}
   {Du gehst zurück zu dem, was dich einmal begeistert hat. Die alte Wärme gibt deiner Beständigkeit neuen Sinn.}
   {Du wärmst dich nur noch an Erinnerungen. Oder du vergisst ganz, dass deine Ruhe einmal aus Leidenschaft entstand.}
+  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:34}{\mycombination[0.5em]{Erde}{Feuer}{Metall}~34}} \hfill \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Feuer}{Wasser}~35}} \hfill \mbox{\hyperlink{spruch:36}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~36}}\\[0.3ex] \mbox{\hyperlink{spruch:6}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~6}} \hfill \mbox{\hyperlink{spruch:48}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~48}} \hfill \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~57}}\par}
+\vspace*{\fill}
 
 \newpage
 \addsec{\texorpdfstring{\element{Metall}}{Metall}}\markright{\element{Metall}}
+\vfill
 \paar{Metall}{Wasser}{Die Klärung}{Metall nährt Wasser. Aus Klarheit wird Weisheit.}
   {Eine klare Entscheidung bringt Ruhe und Tiefe. Was du geklärt hast, kann jetzt frei fließen.}
   {Klarheit wird zur Kälte und Weisheit zur Distanz. Oder du entscheidest nie und kommst nie zur Ruhe.}
-\medskip\vfill
+  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:37}{\mycombination[0.5em]{Metall}{Wasser}{Holz}~37}} \hfill \mbox{\hyperlink{spruch:38}{\mycombination[0.5em]{Metall}{Wasser}{Feuer}~38}} \hfill \mbox{\hyperlink{spruch:39}{\mycombination[0.5em]{Metall}{Wasser}{Erde}~39}}\\[0.3ex] \mbox{\hyperlink{spruch:7}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~7}} \hfill \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Metall}{Wasser}~16}} \hfill \mbox{\hyperlink{spruch:25}{\mycombination[0.5em]{Erde}{Metall}{Wasser}~25}}\par}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \paar{Metall}{Holz}{Das Beil}{Metall bändigt Holz. Die Klarheit schneidet das Wuchernde.}
   {Du trennst, was zu viel ist, und schaffst Raum. Ein klarer Schnitt hilft dem Wachstum.}
   {Wer zu viel schneidet, lässt nichts mehr wachsen. Oder du scheust jeden Schnitt, und alles wuchert durcheinander.}
+  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Holz}{Feuer}~40}} \hfill \mbox{\hyperlink{spruch:41}{\mycombination[0.5em]{Metall}{Holz}{Erde}~41}} \hfill \mbox{\hyperlink{spruch:42}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~42}}\\[0.3ex] \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~17}} \hfill \mbox{\hyperlink{spruch:26}{\mycombination[0.5em]{Erde}{Metall}{Holz}~26}} \hfill \mbox{\hyperlink{spruch:58}{\mycombination[0.5em]{Wasser}{Metall}{Holz}~58}}\par}
+\vspace*{\fill}
 \newpage
+\vspace*{\fill}
 \paar{Metall}{Feuer}{Die Hitze}{Metall stellt sich dem Feuer. Die Form trifft auf die Leidenschaft.}
   {Du setzt dich der Leidenschaft aus, die dich verformen kann. So wird deine Klarheit lebendig und beweglich.}
   {Du schmilzt unter jedem Druck und verlierst deine Form. Oder du verhärtest dich so, dass dich nichts mehr berührt.}
-\medskip\vfill
+  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:43}{\mycombination[0.5em]{Metall}{Feuer}{Erde}~43}} \hfill \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Feuer}{Wasser}~44}} \hfill \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~45}}\\[0.3ex] \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~8}} \hfill \mbox{\hyperlink{spruch:27}{\mycombination[0.5em]{Erde}{Metall}{Feuer}~27}} \hfill \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Metall}{Feuer}~59}}\par}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \paar{Metall}{Erde}{Der Berg}{Metall kehrt heim zur Erde. Die Klarheit sucht ihren Grund.}
   {Du gehst zurück zu dem, was dich hervorgebracht hat. Dort findest du Halt und Wärme hinter deiner Strenge.}
   {Du versteckst dich im Vertrauten und meidest jede Entscheidung. Oder du hast deine Herkunft ganz vergessen und stehst ohne Boden da.}
+  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:46}{\mycombination[0.5em]{Metall}{Erde}{Wasser}~46}} \hfill \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Erde}{Holz}~47}} \hfill \mbox{\hyperlink{spruch:48}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~48}}\\[0.3ex] \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Metall}{Erde}~9}} \hfill \mbox{\hyperlink{spruch:18}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~18}} \hfill \mbox{\hyperlink{spruch:60}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~60}}\par}
+\vspace*{\fill}
 
 \newpage
 \addsec{\texorpdfstring{\element{Wasser}}{Wasser}}\markright{\element{Wasser}}
+\vfill
 \paar{Wasser}{Holz}{Der Frühling}{Wasser nährt Holz. Aus Stille wird Wachstum.}
   {Aus der Ruhe steigt ein neuer Plan. Dein Wissen gibt etwas Neuem Nahrung.}
   {Du gießt und gießt und lässt das Neue nie allein stehen. Oder du bleibst so still, dass nichts aus dir wächst.}
-\medskip\vfill
+  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:49}{\mycombination[0.5em]{Wasser}{Holz}{Feuer}~49}} \hfill \mbox{\hyperlink{spruch:50}{\mycombination[0.5em]{Wasser}{Holz}{Erde}~50}} \hfill \mbox{\hyperlink{spruch:51}{\mycombination[0.5em]{Wasser}{Holz}{Metall}~51}}\\[0.3ex] \mbox{\hyperlink{spruch:19}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~19}} \hfill \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Wasser}{Holz}~28}} \hfill \mbox{\hyperlink{spruch:37}{\mycombination[0.5em]{Metall}{Wasser}{Holz}~37}}\par}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \paar{Wasser}{Feuer}{Das Löschen}{Wasser bändigt Feuer. Die Ruhe dämpft die Hitze.}
   {Du bringst Ruhe in eine aufgeheizte Lage. Deine Gelassenheit hilft anderen, zur Besinnung zu kommen.}
   {Aus Dämpfen wird Ersticken: Wer jede Begeisterung löscht, macht das Leben grau. Oder du lässt alles lodern, bis es niederbrennt.}
+  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Feuer}{Erde}~52}} \hfill \mbox{\hyperlink{spruch:53}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~53}} \hfill \mbox{\hyperlink{spruch:54}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~54}}\\[0.3ex] \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Wasser}{Feuer}~10}} \hfill \mbox{\hyperlink{spruch:29}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~29}} \hfill \mbox{\hyperlink{spruch:38}{\mycombination[0.5em]{Metall}{Wasser}{Feuer}~38}}\par}
+\vspace*{\fill}
 \newpage
+\vspace*{\fill}
 \paar{Wasser}{Erde}{Die Küste}{Wasser stellt sich der Erde. Der Fluss trifft auf seine Grenze.}
   {Du nimmst deine Grenzen an und gewinnst dadurch Richtung. Am Ufer wird das Wasser klar.}
   {Du stößt dich immer wieder an denselben Grenzen. Oder du gibst nach und versickerst.}
-\medskip\vfill
+  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:55}{\mycombination[0.5em]{Wasser}{Erde}{Metall}~55}} \hfill \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Erde}{Holz}~56}} \hfill \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~57}}\\[0.3ex] \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Wasser}{Erde}~11}} \hfill \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Wasser}{Erde}~20}} \hfill \mbox{\hyperlink{spruch:39}{\mycombination[0.5em]{Metall}{Wasser}{Erde}~39}}\par}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \paar{Wasser}{Metall}{Das Gestein}{Wasser kehrt heim zum Metall. Die Tiefe sucht ihre Klarheit.}
   {Du gehst zurück zu deinen Grundsätzen, zu dem, was du klar weißt. Von dort aus fließt dein Handeln rein.}
   {Du klammerst dich an alte Gewissheiten und wirst starr. Oder du verlierst jeden Halt und treibst ziellos.}
+  {{\small Tripel:}\\[0.5ex] \mbox{\hyperlink{spruch:58}{\mycombination[0.5em]{Wasser}{Metall}{Holz}~58}} \hfill \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Metall}{Feuer}~59}} \hfill \mbox{\hyperlink{spruch:60}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~60}}\\[0.3ex] \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~12}} \hfill \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~21}} \hfill \mbox{\hyperlink{spruch:30}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~30}}\par}
+\vspace*{\fill}
 
 \newpage
 

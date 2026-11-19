@@ -189,6 +189,9 @@
     \musterschritt{#3}{}
   \end{pentdiag}}}
 
+% \kreis{Holz}: ein einzelner Kreis mit Zeichen (Register)
+\newcommand{\kreis}[2][0.6em]{\tikz[baseline=-0.6ex]{\elementkreis{#1}{0}{#2}}}
+
 % \mypair[Radius]{Holz}{Feuer}: zwei Kreise mit Pfeil dazwischen
 \newcommand{\mypair}[3][0.5em]{%
   \tikz[baseline=-0.6ex]{%
@@ -405,7 +408,7 @@ Das Orakel lässt sich in zwei Stufen befragen. Lege dafür je einen Stein jeder
 
 \noindent Beim Paar fallen Weg und Frucht zusammen: Die zweite Farbe zeigt, wohin die Wurzel führt.
 
-Zum Deuten lies zuerst den Spruch. Bei einem Tripel führen dich die beiden Pfeile zu den zwei Paaren, aus denen es besteht, und der Name des Musters zu dessen Deutung. Zuletzt helfen die Themen der Elemente. Die Sprüche geben eine Richtung vor, keine Vorhersage.
+Zum Deuten lies zuerst den Spruch. Bei einem Tripel führen dich die beiden Pfeile zu den zwei Paaren, aus denen es besteht, und der Name des Musters zu dessen Deutung. Zuletzt helfen die Themen der Elemente. Am schnellsten findest du eine Kombination über das \hyperref[kap:register]{Register} am Ende des Buches. Die Sprüche geben eine Richtung vor, keine Vorhersage.
 
 \newpage
 \addsec{Die fünf Elemente}\markright{Die fünf Elemente}\label{kap:elemente}
@@ -599,7 +602,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \end{einleitung}
 
 \newpage
-\addsec{\texorpdfstring{\element{Holz}}{Holz}}\markright{\element{Holz}}
+\addsec*{\element{Holz}}\markright{\element{Holz}}
 \vfill
 \paar{Holz}{Feuer}{Der Funke}{Holz nährt Feuer. Aus einem Plan wird Begeisterung.}
   {Was du dir vorgenommen hast, fängt Feuer. Andere spüren deine Freude und lassen sich anstecken. Jetzt ist die Zeit, deinen Ideen Ausdruck zu geben.}
@@ -645,7 +648,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vspace*{\fill}
 
 \newpage
-\addsec{\texorpdfstring{\element{Feuer}}{Feuer}}\markright{\element{Feuer}}
+\addsec*{\element{Feuer}}\markright{\element{Feuer}}
 \vfill
 \paar{Feuer}{Erde}{Die Asche}{Feuer nährt Erde. Aus Begeisterung wird Halt.}
   {Was du mit Leidenschaft begonnen hast, setzt sich und wird tragfähig. Deine Wärme gibt anderen einen Ort, an dem sie bleiben können.}
@@ -691,7 +694,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vspace*{\fill}
 
 \newpage
-\addsec{\texorpdfstring{\element{Erde}}{Erde}}\markright{\element{Erde}}
+\addsec*{\element{Erde}}\markright{\element{Erde}}
 \vfill
 \paar{Erde}{Metall}{Der Schatz}{Erde nährt Metall. Aus Fürsorge wird Klarheit.}
   {Was du geduldig gepflegt hast, bringt etwas Kostbares hervor. Aus deiner Sorgfalt entstehen klare Formen und gute Ergebnisse.}
@@ -737,7 +740,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vspace*{\fill}
 
 \newpage
-\addsec{\texorpdfstring{\element{Metall}}{Metall}}\markright{\element{Metall}}
+\addsec*{\element{Metall}}\markright{\element{Metall}}
 \vfill
 \paar{Metall}{Wasser}{Die Klärung}{Metall nährt Wasser. Aus Klarheit wird Weisheit.}
   {Eine klare Entscheidung bringt Ruhe und Tiefe. Was du geklärt hast, kann jetzt frei fließen.}
@@ -783,7 +786,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vspace*{\fill}
 
 \newpage
-\addsec{\texorpdfstring{\element{Wasser}}{Wasser}}\markright{\element{Wasser}}
+\addsec*{\element{Wasser}}\markright{\element{Wasser}}
 \vfill
 \paar{Wasser}{Holz}{Der Frühling}{Wasser nährt Holz. Aus Stille wird Wachstum.}
   {Aus der Ruhe steigt ein neuer Plan. Dein Wissen gibt etwas Neuem Nahrung.}
@@ -1015,7 +1018,7 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 
 Die Tripel sind nach ihrem ersten Element geordnet. Innerhalb jeder Gruppe folgen sie den Mustern I bis XII. Jedes Tripel hat seinen Spruch: das fett gesetzte Urteil und darunter die Deutung.
 
-\addsec{\texorpdfstring{\element{Holz}}{Holz}}\markright{\element{Holz}}
+\addsec*{\element{Holz}}\markright{\element{Holz}}
 \bigskip
 
 \spruch{1}{Holz}{Feuer}{Erde}{I Strom}{Der Funke wird zum Feld}{Ein Plan entfacht Begeisterung, und die Begeisterung schafft festen Boden. Gib dem Begonnenen Raum, aber lass dich nicht von ihm überwuchern.}
@@ -1044,7 +1047,7 @@ Die Tripel sind nach ihrem ersten Element geordnet. Innerhalb jeder Gruppe folge
   {Es ist Zeit für einen Blick nach innen, tief, Ring um Ring zurück. Dort stößt du auf etwas, das dich bis heute begrenzt: ein altes Urteil, eine Angst, ein Satz, den jemand einmal gesagt hat. Schau es freundlich an. Was erkannt ist, verliert seine Macht, und du wächst weiter.}
 
 \newpage
-\addsec{\texorpdfstring{\element{Feuer}}{Feuer}}\markright{\element{Feuer}}
+\addsec*{\element{Feuer}}\markright{\element{Feuer}}
 \bigskip
 
 \spruch{13}{Feuer}{Erde}{Metall}{I Strom}{Die Esse}{Begeisterung wird zu Fürsorge und Fürsorge zu einem klaren Ergebnis. Großes gelingt, wenn du der Form erlaubst, dein Feuer zu bändigen.}
@@ -1073,7 +1076,7 @@ Die Tripel sind nach ihrem ersten Element geordnet. Innerhalb jeder Gruppe folge
   {Woher kommt eigentlich dein Feuer? Wenn du danach gräbst, triffst du vielleicht auf etwas Unerwartetes: eine Angst, die dich antreibt. Erschrick nicht. Sie anzusehen löscht dich nicht, im Gegenteil. Wer seine Angst kennt, brennt ruhiger und länger.}
 
 \newpage
-\addsec{\texorpdfstring{\element{Erde}}{Erde}}\markright{\element{Erde}}
+\addsec*{\element{Erde}}\markright{\element{Erde}}
 \bigskip
 
 \spruch{25}{Erde}{Metall}{Wasser}{I Strom}{Die Quelle im Fels}{Was du sammelst, klärt sich und beginnt zu fließen. Was fließt, entzieht sich aber deiner Kontrolle.}
@@ -1102,7 +1105,7 @@ Die Tripel sind nach ihrem ersten Element geordnet. Innerhalb jeder Gruppe folge
   {Woher kommt deine Sicherheit? Wenn du zurückgehst, findest du vielleicht eine alte Brandstelle, einen Moment, in dem es einmal heiß und unruhig war. Halte es aus. Gerade dort wächst inzwischen Neues, und es erzählt dir, wie stark du damals schon warst.}
 
 \newpage
-\addsec{\texorpdfstring{\element{Metall}}{Metall}}\markright{\element{Metall}}
+\addsec*{\element{Metall}}\markright{\element{Metall}}
 \bigskip
 
 \spruch{37}{Metall}{Wasser}{Holz}{I Strom}{Der Tau auf der Klinge}{Klarheit wird zu Weisheit und Weisheit zu neuem Wachstum. Was du loslassen kannst, wächst, aber es richtet sich nicht nach dir.}
@@ -1131,7 +1134,7 @@ Die Tripel sind nach ihrem ersten Element geordnet. Innerhalb jeder Gruppe folge
   {Du gräbst nach deinem Ursprung, nach dem, was dich so klar und fest gemacht hat. Dabei triffst du auf eine Glut, eine alte, heiße Erinnerung. Fass sie behutsam an. Sie kann dich verformen, aber auch erwärmen. Vielleicht ist es Zeit, ein wenig weicher zu werden.}
 
 \newpage
-\addsec{\texorpdfstring{\element{Wasser}}{Wasser}}\markright{\element{Wasser}}
+\addsec*{\element{Wasser}}\markright{\element{Wasser}}
 \bigskip
 
 \spruch{49}{Wasser}{Holz}{Feuer}{I Strom}{Die Quelle im Frühling}{Aus der Stille steigt ein Plan, aus dem Plan Begeisterung. Lass es fließen, auch wenn das Feuer deine Ruhe verdrängt.}
@@ -1160,6 +1163,58 @@ Die Tripel sind nach ihrem ersten Element geordnet. Innerhalb jeder Gruppe folge
   {Du gehst bis ganz nach unten, tiefer als je zuvor. Dort findest du keine Leere, sondern ein Ufer: etwas, das dich hält und zugleich begrenzt. Vielleicht ist das die wichtigste Erkenntnis von allen: Du bist getragen. Hier schließt sich der Kreis, und ein neuer kann beginnen.}
 
 \endgroup
+
+\addchap{Register}\markboth{Register}{\mbox{}}\label{kap:register}
+
+\begin{einleitung}
+Mit diesen Tafeln findest du jede Kombination, ohne zu blättern. Suche die erste Farbe in der linken Spalte und die nächste in der Kopfzeile; die Nummer im Schnittpunkt ist ein Link auf das Paar oder das Tripel.
+\end{einleitung}
+
+\addsec*{Paare}\markright{Paare}
+\begin{center}\renewcommand{\arraystretch}{1.6}\setlength{\tabcolsep}{5pt}
+\begin{tabular}{r|ccccc}
+{\footnotesize 1.\ \textbackslash\ 2.} & \kreis{Holz} & \kreis{Feuer} & \kreis{Erde} & \kreis{Metall} & \kreis{Wasser} \\ \hline
+\kreis{Holz} & -- & \hyperlink{paar:Holz-Feuer}{\textcolor{ueberschriftfarbe}{\textbf{1}}} & \hyperlink{paar:Holz-Erde}{\textcolor{ueberschriftfarbe}{\textbf{2}}} & \hyperlink{paar:Holz-Metall}{\textcolor{ueberschriftfarbe}{\textbf{3}}} & \hyperlink{paar:Holz-Wasser}{\textcolor{ueberschriftfarbe}{\textbf{4}}} \\
+\kreis{Feuer} & \hyperlink{paar:Feuer-Holz}{\textcolor{ueberschriftfarbe}{\textbf{8}}} & -- & \hyperlink{paar:Feuer-Erde}{\textcolor{ueberschriftfarbe}{\textbf{5}}} & \hyperlink{paar:Feuer-Metall}{\textcolor{ueberschriftfarbe}{\textbf{6}}} & \hyperlink{paar:Feuer-Wasser}{\textcolor{ueberschriftfarbe}{\textbf{7}}} \\
+\kreis{Erde} & \hyperlink{paar:Erde-Holz}{\textcolor{ueberschriftfarbe}{\textbf{11}}} & \hyperlink{paar:Erde-Feuer}{\textcolor{ueberschriftfarbe}{\textbf{12}}} & -- & \hyperlink{paar:Erde-Metall}{\textcolor{ueberschriftfarbe}{\textbf{9}}} & \hyperlink{paar:Erde-Wasser}{\textcolor{ueberschriftfarbe}{\textbf{10}}} \\
+\kreis{Metall} & \hyperlink{paar:Metall-Holz}{\textcolor{ueberschriftfarbe}{\textbf{14}}} & \hyperlink{paar:Metall-Feuer}{\textcolor{ueberschriftfarbe}{\textbf{15}}} & \hyperlink{paar:Metall-Erde}{\textcolor{ueberschriftfarbe}{\textbf{16}}} & -- & \hyperlink{paar:Metall-Wasser}{\textcolor{ueberschriftfarbe}{\textbf{13}}} \\
+\kreis{Wasser} & \hyperlink{paar:Wasser-Holz}{\textcolor{ueberschriftfarbe}{\textbf{17}}} & \hyperlink{paar:Wasser-Feuer}{\textcolor{ueberschriftfarbe}{\textbf{18}}} & \hyperlink{paar:Wasser-Erde}{\textcolor{ueberschriftfarbe}{\textbf{19}}} & \hyperlink{paar:Wasser-Metall}{\textcolor{ueberschriftfarbe}{\textbf{20}}} & -- \\
+\end{tabular}
+\end{center}
+
+\newpage
+\addsec*{Tripel}\markright{Tripel}
+\begin{center}\renewcommand{\arraystretch}{1.25}\setlength{\tabcolsep}{6pt}
+\begin{tabular}{r|ccccc}
+{\footnotesize 1.\,2.\ \textbackslash\ 3.} & \kreis{Holz} & \kreis{Feuer} & \kreis{Erde} & \kreis{Metall} & \kreis{Wasser} \\ \hline
+\mypair[0.5em]{Holz}{Feuer} &  &  & \hyperlink{spruch:1}{\textbf{1}} & \hyperlink{spruch:2}{\textbf{2}} & \hyperlink{spruch:3}{\textbf{3}} \\
+\mypair[0.5em]{Holz}{Erde} &  & \hyperlink{spruch:6}{\textbf{6}} &  & \hyperlink{spruch:4}{\textbf{4}} & \hyperlink{spruch:5}{\textbf{5}} \\
+\mypair[0.5em]{Holz}{Metall} &  & \hyperlink{spruch:8}{\textbf{8}} & \hyperlink{spruch:9}{\textbf{9}} &  & \hyperlink{spruch:7}{\textbf{7}} \\
+\mypair[0.5em]{Holz}{Wasser} &  & \hyperlink{spruch:10}{\textbf{10}} & \hyperlink{spruch:11}{\textbf{11}} & \hyperlink{spruch:12}{\textbf{12}} &  \\
+\hline
+\mypair[0.5em]{Feuer}{Holz} &  &  & \hyperlink{spruch:22}{\textbf{22}} & \hyperlink{spruch:23}{\textbf{23}} & \hyperlink{spruch:24}{\textbf{24}} \\
+\mypair[0.5em]{Feuer}{Erde} & \hyperlink{spruch:15}{\textbf{15}} &  &  & \hyperlink{spruch:13}{\textbf{13}} & \hyperlink{spruch:14}{\textbf{14}} \\
+\mypair[0.5em]{Feuer}{Metall} & \hyperlink{spruch:17}{\textbf{17}} &  & \hyperlink{spruch:18}{\textbf{18}} &  & \hyperlink{spruch:16}{\textbf{16}} \\
+\mypair[0.5em]{Feuer}{Wasser} & \hyperlink{spruch:19}{\textbf{19}} &  & \hyperlink{spruch:20}{\textbf{20}} & \hyperlink{spruch:21}{\textbf{21}} &  \\
+\hline
+\mypair[0.5em]{Erde}{Holz} &  & \hyperlink{spruch:31}{\textbf{31}} &  & \hyperlink{spruch:32}{\textbf{32}} & \hyperlink{spruch:33}{\textbf{33}} \\
+\mypair[0.5em]{Erde}{Feuer} & \hyperlink{spruch:36}{\textbf{36}} &  &  & \hyperlink{spruch:34}{\textbf{34}} & \hyperlink{spruch:35}{\textbf{35}} \\
+\mypair[0.5em]{Erde}{Metall} & \hyperlink{spruch:26}{\textbf{26}} & \hyperlink{spruch:27}{\textbf{27}} &  &  & \hyperlink{spruch:25}{\textbf{25}} \\
+\mypair[0.5em]{Erde}{Wasser} & \hyperlink{spruch:28}{\textbf{28}} & \hyperlink{spruch:29}{\textbf{29}} &  & \hyperlink{spruch:30}{\textbf{30}} &  \\
+\hline
+\mypair[0.5em]{Metall}{Holz} &  & \hyperlink{spruch:40}{\textbf{40}} & \hyperlink{spruch:41}{\textbf{41}} &  & \hyperlink{spruch:42}{\textbf{42}} \\
+\mypair[0.5em]{Metall}{Feuer} & \hyperlink{spruch:45}{\textbf{45}} &  & \hyperlink{spruch:43}{\textbf{43}} &  & \hyperlink{spruch:44}{\textbf{44}} \\
+\mypair[0.5em]{Metall}{Erde} & \hyperlink{spruch:47}{\textbf{47}} & \hyperlink{spruch:48}{\textbf{48}} &  &  & \hyperlink{spruch:46}{\textbf{46}} \\
+\mypair[0.5em]{Metall}{Wasser} & \hyperlink{spruch:37}{\textbf{37}} & \hyperlink{spruch:38}{\textbf{38}} & \hyperlink{spruch:39}{\textbf{39}} &  &  \\
+\hline
+\mypair[0.5em]{Wasser}{Holz} &  & \hyperlink{spruch:49}{\textbf{49}} & \hyperlink{spruch:50}{\textbf{50}} & \hyperlink{spruch:51}{\textbf{51}} &  \\
+\mypair[0.5em]{Wasser}{Feuer} & \hyperlink{spruch:54}{\textbf{54}} &  & \hyperlink{spruch:52}{\textbf{52}} & \hyperlink{spruch:53}{\textbf{53}} &  \\
+\mypair[0.5em]{Wasser}{Erde} & \hyperlink{spruch:56}{\textbf{56}} & \hyperlink{spruch:57}{\textbf{57}} &  & \hyperlink{spruch:55}{\textbf{55}} &  \\
+\mypair[0.5em]{Wasser}{Metall} & \hyperlink{spruch:58}{\textbf{58}} & \hyperlink{spruch:59}{\textbf{59}} & \hyperlink{spruch:60}{\textbf{60}} &  &  \\
+\end{tabular}
+\end{center}
+
+\newpage
 
 \addchap{Quellen}\markboth{Quellen}{\mbox{}}
 

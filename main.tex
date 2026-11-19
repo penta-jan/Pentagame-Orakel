@@ -189,6 +189,42 @@
     \musterschritt{#3}{}
   \end{pentdiag}}}
 
+% \tripelbrett{A}{B}{C}{Muster}: graues Brett, Ecken und Kreuzungen der drei Elemente farbig,
+% beide Schritte des Musters schwarz von der Ecke von A, rot von der Kreuzung von A
+\expandafter\def\csname musterschritte I\endcsname{{1}{1}}
+\expandafter\def\csname musterschritte II\endcsname{{1}{2}}
+\expandafter\def\csname musterschritte III\endcsname{{1}{3}}
+\expandafter\def\csname musterschritte IV\endcsname{{2}{1}}
+\expandafter\def\csname musterschritte V\endcsname{{2}{2}}
+\expandafter\def\csname musterschritte VI\endcsname{{2}{4}}
+\expandafter\def\csname musterschritte VII\endcsname{{3}{1}}
+\expandafter\def\csname musterschritte VIII\endcsname{{3}{3}}
+\expandafter\def\csname musterschritte IX\endcsname{{3}{4}}
+\expandafter\def\csname musterschritte X\endcsname{{4}{2}}
+\expandafter\def\csname musterschritte XI\endcsname{{4}{3}}
+\expandafter\def\csname musterschritte XII\endcsname{{4}{4}}
+\newcommand{\tripelbrettweg}[2]{%
+    \renewcommand{\pfeilfarbe}{pfeilaussen}%
+    \xdef\musterpos{\tripelstart}\gdef\mustertyp{c}%
+    \musterschritt{#1}{}\musterschritt{#2}{}%
+    \renewcommand{\pfeilfarbe}{pfeilinnen}%
+    \xdef\musterpos{\tripelstart}\gdef\mustertyp{j}%
+    \musterschritt{#1}{}\musterschritt{#2}{}}
+\newcommand{\tripelbrett}[4]{{%
+  \boardwhite
+  \renewcommand{\mywhite}{\mustergrau}\renewcommand{\myblue}{\mustergrau}%
+  \renewcommand{\mygreen}{\mustergrau}\renewcommand{\myred}{\mustergrau}%
+  \renewcommand{\myyellow}{\mustergrau}%
+  \expandafter\renewcommand\csname\csname pfarb#1\endcsname\endcsname{#1}%
+  \expandafter\renewcommand\csname\csname pfarb#2\endcsname\endcsname{#2}%
+  \expandafter\renewcommand\csname\csname pfarb#3\endcsname\endcsname{#3}%
+  \pentcolours[100]{white,blue,green,red,yellow}%
+  \xdef\tripelstart{\csname elpos#1\endcsname}%
+  \begin{pentdiag}[stops=100, radius=0.17\textwidth, background=white]
+    \expandafter\expandafter\expandafter\tripelbrettweg\csname musterschritte #4\endcsname
+  \end{pentdiag}}}
+\def\tripelmuster#1 #2\endtripelmuster{#1}
+
 % \kreis{Holz}: ein einzelner Kreis mit Zeichen (Register)
 \newcommand{\kreis}[2][0.6em]{\tikz[baseline=-0.6ex]{\elementkreis{#1}{0}{#2}}}
 
@@ -306,12 +342,14 @@
 \newcommand{\elementmitfarbe}[2]{%
   \begin{tabular}[t]{@{}c@{}}\element{#1}\\[-0.3ex]{\scriptsize #2}\end{tabular}}
 
-% \spruch{Nr}{Element 1}{Element 2}{Element 3}{Muster}{Name}{Spruch}{Deutung}
+% \spruch{Nr}{Element 1}{Element 2}{Element 3}{Muster}{Name}{Urteil}{Licht}{Schatten}
 % Der Spruch (fett, zentriert) ist das knappe Urteil, die Deutung (Blocksatz) die ausführliche Auslegung
 % Nummer, Kreise, Elemente, Überschrift, Muster, Spruch: untereinander und zentriert
-\newcommand{\spruch}[8]{%
+\newcommand{\spruch}[9]{%
   \begin{orakelblock}
    \hypertarget{spruch:#1}{{\Large\bfseries #1}}\par
+   \smallskip
+   \tripelbrett{#2}{#3}{#4}{\tripelmuster#5\endtripelmuster}\par
    \smallskip
    \mycombination{#2}{#3}{#4}\par
    \smallskip
@@ -322,14 +360,15 @@
    \smallskip
    \textbf{#7}\par
    \smallskip
-   {\justifying\setlength{\parindent}{0pt}\noindent #8\par}
+   \lichtschatten{#8}{#9}
   \end{orakelblock}
-  \bigskip\bigskip
 }
 
 \title{Pentagame-Orakel\\[0.3em]\large Das Buch der 60 Wandlungen}
 \author{Jan Suchanek}
 \date{19.\ November 2026}
+
+\makeatletter\renewcommand\@pnumwidth{2em}\makeatother % Platz für dreistellige Seitenzahlen im Inhaltsverzeichnis
 
 \begin{document}
 \frontmatter
@@ -375,7 +414,7 @@ Wer Pentagame spielt, kennt diesen Moment: Der dritte Stein erreicht sein Ziel, 
 \end{tabular}
 \end{center}
 
-Jedes Paar und jedes Tripel hat seinen Spruch: oben, fett gesetzt, das knappe Urteil, darunter eine ausführlichere Deutung. Auch die Beziehungen und Muster haben ein Urteil und eine Deutung. Bei ihnen und bei den Paaren zeigt die Deutung beide Seiten, wie Yin und Yang: im Licht und im Schatten.
+Jedes Paar und jedes Tripel hat seinen Spruch: oben, fett gesetzt, das knappe Urteil, darunter eine ausführlichere Deutung. Auch die Beziehungen und Muster haben ein Urteil und eine Deutung. Überall zeigt die Deutung beide Seiten, wie Yin und Yang: im Licht und im Schatten.
 
 Das Vorbild ist das \href{https://en.wikipedia.org/wiki/Lingqijing}{Lingqijing} ({\cjk 靈棋經}, „Klassiker der göttlichen Spielsteine“), ein chinesisches Orakel, das wohl in der frühen Wei-Jin-Zeit entstanden ist. Dort ergeben drei Positionen (Himmel, Mensch, Erde) mit je fünf Zuständen 125 Sprüche. Beim Pentagame-Orakel kommt keine Farbe doppelt vor, deshalb sind es 60.
 
@@ -606,7 +645,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vfill
 \paar{Holz}{Feuer}{Der Funke}{Holz nährt Feuer. Aus einem Plan wird Begeisterung.}
   {Was du dir vorgenommen hast, fängt Feuer. Andere spüren deine Freude und lassen sich anstecken. Jetzt ist die Zeit, deinen Ideen Ausdruck zu geben.}
-  {Feuer verzehrt das Holz. Wenn du nur noch brennst, ist dein Plan bald aufgebraucht. Oder du hältst deine Begeisterung zurück, und der Funke springt nie über.}
+  {Begeisterung kann so stark brennen, dass der Plan dahinter verbraucht wird. Manchmal hält man sie auch zurück. Gib dem Funken Raum, und leg ab und zu Holz nach.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:1}{\mycombination[0.5em]{Holz}{Feuer}{Erde}~1}} & \mbox{\hyperlink{spruch:2}{\mycombination[0.5em]{Holz}{Feuer}{Metall}~2}} & \mbox{\hyperlink{spruch:3}{\mycombination[0.5em]{Holz}{Feuer}{Wasser}~3}} \\[0.3ex]
@@ -617,7 +656,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vspace*{\fill}
 \paar{Holz}{Erde}{Der Keim}{Holz bändigt Erde. Der Wille dringt in festen Grund.}
   {Dein Vorhaben schlägt Wurzeln und lockert, was festgefahren war. Wo du wächst, kommt Bewegung in alte Gewohnheiten. Und wie Wurzeln den Boden vor dem Abtragen schützen, gibst du dem Festen neuen Halt.}
-  {Wurzeln können auch sprengen, was sie durchdringen. Wer nur seinen Willen durchsetzt, laugt den Boden aus, der ihn trägt. Oder du wagst es nicht, das Sichere infrage zu stellen.}
+  {Wer seinen Willen durchsetzt, kann den Boden auslaugen, der ihn trägt. Manchmal wagt man aber auch nicht, das Sichere infrage zu stellen. Wachse kräftig, und achte dabei auf den Grund unter dir.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Erde}{Metall}~4}} & \mbox{\hyperlink{spruch:5}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~5}} & \mbox{\hyperlink{spruch:6}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~6}} \\[0.3ex]
@@ -628,7 +667,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vspace*{\fill}
 \paar{Holz}{Metall}{Die Schere}{Holz stellt sich dem Metall. Das Wachsen trifft auf den Schnitt.}
   {Du stellst dich dem, was dich zurechtstutzt: Kritik, Regeln, Grenzen. Das macht dich klarer und stärker, wie einen beschnittenen Baum.}
-  {Du wächst trotzig gegen jede Grenze an und verletzt dich daran. Oder du lässt dich so sehr beschneiden, dass nichts Eigenes mehr bleibt.}
+  {Gegen jede Grenze anzuwachsen, kann wehtun. Und wer sich zu sehr beschneiden lässt, verliert etwas Eigenes. Nimm an, was dich stärkt, und bewahre, was dich ausmacht.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:7}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~7}} & \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~8}} & \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Metall}{Erde}~9}} \\[0.3ex]
@@ -639,7 +678,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vspace*{\fill}
 \paar{Holz}{Wasser}{Der Durst}{Holz kehrt heim zum Wasser. Der Trieb sucht seine Wurzeln.}
   {Bevor du weiterwächst, trinkst du. Du gehst zurück zu dem, was dich nährt, und kommst gestärkt wieder.}
-  {Der Rückzug wird zur Ausrede, nicht zu wachsen. Oder du vergisst die Quelle ganz und vertrocknest im Eifer.}
+  {Rückzug kann bequem werden, und Eifer kann die Quelle vergessen. Beides ist menschlich. Trink, wenn du Durst hast, und dann wachse weiter.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Wasser}{Feuer}~10}} & \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Wasser}{Erde}~11}} & \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~12}} \\[0.3ex]
@@ -652,7 +691,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vfill
 \paar{Feuer}{Erde}{Die Asche}{Feuer nährt Erde. Aus Begeisterung wird Halt.}
   {Was du mit Leidenschaft begonnen hast, setzt sich und wird tragfähig. Deine Wärme gibt anderen einen Ort, an dem sie bleiben können.}
-  {Wenn alles Feuer zu Erde wird, bleibt nur Routine. Oder du brennst immer weiter und lässt nie etwas Beständiges zurück.}
+  {Wenn alles Feuer sich setzt, kann Routine entstehen. Und wer immer nur brennt, hinterlässt wenig Bleibendes. Gönn dir beides: Glut und Grund.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:13}{\mycombination[0.5em]{Feuer}{Erde}{Metall}~13}} & \mbox{\hyperlink{spruch:14}{\mycombination[0.5em]{Feuer}{Erde}{Wasser}~14}} & \mbox{\hyperlink{spruch:15}{\mycombination[0.5em]{Feuer}{Erde}{Holz}~15}} \\[0.3ex]
@@ -663,7 +702,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vspace*{\fill}
 \paar{Feuer}{Metall}{Die Schmiede}{Feuer bändigt Metall. Leidenschaft gibt der Härte Form.}
   {Mit deiner Wärme bringst du Starres in Form. Wo andere nur Regeln sehen, entdeckst du, was man daraus machen kann.}
-  {Zu viel Hitze schmilzt, was Halt gibt, und deine Leidenschaft zerstört klare Strukturen. Oder sie fehlt, und alles bleibt kalt und unbeweglich.}
+  {Zu viel Hitze kann schmelzen, was Halt gibt, und ohne Wärme bleibt alles starr. Mit dem rechten Maß formst du Großes.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Metall}{Wasser}~16}} & \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~17}} & \mbox{\hyperlink{spruch:18}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~18}} \\[0.3ex]
@@ -674,7 +713,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vspace*{\fill}
 \paar{Feuer}{Wasser}{Der Regen}{Feuer stellt sich dem Wasser. Die Begeisterung trifft auf Kühle.}
   {Du stellst dich der Ernüchterung, statt ihr auszuweichen. Was danach noch brennt, ist echt.}
-  {Du kämpfst gegen jede Kühle an und verdampfst dabei. Oder du lässt dich vom ersten kalten Wort löschen.}
+  {Gegen jede Kühle anzukämpfen, kostet Kraft, und manches kalte Wort löscht schneller als nötig. Lass dich abkühlen, ohne zu erlöschen; was bleibt, ist echt.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:19}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~19}} & \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Wasser}{Erde}~20}} & \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~21}} \\[0.3ex]
@@ -685,7 +724,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vspace*{\fill}
 \paar{Feuer}{Holz}{Das Brennholz}{Feuer kehrt heim zum Holz. Die Flamme sucht, was sie nährt.}
   {Du erinnerst dich, warum du brennst: an die Ideen, Menschen und Pläne, die dich entzündet haben. Daraus schöpfst du neue Kraft.}
-  {Du zehrst nur noch von alten Erfolgen. Oder du vergisst, woher deine Glut kommt, und brennst ins Leere.}
+  {Man kann von alten Erfolgen zehren oder vergessen, woher die Glut kommt. Erinnere dich gern an deine Quellen, und lass dich von ihnen zu Neuem entzünden.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~22}} & \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Holz}{Metall}~23}} & \mbox{\hyperlink{spruch:24}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~24}} \\[0.3ex]
@@ -698,7 +737,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vfill
 \paar{Erde}{Metall}{Der Schatz}{Erde nährt Metall. Aus Fürsorge wird Klarheit.}
   {Was du geduldig gepflegt hast, bringt etwas Kostbares hervor. Aus deiner Sorgfalt entstehen klare Formen und gute Ergebnisse.}
-  {Du gibst so viel von deiner Substanz, dass du selbst leer wirst. Oder du hältst alles fest und lässt nichts zu Ende reifen.}
+  {Wer viel von sich gibt, kann leer werden, und wer alles festhält, lässt nichts reifen. Gib aus der Fülle, nicht aus der Not, dann entsteht das Kostbare von selbst.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:25}{\mycombination[0.5em]{Erde}{Metall}{Wasser}~25}} & \mbox{\hyperlink{spruch:26}{\mycombination[0.5em]{Erde}{Metall}{Holz}~26}} & \mbox{\hyperlink{spruch:27}{\mycombination[0.5em]{Erde}{Metall}{Feuer}~27}} \\[0.3ex]
@@ -709,7 +748,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vspace*{\fill}
 \paar{Erde}{Wasser}{Das Bett}{Erde bändigt Wasser. Der Halt gibt dem Fluss eine Richtung.}
   {Du gibst dem Fließenden ein Bett. Gefühle, Ideen und Menschen finden bei dir Halt und Richtung.}
-  {Aus Halt wird Stau: Wer alles eindämmt, lässt nichts mehr fließen. Oder das Bett fehlt, und alles läuft davon.}
+  {Halt kann zum Stau werden, und ohne Halt läuft alles davon. Gib dem Fließenden ein Bett mit Ufern, die atmen.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Wasser}{Holz}~28}} & \mbox{\hyperlink{spruch:29}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~29}} & \mbox{\hyperlink{spruch:30}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~30}} \\[0.3ex]
@@ -720,7 +759,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vspace*{\fill}
 \paar{Erde}{Holz}{Die Lockerung}{Erde stellt sich dem Holz. Die Ruhe trifft auf Wachstum.}
   {Du lässt dich aufbrechen von etwas, das wachsen will. Deine Ruhe bekommt neues Leben.}
-  {Du wehrst dich gegen jede Veränderung und wirst hart. Oder du lässt dich so durchwurzeln, dass du dich selbst verlierst.}
+  {Veränderung kann sich wie Bedrohung anfühlen, und zu viel davon wie Selbstverlust. Lass dich lockern, und bleib dabei der Boden, der du bist.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:31}{\mycombination[0.5em]{Erde}{Holz}{Feuer}~31}} & \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Holz}{Metall}~32}} & \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~33}} \\[0.3ex]
@@ -731,7 +770,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vspace*{\fill}
 \paar{Erde}{Feuer}{Die Feuerstelle}{Erde kehrt heim zum Feuer. Der Halt sucht seine Wärme.}
   {Du gehst zurück zu dem, was dich einmal begeistert hat. Die alte Wärme gibt deiner Beständigkeit neuen Sinn.}
-  {Du wärmst dich nur noch an Erinnerungen. Oder du vergisst ganz, dass deine Ruhe einmal aus Leidenschaft entstand.}
+  {Erinnerungen können wärmen oder ersetzen, was heute fehlt. Hol dir die alte Wärme, und entzünde damit etwas Neues.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:34}{\mycombination[0.5em]{Erde}{Feuer}{Metall}~34}} & \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Feuer}{Wasser}~35}} & \mbox{\hyperlink{spruch:36}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~36}} \\[0.3ex]
@@ -744,7 +783,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vfill
 \paar{Metall}{Wasser}{Die Klärung}{Metall nährt Wasser. Aus Klarheit wird Weisheit.}
   {Eine klare Entscheidung bringt Ruhe und Tiefe. Was du geklärt hast, kann jetzt frei fließen.}
-  {Klarheit wird zur Kälte und Weisheit zur Distanz. Oder du entscheidest nie und kommst nie zur Ruhe.}
+  {Klarheit kann kühl werden, und Unentschlossenheit lässt keine Ruhe einkehren. Entscheide klar und mit warmem Herzen, dann fließt es.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:37}{\mycombination[0.5em]{Metall}{Wasser}{Holz}~37}} & \mbox{\hyperlink{spruch:38}{\mycombination[0.5em]{Metall}{Wasser}{Feuer}~38}} & \mbox{\hyperlink{spruch:39}{\mycombination[0.5em]{Metall}{Wasser}{Erde}~39}} \\[0.3ex]
@@ -755,7 +794,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vspace*{\fill}
 \paar{Metall}{Holz}{Das Beil}{Metall bändigt Holz. Die Klarheit schneidet das Wuchernde.}
   {Du trennst, was zu viel ist, und schaffst Raum. Ein klarer Schnitt hilft dem Wachstum.}
-  {Wer zu viel schneidet, lässt nichts mehr wachsen. Oder du scheust jeden Schnitt, und alles wuchert durcheinander.}
+  {Wer zu viel schneidet, lässt wenig wachsen; wer nie schneidet, verliert die Übersicht. Ein guter Schnitt ist ein Geschenk an das Wachstum.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Holz}{Feuer}~40}} & \mbox{\hyperlink{spruch:41}{\mycombination[0.5em]{Metall}{Holz}{Erde}~41}} & \mbox{\hyperlink{spruch:42}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~42}} \\[0.3ex]
@@ -766,7 +805,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vspace*{\fill}
 \paar{Metall}{Feuer}{Die Hitze}{Metall stellt sich dem Feuer. Die Form trifft auf die Leidenschaft.}
   {Du setzt dich der Leidenschaft aus, die dich verformen kann. So wird deine Klarheit lebendig und beweglich.}
-  {Du schmilzt unter jedem Druck und verlierst deine Form. Oder du verhärtest dich so, dass dich nichts mehr berührt.}
+  {Unter großem Druck kann man die Form verlieren, oder man verhärtet sich. Lass dich bewegen, und vertrau darauf, dass dein Kern bleibt.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:43}{\mycombination[0.5em]{Metall}{Feuer}{Erde}~43}} & \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Feuer}{Wasser}~44}} & \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~45}} \\[0.3ex]
@@ -777,7 +816,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vspace*{\fill}
 \paar{Metall}{Erde}{Der Berg}{Metall kehrt heim zur Erde. Die Klarheit sucht ihren Grund.}
   {Du gehst zurück zu dem, was dich hervorgebracht hat. Dort findest du Halt und Wärme hinter deiner Strenge.}
-  {Du versteckst dich im Vertrauten und meidest jede Entscheidung. Oder du hast deine Herkunft ganz vergessen und stehst ohne Boden da.}
+  {Im Vertrauten kann man sich verstecken, und ohne Herkunft fehlt der Boden. Kehr zurück, um Kraft zu holen, und triff dann deine Entscheidung.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:46}{\mycombination[0.5em]{Metall}{Erde}{Wasser}~46}} & \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Erde}{Holz}~47}} & \mbox{\hyperlink{spruch:48}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~48}} \\[0.3ex]
@@ -790,7 +829,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vfill
 \paar{Wasser}{Holz}{Der Frühling}{Wasser nährt Holz. Aus Stille wird Wachstum.}
   {Aus der Ruhe steigt ein neuer Plan. Dein Wissen gibt etwas Neuem Nahrung.}
-  {Du gießt und gießt und lässt das Neue nie allein stehen. Oder du bleibst so still, dass nichts aus dir wächst.}
+  {Wer zu viel gießt, lässt das Neue nie allein stehen; wer zu still bleibt, lässt nichts wachsen. Nähre, und trau dem Keim dann zu, selbst zu wachsen.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:49}{\mycombination[0.5em]{Wasser}{Holz}{Feuer}~49}} & \mbox{\hyperlink{spruch:50}{\mycombination[0.5em]{Wasser}{Holz}{Erde}~50}} & \mbox{\hyperlink{spruch:51}{\mycombination[0.5em]{Wasser}{Holz}{Metall}~51}} \\[0.3ex]
@@ -801,7 +840,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vspace*{\fill}
 \paar{Wasser}{Feuer}{Das Löschen}{Wasser bändigt Feuer. Die Ruhe dämpft die Hitze.}
   {Du bringst Ruhe in eine aufgeheizte Lage. Deine Gelassenheit hilft anderen, zur Besinnung zu kommen.}
-  {Aus Dämpfen wird Ersticken: Wer jede Begeisterung löscht, macht das Leben grau. Oder du lässt alles lodern, bis es niederbrennt.}
+  {Wer jede Begeisterung dämpft, macht das Leben grau, und wer alles lodern lässt, riskiert den Brand. Bring Ruhe, und lass die Freude leben.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Feuer}{Erde}~52}} & \mbox{\hyperlink{spruch:53}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~53}} & \mbox{\hyperlink{spruch:54}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~54}} \\[0.3ex]
@@ -812,7 +851,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vspace*{\fill}
 \paar{Wasser}{Erde}{Die Küste}{Wasser stellt sich der Erde. Der Fluss trifft auf seine Grenze.}
   {Du nimmst deine Grenzen an und gewinnst dadurch Richtung. Am Ufer wird das Wasser klar.}
-  {Du stößt dich immer wieder an denselben Grenzen. Oder du gibst nach und versickerst.}
+  {An denselben Grenzen stößt man sich immer wieder, oder man gibt nach und versickert. Nimm die Grenze als Ufer, das dir Richtung gibt.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:55}{\mycombination[0.5em]{Wasser}{Erde}{Metall}~55}} & \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Erde}{Holz}~56}} & \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~57}} \\[0.3ex]
@@ -823,7 +862,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \vspace*{\fill}
 \paar{Wasser}{Metall}{Das Gestein}{Wasser kehrt heim zum Metall. Die Tiefe sucht ihre Klarheit.}
   {Du gehst zurück zu deinen Grundsätzen, zu dem, was du klar weißt. Von dort aus fließt dein Handeln rein.}
-  {Du klammerst dich an alte Gewissheiten und wirst starr. Oder du verlierst jeden Halt und treibst ziellos.}
+  {Alte Gewissheiten können starr machen, und ohne sie treibt man leicht. Prüfe deine Grundsätze freundlich, und behalte die, die dich wirklich tragen.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:58}{\mycombination[0.5em]{Wasser}{Metall}{Holz}~58}} & \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Metall}{Feuer}~59}} & \mbox{\hyperlink{spruch:60}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~60}} \\[0.3ex]
@@ -1016,151 +1055,386 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 
 \addchap{Die 60 Tripel}\markboth{Die 60 Tripel}{\mbox{}}\label{kap:tripel}
 
-Die Tripel sind nach ihrem ersten Element geordnet. Innerhalb jeder Gruppe folgen sie den Mustern I bis XII. Jedes Tripel hat seinen Spruch: das fett gesetzte Urteil und darunter die Deutung.
+Die Tripel sind nach ihrem ersten Element geordnet. Innerhalb jeder Gruppe folgen sie den Mustern I bis XII. Jedes Tripel hat seinen Spruch: das fett gesetzte Urteil und darunter die Deutung, wie überall im Buch im Licht und im Schatten.
 
 \addsec*{\element{Holz}}\markright{\element{Holz}}
 \bigskip
 
+\vfill
 \spruch{1}{Holz}{Feuer}{Erde}{I Strom}{Der Funke wird zum Feld}{Ein Plan entfacht Begeisterung, und die Begeisterung schafft festen Boden. Gib dem Begonnenen Raum, aber lass dich nicht von ihm überwuchern.}
   {Da ist etwas in dir, das wachsen will, und es hat schon Feuer gefangen. Lass es brennen! Deine Begeisterung steckt andere an und gibt ihnen Boden unter den Füßen. Vielleicht wird daraus mehr, als du je geplant hast. Freu dich daran, und bleib trotzdem der Gärtner und nicht der Garten.}
+  {Begeisterung kann so mitreißen, dass man das Ziel aus den Augen verliert. Manchmal hält man den Funken aber auch aus Vorsicht zu klein. Beides ist menschlich. Gönn dir die Freude, und schau ab und zu, wohin sie dich trägt.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{2}{Holz}{Feuer}{Metall}{II Prüfung}{Die Glut auf dem Amboss}{Dein Vorhaben entzündet ein Feuer, und das Feuer schmiedet es in eine klare Form. Nimm das Urteil am Ende an.}
   {Du hast etwas begonnen, und es glüht. Jetzt kommt der Hammer: Kritik, Nachfragen, die harte Frage, ob es trägt. Das fühlt sich vielleicht wie ein Angriff an, ist aber ein Geschenk. Erst auf dem Amboss bekommt deine Idee ihre Form. Halte hin und vertrau darauf, dass das Feuer in dir die Schläge aushält.}
+  {Kritik fühlt sich manchmal wie Ablehnung an, und dann möchte man alles hinwerfen. Ebenso kann man so lange feilen, bis vom ersten Funken wenig bleibt. Behalte den Kern im Herzen, dann hält er jeden Schlag aus.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{3}{Holz}{Feuer}{Wasser}{III Lehrzeit}{Der Baum am Quell}{Du verausgabst dich für eine Sache. Wenn die Flamme erlischt, findest du die Tiefe, aus der du wächst.}
   {Du hast viel gegeben, vielleicht mehr, als gut für dich war. Wenn die Flamme jetzt kleiner wird, ist das kein Scheitern. Es ist die Einladung, still zu werden und zu trinken. In der Tiefe liegt die Quelle, aus der du kommst. Nimm dir die Zeit. Ein Baum, der am Wasser steht, wächst wieder.}
+  {Wer sich mit Hingabe verausgabt, merkt oft spät, wie müde er geworden ist. Manchmal zieht man sich aber auch zu früh zurück. Hör auf deine Kraft: Sie sagt dir, wann es Zeit zum Brennen ist und wann zum Trinken.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{4}{Holz}{Erde}{Metall}{IV Damm}{Die Wurzel bricht das Feld}{Dein Wille dringt in harten Grund, und darin kommt Erz zutage. Was du dir hart erarbeitest, wird wertvoll, aber es prüft deine Ziele.}
   {Du eroberst dir gerade etwas mühsam, Zentimeter für Zentimeter durch harten Boden. Bleib dran: In diesem Boden liegt etwas Kostbares, und du wirst es finden. Aber sei darauf gefasst, dass dein Fund dich fragt, warum du das alles tust. Hab eine gute Antwort, oder finde sie unterwegs.}
+  {Auf hartem Grund kann aus Ausdauer leicht Verbissenheit werden. Und manchmal gibt man genau dann auf, wenn das Erz schon nah ist. Frag dich ab und zu, wofür du gräbst, dann findest du das rechte Maß.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{5}{Holz}{Erde}{Wasser}{V Strenger Weg}{Der Pflug}{Du ziehst Furchen und bringst Ordnung ins Feld. Gerade die harte Arbeit führt dich zurück zu deiner Quelle.}
   {Gerade ist es Arbeit, keine Romantik: Furche um Furche, Tag für Tag. Das darf sich auch mal schwer anfühlen. Doch genau diese Ordnung bringt dich zu dir zurück. Wenn das Feld bestellt ist, wirst du merken, dass die Quelle die ganze Zeit unter deinen Füßen lag.}
+  {Ordnung kann zur Pflicht werden, die keine Freude mehr macht. Manchmal wünscht man sich auch, die Quelle käme ohne Mühe. Gönn dir zwischen den Furchen einen Blick auf das ganze Feld, dann trägt dich die Arbeit.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{6}{Holz}{Erde}{Feuer}{VI Abkürzung}{Das Rodungsfeuer}{Du greifst entschlossen ein und lässt dann los. Daraus entsteht die Begeisterung, die du dir gewünscht hast.}
   {Manchmal muss man beherzt eingreifen, Platz schaffen, Altes wegräumen. Das hast du getan oder wirst es tun. Dann geh geradewegs weiter und halte dich nicht mit Nebensachen auf. Aus dem freigeräumten Boden steigt schneller als gedacht genau die Freude auf, nach der du dich gesehnt hast. Nur schau dich ab und zu um, ob du auf dem kurzen Weg niemanden zurückgelassen hast.}
+  {Beim Aufräumen geht manchmal auch etwas Gutes mit. Und manchmal traut man sich nicht, Altes wegzunehmen. Geh beherzt vor, mit offenen Augen für das, was bleiben darf.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{7}{Holz}{Metall}{Wasser}{VII Läuterung}{Der Schnitt im Frühling}{Du stellst dich der Schere, die dich beschneidet. Der Verlust führt dich zu neuer Kraft.}
   {Etwas wird dir genommen, oder du musst selbst etwas abschneiden, mitten im schönsten Wachsen. Das tut weh, und das darf es. Jeder Gärtner weiß aber: Der Schnitt im Frühling macht den Baum stärker. Lass die Trauer zu. Sie führt dich zu einer Kraft, die du vorher nicht hattest.}
+  {Ein Verlust kann größer wirken, als er ist, solange man ihn festhält. Manchmal beschneidet man sich auch selbst, aus Sorge, zu viel Raum zu nehmen. Du darfst trauern, und du darfst groß werden.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{8}{Holz}{Metall}{Feuer}{VIII Aufstand}{Der Trieb gegen die Klinge}{Du widersetzt dich der Strenge, und dein Widerstand entfacht ein eigenes Feuer. Kämpfe, aber wisse, wofür.}
   {Du sollst dich fügen, kleiner werden, nicht so wild sein. Und alles in dir sagt nein. Gut so! Dein Widerstand hat Feuer, und dieses Feuer gehört dir. Nur prüfe ehrlich, wofür du kämpfst. Ein Aufstand mit Herz und Ziel verändert die Welt, einer aus bloßem Trotz verbrennt nur dich selbst.}
+  {Widerstand kann so viel Kraft binden, dass er mehr verbrennt, als er befreit. Manchmal schluckt man ihn auch herunter. Beides ist verständlich. Wähl die Kämpfe, die dir wirklich wichtig sind, und schenk ihnen dein Feuer.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{9}{Holz}{Metall}{Erde}{IX List}{Der Bambus im Sturm}{Du beugst dich vor der Härte, statt zu brechen. Danach findest du Boden, auf dem du dich durchsetzt.}
   {Gegen diese Härte kommst du nicht mit Gewalt an, und du musst es auch nicht. Sei wie der Bambus: biegsam, geduldig, verwurzelt. Der Sturm geht vorbei, und du stehst noch. Danach findest du Boden, auf dem du in aller Ruhe bauen kannst, was du wolltest.}
+  {Wer oft nachgibt, kann vergessen, wofür er steht. Und wer nie nachgibt, bricht leichter. Bleib biegsam und halte deine Wurzeln fest, dann übersteht dein Kern jeden Sturm.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{10}{Holz}{Wasser}{Feuer}{X Gesammelte Kraft}{Der Saft steigt}{Geh zurück zur Wurzel und trink dich satt, dann handle. Aus dieser Sammlung wächst dein Werk.}
   {Du willst loslegen, aber dir fehlt noch etwas. Hör auf dieses Gefühl. Geh zurück zu dem, was dich nährt: zu Menschen, Orten, Stille, Erinnerungen. Trink dich satt. Dann kommt dein Handeln nicht aus Ungeduld, sondern aus Fülle, und es wird leuchten.}
+  {Manchmal sammelt man Kraft und wartet zu lange auf den richtigen Moment. Manchmal startet man auch, bevor man genug getankt hat. Spür hin, wann du bereit bist; dein Gefühl dafür ist meist gut.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{11}{Holz}{Wasser}{Erde}{XI Rückhalt}{Das Ufer}{Getragen von deiner Herkunft stellst du dich dem, was dich eindämmen will. Am Ende bestimmst du das Gelände.}
   {Du bist nicht allein. Hinter dir steht, woher du kommst: deine Familie, deine Freunde, deine Geschichte. Lehn dich daran an. Mit diesem Rückhalt kannst du dich den Grenzen stellen, die man dir setzen will, und am Ende bist du es, der das Gelände bestimmt.}
+  {Herkunft kann so viel Halt geben, dass man sich nicht mehr allein hinauswagt. Und manchmal will man alles allein schaffen. Lass dich stützen und geh trotzdem deine eigenen Schritte; beides gehört zusammen.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{12}{Holz}{Wasser}{Metall}{XII Wurzelsuche}{Die Jahresringe}{Du gehst weit zurück, tiefer als deine Wurzeln. Dort triffst du auf das, was dich begrenzt. Erkenne es und wachse weiter.}
   {Es ist Zeit für einen Blick nach innen, tief, Ring um Ring zurück. Dort stößt du auf etwas, das dich bis heute begrenzt: ein altes Urteil, eine Angst, ein Satz, den jemand einmal gesagt hat. Schau es freundlich an. Was erkannt ist, verliert seine Macht, und du wächst weiter.}
+  {Wer in seiner Geschichte gräbt, findet manchmal mehr Gründe zu bleiben als zu wachsen. Andere schauen lieber gar nicht zurück. Ein freundlicher Blick nach hinten genügt, um leichter nach vorn zu gehen.}
+\vspace*{\fill}
 
 \newpage
 \addsec*{\element{Feuer}}\markright{\element{Feuer}}
 \bigskip
 
+\vfill
 \spruch{13}{Feuer}{Erde}{Metall}{I Strom}{Die Esse}{Begeisterung wird zu Fürsorge und Fürsorge zu einem klaren Ergebnis. Großes gelingt, wenn du der Form erlaubst, dein Feuer zu bändigen.}
   {Deine Leidenschaft ist ein Geschenk, und jetzt kann sie etwas Bleibendes schaffen. Kümmere dich um das, was du begeistert begonnen hast, gib ihm Pflege und Geduld. Dann darfst du zusehen, wie es Gestalt annimmt. Lass zu, dass die Form dich ein wenig zähmt. Das macht dein Feuer nicht kleiner, sondern wirksamer.}
+  {Wenn die Form wichtiger wird als das Feuer, verliert ein Werk seine Wärme. Manchmal mag man sich auch gar nicht formen lassen. Lass beides zusammenkommen: Leidenschaft, die Gestalt annimmt.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{14}{Feuer}{Erde}{Wasser}{II Prüfung}{Die Asche am Fluss}{Deine Wärme setzt sich und wird zur Grenze. Am Ende prüft dich die Stille; nimm die Abkühlung an.}
   {Nach all der Wärme wird es still. Vielleicht vermisst du das Lodern, vielleicht fragst du dich, ob es das war. Halte die Stille aus. Sie prüft dich, aber sie will dir nichts Böses. Am Fluss der Ruhe sortiert sich, was wirklich zählt, und danach weißt du, wofür du wieder brennen willst.}
+  {Nach dem Lodern kann sich die Stille leer anfühlen, und dann sucht man schnell das nächste Feuer. Oder man bleibt zu lange in der Asche sitzen. Gib der Ruhe ein wenig Zeit; die Glut kehrt zurück, wenn sie so weit ist.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{15}{Feuer}{Erde}{Holz}{III Lehrzeit}{Der Herd}{Was du ausstrahlst, gibt anderen Halt, und daraus wächst neuer Antrieb für dich. Wer wärmt, wird genährt.}
   {Du bist für andere wie ein warmer Herd, an dem man sich sammelt. Vielleicht merkst du gar nicht, wie viel Halt du gibst. Jetzt kommt etwas zurück: Ideen, Pläne, neue Lust auf Wachstum. Nimm es an. Wer so großzügig wärmt, darf auch selbst genährt werden.}
+  {Wer viel wärmt, vergisst manchmal sich selbst. Und manchmal wünscht man sich für die Wärme mehr Dank, als kommt. Beides ist menschlich. Sorg auch für dein eigenes Feuer, dann wärmst du leichter.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{16}{Feuer}{Metall}{Wasser}{IV Damm}{Das Schmelzen}{Deine Leidenschaft bricht eine Starre auf, und Neues beginnt zu fließen. Am Ende steht eine Kühle, die dich fordert.}
   {Deine Begeisterung bringt etwas in Bewegung, das lange starr war. Das ist wunderbar, und es fließt jetzt. Aber was fließt, wird kühl und still. Vielleicht begegnet dir am Ende eine Nüchternheit, die dich herausfordert. Bleib warm, auch wenn die anderen schon ruhig geworden sind.}
+  {Was in Bewegung kommt, kann mehr ins Fließen geraten, als man wollte. Manchmal hält man aus Gewohnheit an der Starre fest. Gib dem Neuen ein Bett, dann fließt es in eine gute Richtung.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{17}{Feuer}{Metall}{Holz}{V Strenger Weg}{Die geschärfte Axt}{Du formst mit Hitze, und die Klinge schneidet weiter. Durch Strenge findest du zurück zu dem, was dich einst entzündet hat.}
   {Gerade ist Disziplin gefragt. Du formst, schärfst, schneidest weg, was nicht dazugehört. Das ist nicht immer schön, aber es ist ehrlich. Und mitten in dieser Strenge erinnerst du dich plötzlich, warum du einmal angefangen hast. Diese Erinnerung ist dein Lohn.}
+  {Disziplin kann scharf machen und dabei ein wenig kühl. Manchmal mag man sie auch gar nicht und bleibt ein Strohfeuer. Schärfe dein Werkzeug, und lass dein Herz dabei warm.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{18}{Feuer}{Metall}{Erde}{VI Abkürzung}{Das gegossene Gefäß}{Du setzt dich durch und trittst dann zurück. Es bleibt ein Gefäß, das andere trägt: dein Werk.}
   {Du hast dich mit ganzer Kraft eingesetzt, jetzt darfst du zurücktreten. Das fällt feurigen Menschen schwer. Aber schau: Was du geschaffen hast, steht von selbst. Es trägt andere, auch wenn du nicht daneben stehst. Vielleicht ist das das schönste Werk: eines, das dich nicht mehr braucht.}
+  {Wer sich durchgesetzt hat, möchte manchmal zu früh weiter. Und manchmal fällt es schwer, das eigene Werk loszulassen. Bleib, bis es trägt, und trau ihm dann zu, allein zu stehen.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{19}{Feuer}{Wasser}{Holz}{VII Läuterung}{Regen nach dem Brand}{Du stellst dich dem, was dich löschen will. Aus der Kühle wächst, was dich wieder entzündet.}
   {Etwas will dein Feuer löschen: eine Enttäuschung, eine Absage, ein kalter Blick. Stell dich dem und lauf nicht davon. Nach dem Regen ist die Luft klar, und aus der nassen Erde wächst Neues. Genau daran wirst du dich wieder entzünden, vielleicht heller als zuvor.}
+  {Nach einer Enttäuschung erwartet man leicht die nächste. Manchmal möchte man jeder Kühle ausweichen. Nimm den Regen, wie er kommt: Nicht jedes Nein ist ein Zeichen, und nach jedem Regen klart es auf.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{20}{Feuer}{Wasser}{Erde}{VIII Aufstand}{Der Dampf}{Feuer trifft auf Wasser, Wasser auf den Damm. Aus dem Zusammenstoß entsteht festes Land, wenn der Streit ein Ziel hat.}
   {Es kracht und zischt: Leidenschaft trifft auf Widerstand, und keiner will nachgeben. Streit ist nicht schlimm, wenn er etwas will. Frag dich, was ihr gemeinsam bauen könnt. Aus Feuer und Wasser wird Dampf, und wenn er sich legt, steht ihr vielleicht auf festem, neuem Land.}
+  {Im Streit kann der Dampf so dicht werden, dass man das gemeinsame Ziel nicht mehr sieht. Manchmal schluckt man den Konflikt auch lieber herunter. Sprecht es aus, und schaut dabei auf das Land, das ihr gemeinsam gewinnen könnt.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{21}{Feuer}{Wasser}{Metall}{IX List}{Die Kerze im Wind}{Weich der Übermacht aus, statt dich auslöschen zu lassen. Am Ende hast du Gewicht über das Harte und Kalte.}
   {Der Wind ist gerade stärker als du. Dagegenzuhalten hieße zu verlöschen. Also schütze deine Flamme: Weich aus, such Deckung, warte. Das ist keine Feigheit, sondern Weisheit. Wenn der Sturm vorbei ist, brennst du noch, und dann hast du mehr Gewicht als alle, die sich verausgabt haben.}
+  {Vorsicht kann so groß werden, dass die eigene Flamme kaum noch jemanden wärmt. Manchmal stellt man sich auch jedem Sturm. Weisheit heißt zu spüren, welcher Wind vorübergeht und wann du wieder leuchten darfst.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{22}{Feuer}{Holz}{Erde}{X Gesammelte Kraft}{Holz nachlegen}{Bevor du strahlst, nähre die Glut. Dann wird das Ergebnis dauerhaft.}
   {Bevor du wieder strahlst, sorg für Nachschub. Was nährt dich? Was gibt dir Lust und Kraft? Leg Holz nach, mit Liebe und ohne Eile. Ein Feuer, das gut versorgt ist, wärmt die ganze Nacht, und was du dann schaffst, wird bleiben.}
+  {Man kann so sorgfältig nachlegen, dass man vergisst, das Feuer zu genießen. Oder man verheizt alles auf einmal. Pflege deine Glut, und gönn dir auch ihr Leuchten.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{23}{Feuer}{Holz}{Metall}{XI Rückhalt}{Die Fackel}{Gestützt auf das, was dich nährt, trittst du der Härte entgegen und behältst die Oberhand.}
   {Du gehst auf etwas Hartes zu, und das ist mutig. Aber du gehst nicht allein: Du trägst eine Fackel, und sie nährt sich aus allem, was dich ausmacht. Vergiss das nicht, wenn es kalt wird. Mit diesem Licht in der Hand behältst du die Oberhand.}
+  {Manchmal traut man sich nur, wenn andere die Fackel reichen. Und manchmal geht man ganz ohne Licht los. Vertrau auf das, was dich nährt; es leuchtet dir auch dann, wenn niemand zusieht.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{24}{Feuer}{Holz}{Wasser}{XII Wurzelsuche}{Der Blick ins Dunkel}{Du suchst, woher deine Begeisterung kam, und stößt auf deine Angst. Sie anzusehen löscht dich nicht.}
   {Woher kommt eigentlich dein Feuer? Wenn du danach gräbst, triffst du vielleicht auf etwas Unerwartetes: eine Angst, die dich antreibt. Erschrick nicht. Sie anzusehen löscht dich nicht, im Gegenteil. Wer seine Angst kennt, brennt ruhiger und länger.}
+  {Angst kann wachsen, wenn man sie zu lange anstarrt, und ebenso, wenn man vor ihr davonläuft. Ein ruhiger Blick genügt. Dann zeigt sich, dass dein Feuer größer ist als sie.}
+\vspace*{\fill}
 
 \newpage
 \addsec*{\element{Erde}}\markright{\element{Erde}}
 \bigskip
 
+\vfill
 \spruch{25}{Erde}{Metall}{Wasser}{I Strom}{Die Quelle im Fels}{Was du sammelst, klärt sich und beginnt zu fließen. Was fließt, entzieht sich aber deiner Kontrolle.}
   {Du hast lange gesammelt, gepflegt, bewahrt. Jetzt klärt es sich, und plötzlich fließt es. Das ist ein schöner Moment, genieße ihn. Aber was fließt, gehört nicht mehr nur dir. Lass es ziehen und vertrau darauf, dass es seinen Weg findet.}
+  {Was man lange gesammelt hat, gibt man nicht leicht her. Und manchmal lässt man es zu schnell laufen. Teile mit offener Hand und behalte genug für dich, dann bleibt die Quelle lebendig.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{26}{Erde}{Metall}{Holz}{II Prüfung}{Der Spaten}{Deine Fürsorge bringt Werkzeug hervor, und das Werkzeug lichtet den Wald. Am Ende wächst etwas, das an deiner Ruhe rüttelt.}
   {Deine Fürsorge hat anderen Werkzeug in die Hand gegeben, und jetzt machen sie etwas daraus. Vielleicht etwas, das dir zu schnell geht oder zu wild ist. Halte inne, bevor du bremst. Was da wächst, ist auch deine Frucht. Es prüft nur, wie weit dein Herz ist.}
+  {Fürsorge kann zur Sorge werden, wenn andere anders graben als gedacht. Manchmal gibt man auch ungern etwas aus der Hand. Vertrau dem, was du möglich gemacht hast; es darf über dich hinauswachsen.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{27}{Erde}{Metall}{Feuer}{III Lehrzeit}{Der Tiegel}{Du gibst Substanz, sie wird geschliffen und geprüft. Am Ende kehrt Wärme zu dir zurück.}
   {Du gibst von deiner Substanz: deine Zeit, dein Wissen, deinen Halt. Und es wird geschliffen, geprüft, manchmal kritisiert. Halte durch. Am Ende kehrt die Wärme zu dir zurück, als Dank, als Freude, als Gemeinschaft. Geben und Empfangen schließen sich hier zum Kreis.}
+  {Wer viel gibt, wartet manchmal heimlich auf Wärme zurück. Das ist ganz natürlich. Gib, was du gern gibst, und nimm die Wärme an, wenn sie kommt; oft kommt sie von unerwarteter Seite.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{28}{Erde}{Wasser}{Holz}{IV Damm}{Das Wehr}{Du hältst etwas zurück, und das Gestaute bewässert neues Wachstum. Das Wachstum wird deine Ordnung infrage stellen.}
   {Du hast lange festgehalten, und es hat sich gelohnt: Etwas Neues blüht, weil du es geschützt hast. Jetzt wird es groß und rüttelt an deinen Regeln. Hab keine Angst davor. Es ist dein eigenes Werk, das dich herausfordert, und darauf darfst du stolz sein.}
+  {Wer lange schützt, hält manchmal zu lange fest. Auch ein Wehr braucht einen offenen Durchlass. Vertrau darauf, dass das, was du bewahrt hast, stark genug ist, um zu fließen.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{29}{Erde}{Wasser}{Feuer}{V Strenger Weg}{Der Deich}{Du setzt Grenzen, und die Grenze wird weitergegeben. So findest du zurück zu dem, was dich wärmt.}
   {Grenzen setzen ist kein Liebesentzug. Manchmal ist es die liebevollste Tat überhaupt. Du ziehst eine Linie, und andere lernen daran, selbst Linien zu ziehen. Auf diesem strengen Weg findest du zurück zu der Wärme, die dich ursprünglich bewegt hat.}
+  {Grenzen können sich vermehren, bis man vergisst, was sie schützen sollten. Manchmal scheut man sie auch ganz. Prüfe deine Deiche ab und zu mit liebevollem Blick; die guten dürfen bleiben.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{30}{Erde}{Wasser}{Metall}{VI Abkürzung}{Das Flussbett}{Du gibst die Richtung vor und lässt dann laufen. Was sich absetzt, ist klar und wertvoll: dein Ertrag.}
   {Du hast die Richtung gegeben, jetzt lass laufen. Es ist nicht deine Aufgabe, jede Welle zu lenken. Schau lieber, was sich absetzt, wenn das Wasser zur Ruhe kommt: klare, wertvolle Körner. Das ist deine Ernte, und sie ist größer, als du denkst.}
+  {Wer die Richtung vorgibt, möchte manchmal jede Welle lenken. Und manchmal überlässt man zu viel dem Zufall. Gib den Weg vor und schau dann gelassen zu; das meiste findet seinen Lauf.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{31}{Erde}{Holz}{Feuer}{VII Läuterung}{Das umgegrabene Feld}{Du lässt zu, dass etwas dich durchwurzelt und aufbricht. Daraus entsteht Wärme, die dich belebt.}
   {Etwas wühlt dich auf, bricht durch deine Ruhe, durchwurzelt deine Gewohnheiten. Das ist unbequem. Aber umgegrabene Erde atmet. Lass zu, dass dich etwas bewegt. Aus dieser Unruhe steigt eine Wärme, die dich lebendiger macht, als du dich lange gefühlt hast.}
+  {Neue Ideen können so viel aufwühlen, dass keine Ruhe mehr bleibt. Manchmal wehrt man sich auch gegen jede Bewegung. Lass dich bewegen, und gönn dem Boden danach Zeit, sich zu setzen.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{32}{Erde}{Holz}{Metall}{VIII Aufstand}{Der Erdrutsch}{Du stemmst dich gegen das, was dich bewegen will, und hältst stand. Aus dem Ringen geht Klarheit hervor.}
   {Alles drängt dich zur Veränderung, und du sagst: Nein, hier stehe ich. Das darfst du. Halt stand, aber nicht verkrampft. Im Ringen zeigt sich, was wirklich wichtig ist und was nur Gewohnheit war. Aus diesem Kampf gehst du klarer hervor.}
+  {Standhaftigkeit kann in Sturheit umschlagen und Nachgiebigkeit in Selbstverlust. Beides kennt jeder. Halte fest, was dir wichtig ist, und lass los, was nur Gewohnheit ist.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{33}{Erde}{Holz}{Wasser}{IX List}{Der Acker unter dem Wald}{Du gibst nach und lässt die Wurzeln gewähren. Am Ende lenkst du, was zu fließen begann.}
   {Du musst nicht jeden Kampf annehmen. Gib nach, lass das Neue gewähren, auch wenn es dich verdrängt. Der Wald wächst auf dir, aber du bist der Boden. Mit der Zeit lenkst du ganz leise, wohin das Wasser fließt. Sanftheit ist auch eine Macht.}
+  {Wer viel nachgibt, wird manchmal kaum noch gesehen. Und wer gar nicht nachgibt, verpasst das Neue. Deine leise Kraft ist wertvoll; zeig sie ruhig auch einmal offen.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{34}{Erde}{Feuer}{Metall}{X Gesammelte Kraft}{Der Brennofen}{Hol dir Wärme und Zuspruch, dann forme. Was du hervorbringst, wird fest und gültig.}
   {Bevor du etwas formst, hol dir Wärme: ein ermutigendes Wort, eine Umarmung, ein Fest. Du gibst so viel, jetzt darfst du dich wärmen lassen. Dann gelingt dir, was du anpackst, und es wird fest und gültig wie gebrannter Ton.}
+  {Manchmal wartet man auf Zuspruch, bevor man beginnt. Manchmal arbeitet man ganz ohne Wärme. Hol dir Ermutigung, wo sie guttut, und vertrau auch deinem eigenen Urteil.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{35}{Erde}{Feuer}{Wasser}{XI Rückhalt}{Das Feuer am Damm}{Gestützt von Menschen, die dich wärmen, stellst du dich der Flut und hältst stand.}
   {Die Flut steigt, aber du stehst nicht allein am Damm. Um dich sind Menschen, die dich wärmen und mit dir aushalten. Lass sie nah an dich heran. Gemeinsam haltet ihr stand, und wenn das Wasser sinkt, sitzt ihr noch zusammen am Feuer.}
+  {Wenn andere mit am Damm stehen, kann man sich auch zu sehr auf sie verlassen. Und manchmal lässt man niemanden heran. Gemeinschaft trägt am besten, wenn jeder ein wenig mit anpackt, auch du.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{36}{Erde}{Feuer}{Holz}{XII Wurzelsuche}{Die alte Brandstelle}{Du forschst nach, woher deine Sicherheit kommt, und triffst auf das, was dich unruhig macht. Halte es aus.}
   {Woher kommt deine Sicherheit? Wenn du zurückgehst, findest du vielleicht eine alte Brandstelle, einen Moment, in dem es einmal heiß und unruhig war. Halte es aus. Gerade dort wächst inzwischen Neues, und es erzählt dir, wie stark du damals schon warst.}
+  {Alte Wunden ziehen manchmal immer wieder an. Und manchmal möchte man sie lieber ganz vergessen. Ein versöhnlicher Blick zurück macht deinen Halt fester als beides.}
+\vspace*{\fill}
 
 \newpage
 \addsec*{\element{Metall}}\markright{\element{Metall}}
 \bigskip
 
+\vfill
 \spruch{37}{Metall}{Wasser}{Holz}{I Strom}{Der Tau auf der Klinge}{Klarheit wird zu Weisheit und Weisheit zu neuem Wachstum. Was du loslassen kannst, wächst, aber es richtet sich nicht nach dir.}
   {Du hast etwas klar gesehen und klar entschieden. Jetzt wird aus deiner Klarheit Weisheit, und aus der Weisheit wächst Leben. Das ist schön, aber es wächst nicht nach deinem Plan. Lass es frei. Was du loslassen kannst, kann am größten werden.}
+  {Was man losgelassen hat, möchte man manchmal doch noch ein wenig lenken. Und Klarheit kann kühl wirken. Lass es wirklich frei, und schenk ihm deine Wärme dazu.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{38}{Metall}{Wasser}{Feuer}{II Prüfung}{Das gekühlte Schwert}{Deine Entscheidung beruhigt die Lage. Die Ruhe hält jedoch ein Feuer im Zaum, das dich prüfen wird.}
   {Deine Entscheidung hat Ruhe gebracht, gut gemacht. Doch unter der Ruhe glimmt noch etwas: ein Gefühl, ein Wunsch, ein Konflikt. Er wird sich melden. Begegne ihm nicht mit Strenge, sondern mit Neugier. Diese Prüfung will dir zeigen, wo dein Herz noch brennt.}
+  {Ruhe kann darüber hinwegtäuschen, dass noch etwas glimmt. Manchmal begegnet man Gefühlen auch zu streng. Hör ihnen freundlich zu, dann wird aus der Prüfung ein Gespräch.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{39}{Metall}{Wasser}{Erde}{III Lehrzeit}{Das Erz im Schlamm}{Du gibst weiter, was du weißt. Am Ende findest du den Boden, aus dem du selbst stammst.}
   {Du gibst weiter, was du weißt, und das ist ein Akt der Liebe. Beim Erklären, Lehren und Teilen entdeckst du etwas Überraschendes: deine eigenen Wurzeln, woher du kommst, wer dich geprägt hat. Lass dich davon berühren. Du bist Teil einer langen Kette.}
+  {Beim Weitergeben kann aus Teilen leicht Belehren werden. Und manchmal behält man sein Wissen lieber für sich. Teile es so, wie du es selbst gern empfangen hättest.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{40}{Metall}{Holz}{Feuer}{IV Damm}{Die gefällte Kiefer}{Du schneidest ab, was zu viel ist, und daraus wird Brennholz für Neues. Rechne mit Leidenschaft, die deine Ordnung herausfordert.}
   {Du räumst auf und schneidest weg, was zu viel war. Das schafft Raum und Brennstoff. Doch rechne damit, dass aus dem Holz ein Feuer wird, das sich nicht an deine Ordnung hält. Freu dich darüber. Leidenschaft ist das, was deine Klarheit lebendig macht.}
+  {Wer aufräumt, schneidet manchmal schneller, als gut ist. Und manchmal stört die Leidenschaft, die daraus entsteht. Lass beides zu: Klarheit und Wärme gehören zusammen.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{41}{Metall}{Holz}{Erde}{V Strenger Weg}{Die Rodung}{Du schneidest, und das Geschnittene dringt in den Boden. Strenge führt zurück zu dem Halt, der dich trägt.}
   {Gerade ist ein klarer Schnitt nötig, und du hast den Mut dazu. Was du abschneidest, sinkt in den Boden und wird zu Erde. Nichts geht verloren. Auf diesem strengen Weg kommst du zurück zu dem, was dich trägt: dein Halt, dein Zuhause, deine Mitte.}
+  {Ein klarer Schnitt kann den nächsten nach sich ziehen, bis wenig übrig bleibt. Manchmal scheut man ihn auch ganz. Schneide mit Bedacht; der Boden, der dich trägt, braucht auch etwas Grün.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{42}{Metall}{Holz}{Wasser}{VI Abkürzung}{Die Sichel}{Du erntest und lässt das Feld ruhen. Aus der Ruhe entsteht Tiefe, und sie ist deine eigentliche Frucht.}
   {Die Ernte ist eingebracht. Jetzt kommt die Zeit, in der nichts geschehen muss. Lass das Feld ruhen, und lass dich ruhen. Das ist kein Stillstand, sondern Reifung. In dieser Ruhe wächst eine Tiefe, die vielleicht die wahre Frucht des ganzen Jahres ist.}
+  {Nach der Ernte möchte man oft gleich weiter. Und manchmal ruht man länger, als man wollte. Gönn dir die Pause ganz, dann weißt du von selbst, wann die nächste Saat dran ist.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{43}{Metall}{Feuer}{Erde}{VII Läuterung}{Die Schmelze}{Du gibst dich in die Hitze, die dich verformt. Daraus entsteht neuer Grund, der dich nährt.}
   {Etwas bringt deine festen Formen zum Schmelzen: eine Liebe, eine Krise, eine Leidenschaft. Das macht Angst, denn du warst so klar. Aber lass dich verformen. Aus der Schmelze entsteht neuer Grund, weicher und nahrhafter als zuvor, und du wirst dich darin wohler fühlen.}
+  {In großer Hitze kann man sich selbst ein wenig verlieren. Manchmal schützt man sich auch so sehr, dass einen nichts mehr berührt. Lass dich berühren, und vertrau darauf, dass dein Kern bleibt.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{44}{Metall}{Feuer}{Wasser}{VIII Aufstand}{Der Hammer gegen die Glut}{Du hältst dem Druck stand, und das Feuer versinkt in stiller Tiefe. Am Ende siegt die Weisheit.}
   {Man setzt dich unter Druck, und du hältst stand, Schlag um Schlag. Das kostet Kraft, aber es lohnt sich. Irgendwann versinkt die ganze Hitze in einer tiefen Stille, und dann zeigt sich: Nicht die Lautesten gewinnen, sondern die, die wissen, was sie wollen.}
+  {Wer lange standhält, wird manchmal härter, als er möchte. Und manchmal gibt man zu früh nach. Gönn dir zwischen den Schlägen Ruhe; Standhaftigkeit wächst aus Gelassenheit.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{45}{Metall}{Feuer}{Holz}{IX List}{Die abgekühlte Form}{Du weichst der Hitze aus und ziehst dich zurück. Am Ende kannst du zurechtschneiden, was wild gewachsen ist.}
   {Die Hitze ist gerade zu groß, die Stimmung zu aufgeladen. Zieh dich zurück, ohne Groll, und lass alles abkühlen. Später, mit ruhiger Hand, kannst du das, was in der Zwischenzeit wild gewachsen ist, in eine gute Form bringen. Geduld ist hier deine schärfste Klinge.}
+  {Wer sich zurückzieht, verpasst manchmal den Moment, zurückzukehren. Und später schneidet man vielleicht strenger als nötig. Komm zur rechten Zeit wieder, mit ruhiger, freundlicher Hand.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{46}{Metall}{Erde}{Wasser}{X Gesammelte Kraft}{Die Ader im Berg}{Erst zurück in den Schoß, dann Grenzen setzen. Was danach fließt, ist rein.}
   {Bevor du klare Grenzen ziehst, geh zurück in den Schoß, dorthin, wo du dich geborgen fühlst. Von dort aus bist du nicht hart, sondern klar. Und was dann aus deiner Entscheidung fließt, ist rein und frei von Bitterkeit.}
+  {In der Geborgenheit kann man Entscheidungen auch vor sich herschieben. Und manchmal entscheidet man kühler, als man ist. Sammle dich, und dann sprich klar und warm zugleich.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{47}{Metall}{Erde}{Holz}{XI Rückhalt}{Der eiserne Pflug}{Mit dem Rückhalt deiner Herkunft stellst du dich dem Wuchernden und lenkst es.}
   {Etwas wuchert, wächst durcheinander, droht dich zu überrollen. Du musst es nicht allein bändigen. Stütz dich auf das, was dich trägt: deine Erfahrung, deine Herkunft, die Menschen hinter dir. Mit diesem Halt lenkst du das Wilde in gute Bahnen, ohne es zu zerstören.}
+  {Wer das Wilde lenkt, greift manchmal fester zu als nötig. Und Erfahrung kann den Blick für Neues trüben. Lenke mit leichter Hand und bleib neugierig auf das, was wachsen will.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{48}{Metall}{Erde}{Feuer}{XII Wurzelsuche}{Die Erzsuche}{Du gräbst nach deinem Ursprung und triffst auf die Glut, die dich verformen kann. Fass die Erinnerung mit Vorsicht an.}
   {Du gräbst nach deinem Ursprung, nach dem, was dich so klar und fest gemacht hat. Dabei triffst du auf eine Glut, eine alte, heiße Erinnerung. Fass sie behutsam an. Sie kann dich verformen, aber auch erwärmen. Vielleicht ist es Zeit, ein wenig weicher zu werden.}
+  {Alte Erinnerungen können noch heiß sein. Manchmal meidet man sie ganz, manchmal stürzt man sich hinein. Geh in deinem Tempo; du bestimmst, wie nah du der Glut kommst.}
+\vspace*{\fill}
 
 \newpage
 \addsec*{\element{Wasser}}\markright{\element{Wasser}}
 \bigskip
 
+\vfill
 \spruch{49}{Wasser}{Holz}{Feuer}{I Strom}{Die Quelle im Frühling}{Aus der Stille steigt ein Plan, aus dem Plan Begeisterung. Lass es fließen, auch wenn das Feuer deine Ruhe verdrängt.}
   {Aus deiner Stille steigt etwas auf: ein Plan, eine Sehnsucht, ein Frühling. Und schon brennt es! Lass es geschehen. Ja, deine Ruhe wird dabei verdrängt, aber das ist der Preis des Lebens. Die Stille wartet auf dich, und du wirst sie wiederfinden.}
+  {Neue Begeisterung kann die eigene Stille übertönen. Und manchmal hält man so an der Ruhe fest, dass nichts aufsteigen darf. Lass den Frühling kommen; die Stille findet dich wieder.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{50}{Wasser}{Holz}{Erde}{II Prüfung}{Das bewässerte Feld}{Dein Wissen nährt einen Anfang, und der Anfang greift in festen Grund. Am Ende stehen Strukturen, die deine Freiheit begrenzen.}
   {Was du weißt, nährt einen neuen Anfang, und dieser Anfang schlägt Wurzeln, wird fest, wird Struktur. Plötzlich gibt es Regeln, Pflichten, Erwartungen. Das kann sich eng anfühlen. Aber es ist auch der Beweis, dass aus deinem Wissen etwas Wirkliches geworden ist.}
+  {Aus Wissen kann ein Gerüst werden, das auch einengt. Manchmal flieht man auch vor jeder Struktur. Bau dir eine Ordnung, die dir dient, und lass dir darin Luft zum Atmen.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{51}{Wasser}{Holz}{Metall}{III Lehrzeit}{Das Floß}{Du förderst ein Wachstum, das auf die Klinge trifft. Daraus kehrt Klarheit zu dir zurück, deine eigene Quelle.}
   {Du förderst etwas, das wächst und dann auf Widerstand trifft. Bleib dabei, auch wenn es geprüft wird. Gerade in dieser Prüfung findest du zu einer Klarheit, die dich selbst überrascht. Das Floß trägt, und am Ende trägt es auch dich.}
+  {Wer andere fördert, vergisst manchmal sich selbst. Und wenn Widerstand kommt, möchte man aufgeben. Bleib dabei, und gönn dir unterwegs auch eigene Klarheit.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{52}{Wasser}{Feuer}{Erde}{IV Damm}{Das gelöschte Feuer}{Du dämpfst eine Begeisterung, und aus der Asche wird Boden. Dieser Boden wird dich eindämmen wollen.}
   {Du hast eine Begeisterung gedämpft, vielleicht deine eigene, vielleicht die eines anderen. Das war vernünftig. Aus der Asche wird fruchtbarer Boden. Doch sei darauf gefasst: Dieser Boden will Ordnung, und er wird auch dich ein wenig eindämmen. Bleib im Fluss.}
+  {Vernunft kann jede Begeisterung dämpfen, auch die eigene. Manchmal lässt man aber auch alles lodern. Finde das Maß, bei dem die Freude bleibt und nichts verbrennt.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{53}{Wasser}{Feuer}{Metall}{V Strenger Weg}{Die Härtung}{Du kühlst, was glüht, und die Kühle macht es hart. Die Strenge führt dich zurück zur Klarheit, aus der du kommst.}
   {Du kühlst, was glüht, und dadurch wird es hart und belastbar. Das ist Handwerk, und es ist streng. Aber die Strenge führt dich zurück zu deiner eigenen Klarheit, zu dem, was du im Innersten weißt. Vertrau diesem Wissen. Es hält mehr aus, als du glaubst.}
+  {Wer viel kühlt, wird manchmal selbst ein wenig spröde. Und manches bleibt formlos, wenn es nie abkühlen darf. Gutes Handwerk kennt das rechte Maß, und du kannst es lernen.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{54}{Wasser}{Feuer}{Holz}{VI Abkürzung}{Der Wolkenbruch}{Du löschst und ziehst dich zurück. Wo es gebrannt hat, wächst das Neue, das du säen wolltest.}
   {Du hast gelöscht, was zu heftig brannte, und dich dann zurückgezogen. Gut so. Jetzt schau zu, was passiert: Wo es gebrannt hat, keimt etwas, und es ist genau das, was du säen wolltest. Manchmal wächst das Schönste dort, wo wir nicht mehr hinsehen.}
+  {Wer schnell löscht, sieht manchmal nicht, was dabei verloren geht. Und wer sich zurückzieht, verpasst leicht, was keimt. Wirf ab und zu einen zweiten Blick zurück; vielleicht wächst dort schon dein Neues.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{55}{Wasser}{Erde}{Metall}{VII Läuterung}{Die Mündung}{Du stellst dich dem Ufer, das dich begrenzt. Was sich dort ablagert, macht dich klarer.}
   {Du stößt an ein Ufer, an eine Grenze, die du nicht überfluten kannst. Nimm sie an. An der Mündung lagert sich ab, was du mitgetragen hast, und das Wasser wird klar. Diese Begrenzung ist kein Ende, sondern eine Reinigung. Danach siehst du bis auf den Grund.}
+  {An derselben Grenze anzustoßen, kann sich wie Schicksal anfühlen. Manchmal ergibt man sich ihr auch zu schnell. Nimm sie an, ohne dich aufzugeben, dann wird das Wasser klar.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{56}{Wasser}{Erde}{Holz}{VIII Aufstand}{Die Flut}{Du durchbrichst Grenzen, und die Grenzen brechen auf zu Wurzelwerk. Aus dem Überschreiten wächst etwas Lebendiges.}
   {Du lässt dich nicht mehr eindämmen. Die Grenzen brechen, und das ist gewaltig. Aber schau, was geschieht: Wo die Flut hinkommt, wächst Leben. Dein Überschreiten ist keine Zerstörung, sondern Befreiung. Lenk deine Kraft dorthin, wo etwas wachsen will.}
+  {Wer Grenzen durchbricht, reißt manchmal mehr mit als gedacht. Und manchmal lässt man sich zu lange eindämmen. Lenk deine Kraft dahin, wo sie Leben bringt.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{57}{Wasser}{Erde}{Feuer}{IX List}{Das Grundwasser}{Du gehst unter dem Hindernis hindurch, statt dagegen anzurennen. Am Ende hast du Macht über das, was laut ist.}
   {Gegen das Hindernis anzurennen bringt nichts. Nimm den leisen Weg, unter der Oberfläche, geduldig und unsichtbar. Wasser findet immer einen Weg. Am Ende hast du mehr Einfluss als die, die am lautesten sind, und du hast dafür nicht einmal die Stimme erhoben.}
+  {Wer leise wirkt, wird manchmal kaum verstanden. Und manchmal rennt man doch offen gegen die Wand. Sag ruhig auch einmal laut, was du willst; Wasser darf auch an die Oberfläche.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{58}{Wasser}{Metall}{Holz}{X Gesammelte Kraft}{Der Winterschlaf}{Zieh dich in die Klarheit zurück, sammle Kraft, dann handle. Was danach wächst, kommt von dir.}
   {Jetzt ist Winter, und das ist gut so. Zieh dich zurück, werde klar, sammle Kraft. Niemand verlangt, dass du jetzt blühst. Wenn die Zeit gekommen ist, wirst du handeln, und was dann wächst, kommt ganz aus dir.}
+  {Manchmal dauert der Winter länger, als man möchte. Und manchmal will man blühen, bevor die Kraft da ist. Hab Geduld mit dir; jede Zeit hat ihr eigenes Maß.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{59}{Wasser}{Metall}{Feuer}{XI Rückhalt}{Die Quelle im Erz}{Mit festem Halt im Rücken stellst du dich dem Brennenden und dämpfst es.}
   {Da brennt etwas lichterloh, und du sollst es beruhigen. Das kannst du, weil du festen Halt hast: deine Klarheit, deine Grundsätze, deine Erfahrung. Geh ruhig auf das Feuer zu. Du musst es nicht ersticken, nur dämpfen, bis es wieder wärmt, statt zu verbrennen.}
+  {Grundsätze können mit der Zeit kühl werden. Und manchmal traut man seinem Halt zu wenig. Prüfe, was dir wirklich Halt gibt, und geh dann ruhig auf das Feuer zu.}
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
 \spruch{60}{Wasser}{Metall}{Erde}{XII Wurzelsuche}{Der Grund des Brunnens}{Du gehst bis zum Ursprung, tiefer als die Tiefe, und triffst auf das Ufer, das dich hält und begrenzt. Hier schließt sich der Kreis.}
   {Du gehst bis ganz nach unten, tiefer als je zuvor. Dort findest du keine Leere, sondern ein Ufer: etwas, das dich hält und zugleich begrenzt. Vielleicht ist das die wichtigste Erkenntnis von allen: Du bist getragen. Hier schließt sich der Kreis, und ein neuer kann beginnen.}
+  {In der Tiefe kann man sich verlieren, und manchmal scheut man sie ganz. Beides ist verständlich. Geh so tief, wie es dir guttut, und tauche dann wieder auf; der Kreis trägt dich.}
+\vspace*{\fill}
 
 \endgroup
 

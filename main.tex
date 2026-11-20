@@ -140,11 +140,11 @@
   \renewcommand{\myyellow}{\mustergrau}%
   \begin{pentdiag}[stops=100, radius=0.16\textwidth, background=white]
     \renewcommand{\pfeilfarbe}{pfeilaussen}%
-    \gdef\musterpos{0}\gdef\mustertyp{c}%   von der weißen Ecke
+    \gdef\musterpos{0}\gdef\mustertyp{c}%   von der Ecke oben
     \musterschritt{#1}{}
     \musterschritt{#2}{}
     \renewcommand{\pfeilfarbe}{pfeilinnen}%
-    \gdef\musterpos{0}\gdef\mustertyp{j}%   von der weißen Kreuzung
+    \gdef\musterpos{0}\gdef\mustertyp{j}%   von der Kreuzung unten
     \musterschritt{#1}{}
     \musterschritt{#2}{}
   \end{pentdiag}}}
@@ -157,18 +157,18 @@
   \renewcommand{\myyellow}{\mustergrau}%
   \begin{pentdiag}[stops=100, radius=0.15\textwidth, background=white]
     \renewcommand{\pfeilfarbe}{pfeilaussen}%
-    \gdef\musterpos{0}\gdef\mustertyp{c}%   von der weißen Ecke
+    \gdef\musterpos{0}\gdef\mustertyp{c}%   von der Ecke oben
     \musterschritt{#1}{}
     \renewcommand{\pfeilfarbe}{pfeilinnen}%
-    \gdef\musterpos{0}\gdef\mustertyp{j}%   von der weißen Kreuzung
+    \gdef\musterpos{0}\gdef\mustertyp{j}%   von der Kreuzung unten
     \musterschritt{#1}{}
   \end{pentdiag}}}
 
 % \paarbrett{A}{B}{Schritte}: graues Brett (Geometrie 100, Farbfolge 50), nur Ecke und Kreuzung von A und B in ihren Farben;
 % die Beziehung schwarz von der Ecke, rot von der Kreuzung von A aus
-% Lage der Elemente auf dem 50er-Brett (gegen den Uhrzeigersinn ab Weiß oben)
-\newcommand{\elposMetall}{0}\newcommand{\elposErde}{1}\newcommand{\elposFeuer}{2}
-\newcommand{\elposHolz}{3}\newcommand{\elposWasser}{4}
+% Lage der Elemente auf dem Brett (gegen den Uhrzeigersinn ab Holz oben)
+\newcommand{\elposHolz}{0}\newcommand{\elposWasser}{1}\newcommand{\elposMetall}{2}
+\newcommand{\elposErde}{3}\newcommand{\elposFeuer}{4}
 % welche pentpack-Farbe zu welchem Element gehört
 \newcommand{\pfarbHolz}{mygreen}\newcommand{\pfarbFeuer}{myred}\newcommand{\pfarbErde}{myyellow}
 \newcommand{\pfarbMetall}{mywhite}\newcommand{\pfarbWasser}{myblue}
@@ -179,7 +179,7 @@
   \renewcommand{\myyellow}{\mustergrau}%
   \expandafter\renewcommand\csname\csname pfarb#1\endcsname\endcsname{#1}%
   \expandafter\renewcommand\csname\csname pfarb#2\endcsname\endcsname{#2}%
-  \pentcolours[100]{white,blue,green,red,yellow}% Farbfolge wie auf dem 50er-Brett
+  \pentcolours[100]{green,red,yellow,white,blue}% Farbfolge im Uhrzeigersinn ab Holz oben
   \begin{pentdiag}[stops=100, radius=0.17\textwidth, background=white]
     \renewcommand{\pfeilfarbe}{pfeilaussen}%
     \xdef\musterpos{\csname elpos#1\endcsname}\gdef\mustertyp{c}%
@@ -194,15 +194,15 @@
 \expandafter\def\csname musterschritte I\endcsname{{1}{1}}
 \expandafter\def\csname musterschritte II\endcsname{{1}{2}}
 \expandafter\def\csname musterschritte III\endcsname{{1}{3}}
-\expandafter\def\csname musterschritte IV\endcsname{{2}{1}}
-\expandafter\def\csname musterschritte V\endcsname{{2}{2}}
-\expandafter\def\csname musterschritte VI\endcsname{{2}{4}}
-\expandafter\def\csname musterschritte VII\endcsname{{3}{1}}
-\expandafter\def\csname musterschritte VIII\endcsname{{3}{3}}
-\expandafter\def\csname musterschritte IX\endcsname{{3}{4}}
-\expandafter\def\csname musterschritte X\endcsname{{4}{2}}
-\expandafter\def\csname musterschritte XI\endcsname{{4}{3}}
-\expandafter\def\csname musterschritte XII\endcsname{{4}{4}}
+\expandafter\def\csname musterschritte VII\endcsname{{2}{1}}
+\expandafter\def\csname musterschritte IX\endcsname{{2}{2}}
+\expandafter\def\csname musterschritte VIII\endcsname{{2}{4}}
+\expandafter\def\csname musterschritte X\endcsname{{3}{1}}
+\expandafter\def\csname musterschritte XII\endcsname{{3}{3}}
+\expandafter\def\csname musterschritte XI\endcsname{{3}{4}}
+\expandafter\def\csname musterschritte V\endcsname{{4}{2}}
+\expandafter\def\csname musterschritte VI\endcsname{{4}{3}}
+\expandafter\def\csname musterschritte IV\endcsname{{4}{4}}
 \newcommand{\tripelbrettweg}[2]{%
     \renewcommand{\pfeilfarbe}{pfeilaussen}%
     \xdef\musterpos{\tripelstart}\gdef\mustertyp{c}%
@@ -218,7 +218,7 @@
   \expandafter\renewcommand\csname\csname pfarb#1\endcsname\endcsname{#1}%
   \expandafter\renewcommand\csname\csname pfarb#2\endcsname\endcsname{#2}%
   \expandafter\renewcommand\csname\csname pfarb#3\endcsname\endcsname{#3}%
-  \pentcolours[100]{white,blue,green,red,yellow}%
+  \pentcolours[100]{green,red,yellow,white,blue}%
   \xdef\tripelstart{\csname elpos#1\endcsname}%
   \begin{pentdiag}[stops=100, radius=0.17\textwidth, background=white]
     \expandafter\expandafter\expandafter\tripelbrettweg\csname musterschritte #4\endcsname
@@ -254,8 +254,8 @@
 \expandafter\def\csname bznr Nähren\endcsname{1}
 \expandafter\def\csname bznr Bändigen\endcsname{2}
 \expandafter\def\csname bznr Sich stellen\endcsname{3}
-\expandafter\def\csname bznr Heimkehren\endcsname{4}
-\newcommand{\blink}[1]{\hyperlink{beziehung:\csname bznr #1\endcsname}{#1}}
+\expandafter\def\csname bznr Annehmen\endcsname{4}
+\newcommand{\blink}[1]{\hyperlink{beziehung:\csname bznr #1\endcsname}{\csname bzlabel\csname bznr #1\endcsname\endcsname~#1}}
 
 % Kopf eines Musters, aufgebaut wie ein Spruch:
 % Nummer, Bild, Überschrift, dann die Schritte
@@ -303,10 +303,10 @@
   \hyperlink{paar:#1-#2}{\element{#1}\,$\rightarrow$\,}\allowbreak}
 
 % \paar{A}{B}{Titel}{Urteil}{Licht}{Schatten}{Tripel}: Eintrag eines der 20 Paare,
-% Nummer (rot, arabisch) = 4 * Position von A im Wandlungskreis + Beziehung
+% Nummer (rot, arabisch) = 4 * Position von A im Wandlungskreis + Nummer der Beziehung (+1, −1, +2, −2 = 1..4)
 \newcommand{\paar}[7]{%
   \pgfmathtruncatemacro{\paarnr}{mod(\csname elnum#2\endcsname-\csname elnum#1\endcsname+5,5)}%
-  \pgfmathtruncatemacro{\paarnum}{4*\csname elnum#1\endcsname+\paarnr}%
+  \pgfmathtruncatemacro{\paarnum}{4*\csname elnum#1\endcsname+\csname bzidx\paarnr\endcsname}%
   \begin{orakelblock}
    \hypertarget{paar:#1-#2}{{\Large\bfseries\color{ueberschriftfarbe}\paarnum}}\par
    \smallskip
@@ -317,7 +317,7 @@
    {\small\element{#1}\,$\rightarrow$\,\element{#2}}\par
    \medskip
    {\large\bfseries #3}\par
-   {\small Beziehung:}~\hyperlink{beziehung:\paarnr}{\textit{+\paarnr~\csname bzname\paarnr\endcsname}}\par
+   {\small Beziehung:}~\hyperlink{beziehung:\paarnr}{\textit{\csname bzlabel\paarnr\endcsname~\csname bzname\paarnr\endcsname}}\par
    \smallskip
    \textbf{#4}\par
    \smallskip
@@ -326,24 +326,30 @@
    #7
   \end{orakelblock}
 }
+% Beziehungen intern als Schritte im Wandlungskreis (1..4), gezeigt als +1, −1, +2, −2;
+% Reihenfolge im Buch: +1, −1, +2, −2 (bzidx)
+\expandafter\def\csname bzlabel1\endcsname{+1}\expandafter\def\csname bzidx1\endcsname{1}
+\expandafter\def\csname bzlabel4\endcsname{−1}\expandafter\def\csname bzidx4\endcsname{2}
+\expandafter\def\csname bzlabel2\endcsname{+2}\expandafter\def\csname bzidx2\endcsname{3}
+\expandafter\def\csname bzlabel3\endcsname{−2}\expandafter\def\csname bzidx3\endcsname{4}
 \expandafter\def\csname bzname1\endcsname{Nähren}
 \expandafter\def\csname bzname2\endcsname{Bändigen}
 \expandafter\def\csname bzname3\endcsname{Sich stellen}
-\expandafter\def\csname bzname4\endcsname{Heimkehren}
+\expandafter\def\csname bzname4\endcsname{Annehmen}
 
 % \musterref XI Rückhalt\endmusterref -> "Muster: XI. Der Rückhalt" als Link zum Muster XI
 \expandafter\def\csname mustername I\endcsname{Der Strom}
 \expandafter\def\csname mustername II\endcsname{Die Prüfung}
 \expandafter\def\csname mustername III\endcsname{Die Lehrzeit}
-\expandafter\def\csname mustername IV\endcsname{Der Damm}
-\expandafter\def\csname mustername V\endcsname{Der strenge Weg}
-\expandafter\def\csname mustername VI\endcsname{Die Abkürzung}
-\expandafter\def\csname mustername VII\endcsname{Die Läuterung}
-\expandafter\def\csname mustername VIII\endcsname{Der Aufstand}
-\expandafter\def\csname mustername IX\endcsname{Die List}
-\expandafter\def\csname mustername X\endcsname{Die gesammelte Kraft}
-\expandafter\def\csname mustername XI\endcsname{Der Rückhalt}
-\expandafter\def\csname mustername XII\endcsname{Die Wurzelsuche}
+\expandafter\def\csname mustername VII\endcsname{Der Damm}
+\expandafter\def\csname mustername IX\endcsname{Der strenge Weg}
+\expandafter\def\csname mustername VIII\endcsname{Die Abkürzung}
+\expandafter\def\csname mustername X\endcsname{Die Läuterung}
+\expandafter\def\csname mustername XII\endcsname{Der Aufstand}
+\expandafter\def\csname mustername XI\endcsname{Die List}
+\expandafter\def\csname mustername V\endcsname{Die gesammelte Kraft}
+\expandafter\def\csname mustername VI\endcsname{Der Rückhalt}
+\expandafter\def\csname mustername IV\endcsname{Die Wurzelsuche}
 % Ausgabe: "Muster: II. Die Prüfung", Nummer und Name als Link
 \def\musterref#1 #2\endmusterref{{\small Muster:}~\hyperlink{muster:#1}{\textit{#1.~\csname mustername #1\endcsname}}}
 
@@ -383,6 +389,40 @@
 
 \makeatletter\renewcommand\@pnumwidth{2em}\makeatother % Platz für dreistellige Seitenzahlen im Inhaltsverzeichnis
 
+% \beziehungsuebersicht: volles, farbiges 50er-Brett (Holz oben), von der grünen Ecke (schwarz) und
+% der grünen Kreuzung (rot) die vier Beziehungen; Punkt am Anfang, Pfeil bis in die Mitte des Ziels
+\tikzset{bezlabel/.style={font=\scriptsize, align=center, inner sep=1pt, text=black, fill=white, fill opacity=0.85, text opacity=1},
+  bezinnen/.style={font=\scriptsize, inner sep=1pt, text=pfeilinnen, fill=white, fill opacity=0.85, text opacity=1},
+  bezpfeil/.style={{Circle[length=3.2pt]}-{Stealth[scale=0.9]}, color=\pfeilfarbe},
+  bezpfeilrueck/.style={{Stealth[scale=0.9]}-{Circle[length=3.2pt]}, color=\pfeilfarbe}}
+\newcommand{\bezabstand}{6.5pt}% Abstand der Pfeilanfänge vom Mittelpunkt
+\makeatletter
+\newcommand{\beziehungsuebersicht}{{%
+  \boardcoloured
+  \pentcolours[50]{green,red,yellow,white,blue}% Holz oben
+  \def\pp@lw{1.4pt}%
+  \renewcommand{\pfeilfarbe}{pfeilaussen}%
+  \begin{pentdiag}[stops=50, radius=0.31\textwidth, background=white]
+    \pbogen{4}{bezpfeilrueck, shorten >=\bezabstand}
+      node[bezlabel, pos=0.4, above right=1pt] {+1 Nähren\\{\cjk 生} shēng};
+    \pbogen{0}{bezpfeil, shorten <=\bezabstand}
+      node[bezlabel, pos=0.6, above left=1pt] {−1 Annehmen\\{\cjk 泄} xiè};
+    \plinie{0}{3a}{bezpfeil, shorten <=\bezabstand}
+      node[bezlabel, pos=0.66, above left=0pt] {+2 Bändigen\\{\cjk 克} kè};
+    \plinie{0}{2a}{bezpfeil, shorten <=\bezabstand}
+      node[bezlabel, pos=0.66, above right=0pt] {−2 Sich stellen\\{\cjk 侮} wǔ};
+    \renewcommand{\pfeilfarbe}{pfeilinnen}%
+    \plinie{0a}{4a}{bezpfeil, shorten <=\bezabstand}
+      node[bezinnen, pos=0.5, below left=2pt] {+1 {\cjk 生}};
+    \plinie{0a}{1a}{bezpfeil, shorten <=\bezabstand}
+      node[bezinnen, pos=0.5, below right=2pt] {−1 {\cjk 泄}};
+    \plinie{0a}{3}{bezpfeil, shorten <=\bezabstand}
+      node[bezinnen, pos=0.7, above right=1pt] {+2 {\cjk 克}};
+    \plinie{0a}{2}{bezpfeil, shorten <=\bezabstand}
+      node[bezinnen, pos=0.7, above left=1pt] {−2 {\cjk 侮}};
+  \end{pentdiag}}}
+\makeatother
+
 \begin{document}
 \frontmatter
 \maketitle
@@ -406,9 +446,9 @@ Wer Pentagame spielt, kennt diesen Moment: Der dritte Stein erreicht sein Ziel, 
 
 \begin{description}[leftmargin=0pt, itemsep=0.5ex]
   \item[Die fünf Elemente.] Sie folgen im Wandlungskreis aufeinander. Jedes hat ein Thema, eine helle und eine dunkle Seite.
-  \item[Die vier Beziehungen.] Zwischen zwei Elementen besteht immer genau eine von vier Beziehungen: \emph{Nähren}, \emph{Bändigen}, \emph{Sich stellen} oder \emph{Heimkehren}. Welche es ist, hängt nur davon ab, wie viele Schritte man im Wandlungskreis vorwärts geht.
+  \item[Die vier Beziehungen.] Zwischen zwei Elementen besteht immer genau eine von vier Beziehungen: \emph{Nähren} (+1), \emph{Annehmen} (−1), \emph{Bändigen} (+2) oder \emph{Sich stellen} (−2). Welche es ist, hängt nur davon ab, ob man im Wandlungskreis einen oder zwei Schritte vor- oder zurückgeht.
   \item[Die 20 Paare.] Ein Element und eine Beziehung ergeben ein Paar, zwei Elemente in fester Reihenfolge, etwa \element*{Holz}\,$\rightarrow$\,\element*{Feuer}. Zu jedem der fünf Elemente gibt es vier Paare: $5 \times 4 = 20$.
-  \item[Die zwölf Muster.] Zwei Beziehungen hintereinander ergeben ein Muster. Für den ersten Schritt gibt es vier Möglichkeiten, für den zweiten drei, denn er darf nicht zum Anfang zurückführen: $4 \times 3 = 12$.
+  \item[Die zwölf Muster.] Zwei Beziehungen hintereinander ergeben ein Muster. Für den ersten Schritt gibt es vier Möglichkeiten, für den zweiten drei, denn er darf den ersten nicht aufheben: Auf +1 folgt nie −1, auf +2 nie −2. Das ergibt $4 \times 3 = 12$.
   \item[Die 60 Tripel.] Ein Element und ein Muster ergeben ein Tripel, eine Folge aus drei verschiedenen Elementen, etwa \element*{Holz}\,$\rightarrow$\,\element*{Feuer}\,$\rightarrow$\,\element*{Erde}. Das sind $5 \times 12 = 60$, genau die Folgen, mit denen man beim Pentagame gewinnt. Jedes Tripel besteht aus zwei Paaren, hier Holz\,$\rightarrow$\,Feuer und Feuer\,$\rightarrow$\,Erde.
 \end{description}
 
@@ -490,7 +530,7 @@ Hier ist jedes Element eine der fünf Pentagame-Farben. Die Farben folgen der Tr
 
 \bigskip
 \begin{orakelblock}
-\begin{tikzpicture}[rotate=18, >=latex] % Metall oben, wie die weiße Ecke des Bretts
+\begin{tikzpicture}[rotate=162, >=latex] % Holz oben, wie auf allen Brettern
   \def\myradius{3.2cm}
   \def\myRadius{4.6cm}
   \foreach [count=\i] \zeichen/\e in {木/Holz,火/Feuer,土/Erde,金/Metall,水/Wasser}{
@@ -550,7 +590,7 @@ Planet & Jupiter
 \lichtschatten{Holz ist die Kraft des Anfangs: der Plan, der Wille, das Wachsen. Im Frühling bricht der Keim durch die Erde, biegsam und doch beharrlich. Wer im Zeichen des Holzes steht, hat Visionen und den Mut, sie anzugehen, und die Güte, auch andere wachsen zu lassen.}
   {Wo das Wachsen keinen Raum findet, wird es zu Ungeduld und Zorn. Darin steckt nur Kraft, die einen Weg sucht. Gib ihr ein Ziel und etwas Zeit, dann wird aus dem Zorn wieder Wachstum.}
 \linkteil
-{\small Die vier Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Holz-Feuer}{\mypair{Holz}{Feuer}}} \hfill \mbox{\hyperlink{paar:Holz-Erde}{\mypair{Holz}{Erde}}} \hfill \mbox{\hyperlink{paar:Holz-Metall}{\mypair{Holz}{Metall}}} \hfill \mbox{\hyperlink{paar:Holz-Wasser}{\mypair{Holz}{Wasser}}}\par
+{\small Die vier Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Holz-Feuer}{\mypair{Holz}{Feuer}}} \hfill \mbox{\hyperlink{paar:Holz-Wasser}{\mypair{Holz}{Wasser}}} \hfill \mbox{\hyperlink{paar:Holz-Erde}{\mypair{Holz}{Erde}}} \hfill \mbox{\hyperlink{paar:Holz-Metall}{\mypair{Holz}{Metall}}}\par
 \end{orakelblock}
 \newpage
 \markright{\element{Feuer}}
@@ -577,7 +617,7 @@ Planet & Mars
 \lichtschatten{Feuer ist Ausdruck, Begeisterung und Begegnung. Im Sommer steht alles in voller Blüte. Wer im Zeichen des Feuers steht, wärmt andere, steckt sie an und bringt Menschen zusammen. Der Anstand gibt der Flamme ihre Form, damit sie leuchtet, ohne zu verbrennen.}
   {Feuer kann sich verausgaben oder in Übermut umschlagen. Das ist die Kehrseite großer Freude. Gönn dir die Glut, und sorge für Holz zum Nachlegen.}
 \linkteil
-{\small Die vier Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Feuer-Erde}{\mypair{Feuer}{Erde}}} \hfill \mbox{\hyperlink{paar:Feuer-Metall}{\mypair{Feuer}{Metall}}} \hfill \mbox{\hyperlink{paar:Feuer-Wasser}{\mypair{Feuer}{Wasser}}} \hfill \mbox{\hyperlink{paar:Feuer-Holz}{\mypair{Feuer}{Holz}}}\par
+{\small Die vier Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Feuer-Erde}{\mypair{Feuer}{Erde}}} \hfill \mbox{\hyperlink{paar:Feuer-Holz}{\mypair{Feuer}{Holz}}} \hfill \mbox{\hyperlink{paar:Feuer-Metall}{\mypair{Feuer}{Metall}}} \hfill \mbox{\hyperlink{paar:Feuer-Wasser}{\mypair{Feuer}{Wasser}}}\par
 \end{orakelblock}
 \newpage
 \markright{\element{Erde}}
@@ -604,7 +644,7 @@ Planet & Saturn
 \lichtschatten{Erde ist Sammlung, Fürsorge und Halt. Sie hat keine eigene Jahreszeit, sondern gehört zu jedem Übergang, und sie steht in der Mitte der vier Richtungen. Wer im Zeichen der Erde steht, gibt anderen Boden unter den Füßen und ist verlässlich.}
   {Wer immer trägt, kann ins Grübeln geraten oder schwer werden. Auch die Erde braucht Lockerung. Lass dich bewegen; fruchtbarer Boden ist nie ganz fest.}
 \linkteil
-{\small Die vier Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Erde-Metall}{\mypair{Erde}{Metall}}} \hfill \mbox{\hyperlink{paar:Erde-Wasser}{\mypair{Erde}{Wasser}}} \hfill \mbox{\hyperlink{paar:Erde-Holz}{\mypair{Erde}{Holz}}} \hfill \mbox{\hyperlink{paar:Erde-Feuer}{\mypair{Erde}{Feuer}}}\par
+{\small Die vier Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Erde-Metall}{\mypair{Erde}{Metall}}} \hfill \mbox{\hyperlink{paar:Erde-Feuer}{\mypair{Erde}{Feuer}}} \hfill \mbox{\hyperlink{paar:Erde-Wasser}{\mypair{Erde}{Wasser}}} \hfill \mbox{\hyperlink{paar:Erde-Holz}{\mypair{Erde}{Holz}}}\par
 \end{orakelblock}
 \newpage
 \markright{\element{Metall}}
@@ -631,7 +671,7 @@ Planet & Venus
 \lichtschatten{Metall ist Klarheit, Maß und Abschied. Im Herbst wird geerntet und getrennt: das Korn von der Spreu, das Wichtige vom Überflüssigen. Wer im Zeichen des Metalls steht, urteilt gerecht und schafft Ordnung.}
   {Klarheit kann streng werden, und jeder Abschied bringt Trauer. Beides gehört zur Ernte. Lass die Trauer zu; sie macht Platz für das, was wertvoll bleibt.}
 \linkteil
-{\small Die vier Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Metall-Wasser}{\mypair{Metall}{Wasser}}} \hfill \mbox{\hyperlink{paar:Metall-Holz}{\mypair{Metall}{Holz}}} \hfill \mbox{\hyperlink{paar:Metall-Feuer}{\mypair{Metall}{Feuer}}} \hfill \mbox{\hyperlink{paar:Metall-Erde}{\mypair{Metall}{Erde}}}\par
+{\small Die vier Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Metall-Wasser}{\mypair{Metall}{Wasser}}} \hfill \mbox{\hyperlink{paar:Metall-Erde}{\mypair{Metall}{Erde}}} \hfill \mbox{\hyperlink{paar:Metall-Holz}{\mypair{Metall}{Holz}}} \hfill \mbox{\hyperlink{paar:Metall-Feuer}{\mypair{Metall}{Feuer}}}\par
 \end{orakelblock}
 \newpage
 \markright{\element{Wasser}}
@@ -658,14 +698,14 @@ Planet & Merkur
 \lichtschatten{Wasser ist Ruhe, Tiefe und Ausdauer. Im Winter zieht sich alles zurück, und unter dem Eis liegt die Quelle des Frühlings. Wer im Zeichen des Wassers steht, ist weise und geduldig und findet immer einen Weg.}
   {In der Tiefe kann Furcht wohnen, und Rückzug kann einsam machen. Das ist die Stille vor dem Neubeginn. Vertrau ihr; aus jedem Winter wird ein Frühling.}
 \linkteil
-{\small Die vier Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Wasser-Holz}{\mypair{Wasser}{Holz}}} \hfill \mbox{\hyperlink{paar:Wasser-Feuer}{\mypair{Wasser}{Feuer}}} \hfill \mbox{\hyperlink{paar:Wasser-Erde}{\mypair{Wasser}{Erde}}} \hfill \mbox{\hyperlink{paar:Wasser-Metall}{\mypair{Wasser}{Metall}}}\par
+{\small Die vier Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Wasser-Holz}{\mypair{Wasser}{Holz}}} \hfill \mbox{\hyperlink{paar:Wasser-Metall}{\mypair{Wasser}{Metall}}} \hfill \mbox{\hyperlink{paar:Wasser-Feuer}{\mypair{Wasser}{Feuer}}} \hfill \mbox{\hyperlink{paar:Wasser-Erde}{\mypair{Wasser}{Erde}}}\par
 \end{orakelblock}
 
 \newpage
 \addchap{Die vier Beziehungen}\markboth{Die vier Beziehungen}{\mbox{}}\label{kap:beziehungen}
 
 \begin{einleitung}
-Zwischen zwei Elementen besteht immer genau eine von vier Beziehungen. Welche es ist, hängt davon ab, wie viele Schritte man im Wandlungskreis vorwärts geht. Jede Beziehung hat, wie Yin und Yang, eine Seite im Licht und eine im Schatten. Die chinesische Tradition kennt sie unter eigenen Namen: Nähren ist {\cjk 生} shēng, Bändigen {\cjk 克} kè. Die Gegenrichtungen heißen {\cjk 侮} wǔ, die Auflehnung des Gebändigten gegen seinen Bändiger, und {\cjk 泄} xiè, das Ableiten, bei dem das Kind an der Mutter zehrt. Das Übermaß des Bändigens heißt {\cjk 乘} chéng, das Überwältigen.
+Zwischen zwei Elementen besteht immer genau eine von vier Beziehungen. Welche es ist, hängt davon ab, ob man im Wandlungskreis einen oder zwei Schritte vor- oder zurückgeht. Deshalb heißen sie hier +1, −1, +2 und −2: Die Zahl sagt, wie weit, das Vorzeichen, in welche Richtung. Jede Beziehung hat, wie Yin und Yang, eine Seite im Licht und eine im Schatten. Die chinesische Tradition kennt sie unter eigenen Namen: Nähren ist {\cjk 生} shēng, Bändigen {\cjk 克} kè. Die Gegenrichtungen heißen {\cjk 侮} wǔ, die Auflehnung des Gebändigten gegen seinen Bändiger, und {\cjk 泄} xiè, das Ableiten, bei dem das Kind an der Mutter zehrt. Das Übermaß des Bändigens heißt {\cjk 乘} chéng, das Überwältigen.
 \end{einleitung}
 
 \medskip
@@ -676,16 +716,34 @@ Zwischen zwei Elementen besteht immer genau eine von vier Beziehungen. Welche es
 \textbf{Beziehung} & \textbf{Im Kreis} & \textbf{Richtung} & \textbf{Weg} & \textbf{Strecke} \\
 \midrule
 \hyperlink{beziehung:1}{\textbf{+1} Nähren}       & 1 vor \mbox{({\cjk 生} shēng)} & \uzs  & innen oder außen & kurz \\
+\hyperlink{beziehung:4}{\textbf{−1} Annehmen}     & 1 zurück \mbox{({\cjk 泄} xiè)} & \guzs & innen oder außen & kurz \\
 \hyperlink{beziehung:2}{\textbf{+2} Bändigen}     & 2 vor \mbox{({\cjk 克} kè)} & \guzs & innen und außen  & lang \\
-\hyperlink{beziehung:3}{\textbf{+3} Sich stellen} & 2 zurück \mbox{({\cjk 侮} wǔ)} & \uzs  & innen und außen  & lang \\
-\hyperlink{beziehung:4}{\textbf{+4} Heimkehren}   & 1 zurück \mbox{({\cjk 泄} xiè)} & \guzs & innen oder außen & kurz \\
+\hyperlink{beziehung:3}{\textbf{−2} Sich stellen} & 2 zurück \mbox{({\cjk 侮} wǔ)} & \uzs  & innen und außen  & lang \\
 \bottomrule
 \end{tabularx}
 \end{center}
 
 \begin{einleitung}
 
-Das Bild über jeder Beziehung zeigt sie auf dem Pentagame-Brett mit 50 Feldern. Dort liegen die Farben im Uhrzeigersinn in derselben Reihenfolge wie im Wandlungskreis: \element*{Metall}, \element*{Wasser}, \element*{Holz}, \element*{Feuer}, \element*{Erde}. Das gilt für die Ecken und für die Kreuzungen. Deshalb ist jede Beziehung eine einzige Linie. Jedes Bild zeigt sie zweimal: schwarz von außen, von der Ecke oben, und rot von innen, von der Kreuzung unten in der Mitte. Die Bilder sind bewusst grau: Die Ecke oben kann jedes der fünf Elemente sein, und die Beziehung sieht für alle gleich aus.
+\textbf{Vom Wandlungskreis zum Brett.} Im klassischen Bild des Wu Xing stehen die fünf Elemente auf einem Kreis. Die Schritte zum Nachbarn, einer vor (shēng) oder einer zurück (xiè), laufen am Kreis entlang. Die Schritte zum übernächsten Element, zwei vor (kè) oder zwei zurück (wǔ), schneiden als lange Diagonalen durch den Kreis; zusammen bilden diese Diagonalen ein Pentagramm.
+
+Das Pentagame-Brett nimmt dieses Bild auf und verdoppelt es. Die fünf Farben stehen dort zweimal in der Reihenfolge des Wandlungskreises: außen auf den Ecken des Rings und innen auf den Kreuzungen des Pentagons. Beide Kreise folgen demselben Schema, im Uhrzeigersinn \element*{Holz}, \element*{Feuer}, \element*{Erde}, \element*{Metall}, \element*{Wasser}. Damit kommt etwas Neues ins Spiel: Die langen Linien des Pentagramms verbinden nicht mehr eine Ecke mit einer Ecke, sondern führen von außen nach innen oder von innen nach außen. Wer auf einer solchen Linie zieht, geht im Wandlungskreis zwei Schritte vor oder zurück.
+
+\begin{center}
+\beziehungsuebersicht\par
+{\small\itshape Die vier Beziehungen von \element*{Holz} aus: schwarz von der grünen Ecke, rot von der grünen Kreuzung.\par}
+\end{center}
+
+\noindent So ordnen sich die vier Beziehungen:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Nähren und Annehmen} (+1 und −1, {\cjk 生} shēng und {\cjk 泄} xiè) sind Bewegungen \emph{auf} einem der beiden Kreise, entweder auf dem Ring oder auf dem Pentagon: im Uhrzeigersinn vor, gegen den Uhrzeigersinn zurück.
+  \item \textbf{Bändigen und Sich stellen} (+2 und −2, {\cjk 克} kè und {\cjk 侮} wǔ) sind Bewegungen \emph{zwischen} den Kreisen, auf einer langen Linie vom Ring zum Pentagon oder umgekehrt: Bändigen gegen den Uhrzeigersinn, Sich stellen im Uhrzeigersinn. Das Vorzeichen bezieht sich also auf den Wandlungskreis, nicht auf die Drehrichtung auf dem Brett.
+\end{itemize}
+
+Deshalb zeigen die Bilder auf den folgenden Seiten Bändigen und Sich stellen nicht als Diagonalen in einem Kreis, sondern als Übergänge zwischen außen und innen. Das heißt nicht, dass nur diese Züge dazugehören. Wer auf dem Ring zwei Schritte vorwärts geht, kommt ebenfalls beim übernächsten Element an, und auch das ist Bändigen; diese beiden Schritte bilden das Muster \hyperlink{muster:I}{I, Der Strom}. Die lange Linie ist nur der direkte Weg.
+
+Jedes Bild zeigt seine Beziehung zweimal: schwarz von außen, von der Ecke oben, und rot von innen, von der Kreuzung unten in der Mitte. Die Bilder sind bewusst grau: Die Ecke oben kann jedes der fünf Elemente sein, und die Beziehung sieht für alle gleich aus.
 \end{einleitung}
 
 
@@ -713,6 +771,29 @@ Das Bild über jeder Beziehung zeigt sie auf dem Pentagame-Brett mit 50 Feldern.
 \end{orakelblock}
 \newpage
 
+\markright{−1 \quad Annehmen}
+\begin{orakelblock}
+\hypertarget{beziehung:4}{{\Large\bfseries −1}}\par
+\smallskip
+\beziehungsbrett{4}\par
+\smallskip
+{\large\bfseries\color{ueberschriftfarbe} Annehmen}\par
+{\cjk 泄}~xiè\par
+\smallskip
+
+\textit{Im Wandlungskreis: ein Schritt zurück, gegen den Sheng-Zyklus.}\\
+\textit{Auf dem Brett: gegen den Uhrzeigersinn außen auf dem Ring oder innen auf dem Pentagon voran.}\par
+\smallskip
+
+\textbf{Du nimmst an, was deine „Mutter“ dir gibt, die Quelle, die dich nährt.}\par
+\smallskip
+\lichtschatten{Annehmen heißt, sich nähren zu lassen: von dem, was dich hervorgebracht hat, von Menschen, Orten, Erinnerungen, von der Stille. Zugleich nimmst du der Mutter etwas von ihrer Fülle ab: In der Tradition ist das der sanfteste Weg, ein Übermaß auszugleichen.}
+  {Das Kind zehrt an der Mutter: Wer immer nur nimmt, erschöpft die Quelle. Manchmal fällt es auch schwer, überhaupt etwas anzunehmen. Nimm an, was dir gegeben wird, und danke dafür; dann bleibt die Quelle lebendig.}
+\linkteil
+{\small Alle fünf Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Holz-Wasser}{\mypair{Holz}{Wasser}}} \hfill \mbox{\hyperlink{paar:Feuer-Holz}{\mypair{Feuer}{Holz}}} \hfill \mbox{\hyperlink{paar:Erde-Feuer}{\mypair{Erde}{Feuer}}} \hfill \mbox{\hyperlink{paar:Metall-Erde}{\mypair{Metall}{Erde}}} \hfill \mbox{\hyperlink{paar:Wasser-Metall}{\mypair{Wasser}{Metall}}}\par
+\end{orakelblock}
+\newpage
+
 \markright{+2 \quad Bändigen}
 \begin{orakelblock}
 \hypertarget{beziehung:2}{{\Large\bfseries +2}}\par
@@ -736,9 +817,9 @@ Das Bild über jeder Beziehung zeigt sie auf dem Pentagame-Brett mit 50 Feldern.
 \end{orakelblock}
 \newpage
 
-\markright{+3 \quad Sich stellen}
+\markright{−2 \quad Sich stellen}
 \begin{orakelblock}
-\hypertarget{beziehung:3}{{\Large\bfseries +3}}\par
+\hypertarget{beziehung:3}{{\Large\bfseries −2}}\par
 \smallskip
 \beziehungsbrett{3}\par
 \smallskip
@@ -746,7 +827,7 @@ Das Bild über jeder Beziehung zeigt sie auf dem Pentagame-Brett mit 50 Feldern.
 {\cjk 侮}~wǔ\par
 \smallskip
 
-\textit{Im Wandlungskreis: drei Schritte vorwärts, also zwei zurück, gegen den Ke-Zyklus.}\\
+\textit{Im Wandlungskreis: zwei Schritte zurück, gegen den Ke-Zyklus.}\\
 \textit{Auf dem Brett: im Uhrzeigersinn vom Ring nach innen oder von innen nach außen.}\par
 \smallskip
 
@@ -756,29 +837,6 @@ Das Bild über jeder Beziehung zeigt sie auf dem Pentagame-Brett mit 50 Feldern.
   {Aus dem Sich-Stellen wird Auflehnung um jeden Preis, wie die Tradition sie beschreibt: Das Gebändigte verhöhnt seinen Bändiger und fordert jede Grenze heraus, auch die schützende. Oder du stellst dich nie und lässt dich ein Leben lang bändigen. Wähle deine Prüfungen mit Bedacht.}
 \linkteil
 {\small Alle fünf Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Holz-Metall}{\mypair{Holz}{Metall}}} \hfill \mbox{\hyperlink{paar:Feuer-Wasser}{\mypair{Feuer}{Wasser}}} \hfill \mbox{\hyperlink{paar:Erde-Holz}{\mypair{Erde}{Holz}}} \hfill \mbox{\hyperlink{paar:Metall-Feuer}{\mypair{Metall}{Feuer}}} \hfill \mbox{\hyperlink{paar:Wasser-Erde}{\mypair{Wasser}{Erde}}}\par
-\end{orakelblock}
-\newpage
-
-\markright{+4 \quad Heimkehren}
-\begin{orakelblock}
-\hypertarget{beziehung:4}{{\Large\bfseries +4}}\par
-\smallskip
-\beziehungsbrett{4}\par
-\smallskip
-{\large\bfseries\color{ueberschriftfarbe} Heimkehren}\par
-{\cjk 泄}~xiè\par
-\smallskip
-
-\textit{Im Wandlungskreis: vier Schritte vorwärts, also einer zurück, gegen den Sheng-Zyklus.}\\
-\textit{Auf dem Brett: gegen den Uhrzeigersinn außen auf dem Ring oder innen auf dem Pentagon voran.}\par
-\smallskip
-
-\textbf{Du kehrst zu deiner „Mutter“ zurück, zu der Quelle, die dich nährt.}\par
-\smallskip
-\lichtschatten{Heimkehren heißt, zur Quelle zurückzugehen: zu dem, was dich genährt hat, zu Menschen, Orten, Erinnerungen, zur Stille. Dort holst du Kraft, bevor du weitergehst. Zugleich nimmst du der Mutter etwas von ihrer Fülle ab: In der Tradition ist das der sanfteste Weg, ein Übermaß auszugleichen.}
-  {Das Kind zehrt an der Mutter. Wer immer nur zurückkommt, um zu nehmen, erschöpft die Quelle, die ihn nährt. Oder du kappst alle Wurzeln und verlierst den Halt. Kehr heim, um aufzutanken und zu danken, nicht um auszuzehren.}
-\linkteil
-{\small Alle fünf Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Holz-Wasser}{\mypair{Holz}{Wasser}}} \hfill \mbox{\hyperlink{paar:Feuer-Holz}{\mypair{Feuer}{Holz}}} \hfill \mbox{\hyperlink{paar:Erde-Feuer}{\mypair{Erde}{Feuer}}} \hfill \mbox{\hyperlink{paar:Metall-Erde}{\mypair{Metall}{Erde}}} \hfill \mbox{\hyperlink{paar:Wasser-Metall}{\mypair{Wasser}{Metall}}}\par
 \end{orakelblock}
 \newpage
 
@@ -796,7 +854,16 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:1}{\mycombination[0.5em]{Holz}{Feuer}{Erde}~1}} & \mbox{\hyperlink{spruch:2}{\mycombination[0.5em]{Holz}{Feuer}{Metall}~2}} & \mbox{\hyperlink{spruch:3}{\mycombination[0.5em]{Holz}{Feuer}{Wasser}~3}} \\[0.3ex]
-   \mbox{\hyperlink{spruch:31}{\mycombination[0.5em]{Erde}{Holz}{Feuer}~31}} & \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Holz}{Feuer}~40}} & \mbox{\hyperlink{spruch:49}{\mycombination[0.5em]{Wasser}{Holz}{Feuer}~49}}
+   \mbox{\hyperlink{spruch:34}{\mycombination[0.5em]{Erde}{Holz}{Feuer}~34}} & \mbox{\hyperlink{spruch:43}{\mycombination[0.5em]{Metall}{Holz}{Feuer}~43}} & \mbox{\hyperlink{spruch:49}{\mycombination[0.5em]{Wasser}{Holz}{Feuer}~49}}
+   \end{tabular*}\par}
+\newpage
+\paar{Holz}{Wasser}{Der Durst}{Holz nimmt das Wasser an. Der Trieb sucht seine Wurzeln.}
+  {Bevor du weiterwächst, trinkst du. Du nimmst an, was dich nährt, und wächst gestärkt weiter.}
+  {Rückzug kann bequem werden, und Eifer kann die Quelle vergessen. Beides ist menschlich. Trink, wenn du Durst hast, und dann wachse weiter.}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~4}} & \mbox{\hyperlink{spruch:5}{\mycombination[0.5em]{Holz}{Wasser}{Feuer}~5}} & \mbox{\hyperlink{spruch:6}{\mycombination[0.5em]{Holz}{Wasser}{Erde}~6}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~16}} & \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~35}} & \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~44}}
    \end{tabular*}\par}
 \newpage
 \paar{Holz}{Erde}{Der Keim}{Holz bändigt Erde. Der Wille dringt in festen Grund.}
@@ -804,8 +871,8 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
   {Wer seinen Willen durchsetzt, kann den Boden auslaugen, der ihn trägt. Manchmal wagt man aber auch nicht, das Sichere infrage zu stellen. Wachse kräftig, und achte dabei auf den Grund unter dir.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
-   \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Erde}{Metall}~4}} & \mbox{\hyperlink{spruch:5}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~5}} & \mbox{\hyperlink{spruch:6}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~6}} \\[0.3ex]
-   \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~22}} & \mbox{\hyperlink{spruch:41}{\mycombination[0.5em]{Metall}{Holz}{Erde}~41}} & \mbox{\hyperlink{spruch:50}{\mycombination[0.5em]{Wasser}{Holz}{Erde}~50}}
+   \mbox{\hyperlink{spruch:7}{\mycombination[0.5em]{Holz}{Erde}{Metall}~7}} & \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~8}} & \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~9}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~17}} & \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Holz}{Erde}~45}} & \mbox{\hyperlink{spruch:50}{\mycombination[0.5em]{Wasser}{Holz}{Erde}~50}}
    \end{tabular*}\par}
 \newpage
 \paar{Holz}{Metall}{Die Schere}{Holz stellt sich dem Metall. Das Wachsen trifft auf den Schnitt.}
@@ -813,19 +880,9 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
   {Gegen jede Grenze anzuwachsen, kann wehtun. Und wer sich zu sehr beschneiden lässt, verliert etwas Eigenes. Nimm an, was dich stärkt, und bewahre, was dich ausmacht.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
-   \mbox{\hyperlink{spruch:7}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~7}} & \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~8}} & \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Metall}{Erde}~9}} \\[0.3ex]
-   \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Holz}{Metall}~23}} & \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Holz}{Metall}~32}} & \mbox{\hyperlink{spruch:51}{\mycombination[0.5em]{Wasser}{Holz}{Metall}~51}}
+   \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~10}} & \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Metall}{Erde}~11}} & \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~12}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:18}{\mycombination[0.5em]{Feuer}{Holz}{Metall}~18}} & \mbox{\hyperlink{spruch:36}{\mycombination[0.5em]{Erde}{Holz}{Metall}~36}} & \mbox{\hyperlink{spruch:51}{\mycombination[0.5em]{Wasser}{Holz}{Metall}~51}}
    \end{tabular*}\par}
-\newpage
-\paar{Holz}{Wasser}{Der Durst}{Holz kehrt heim zum Wasser. Der Trieb sucht seine Wurzeln.}
-  {Bevor du weiterwächst, trinkst du. Du gehst zurück zu dem, was dich nährt, und kommst gestärkt wieder.}
-  {Rückzug kann bequem werden, und Eifer kann die Quelle vergessen. Beides ist menschlich. Trink, wenn du Durst hast, und dann wachse weiter.}
-  {{\small Alle sechs Tripel:}\par\smallskip
-   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
-   \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Wasser}{Feuer}~10}} & \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Wasser}{Erde}~11}} & \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~12}} \\[0.3ex]
-   \mbox{\hyperlink{spruch:24}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~24}} & \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~33}} & \mbox{\hyperlink{spruch:42}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~42}}
-   \end{tabular*}\par}
-
 \newpage
 \markright{\element{Feuer}}
 \paar{Feuer}{Erde}{Die Asche}{Feuer nährt Erde. Aus Begeisterung wird Halt.}
@@ -834,7 +891,16 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:13}{\mycombination[0.5em]{Feuer}{Erde}{Metall}~13}} & \mbox{\hyperlink{spruch:14}{\mycombination[0.5em]{Feuer}{Erde}{Wasser}~14}} & \mbox{\hyperlink{spruch:15}{\mycombination[0.5em]{Feuer}{Erde}{Holz}~15}} \\[0.3ex]
-   \mbox{\hyperlink{spruch:1}{\mycombination[0.5em]{Holz}{Feuer}{Erde}~1}} & \mbox{\hyperlink{spruch:43}{\mycombination[0.5em]{Metall}{Feuer}{Erde}~43}} & \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Feuer}{Erde}~52}}
+   \mbox{\hyperlink{spruch:1}{\mycombination[0.5em]{Holz}{Feuer}{Erde}~1}} & \mbox{\hyperlink{spruch:46}{\mycombination[0.5em]{Metall}{Feuer}{Erde}~46}} & \mbox{\hyperlink{spruch:55}{\mycombination[0.5em]{Wasser}{Feuer}{Erde}~55}}
+   \end{tabular*}\par}
+\newpage
+\paar{Feuer}{Holz}{Das Brennholz}{Feuer nimmt das Holz an. Die Flamme sucht, was sie nährt.}
+  {Du erinnerst dich, warum du brennst: an die Ideen, Menschen und Pläne, die dich entzündet haben. Daraus schöpfst du neue Kraft.}
+  {Man kann von alten Erfolgen zehren oder vergessen, woher die Glut kommt. Erinnere dich gern an deine Quellen, und lass dich von ihnen zu Neuem entzünden.}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~16}} & \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~17}} & \mbox{\hyperlink{spruch:18}{\mycombination[0.5em]{Feuer}{Holz}{Metall}~18}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~28}} & \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~47}} & \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~56}}
    \end{tabular*}\par}
 \newpage
 \paar{Feuer}{Metall}{Die Schmiede}{Feuer bändigt Metall. Leidenschaft gibt der Härte Form.}
@@ -842,8 +908,8 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
   {Zu viel Hitze kann schmelzen, was Halt gibt, und ohne Wärme bleibt alles starr. Mit dem rechten Maß formst du Großes.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
-   \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Metall}{Wasser}~16}} & \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~17}} & \mbox{\hyperlink{spruch:18}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~18}} \\[0.3ex]
-   \mbox{\hyperlink{spruch:2}{\mycombination[0.5em]{Holz}{Feuer}{Metall}~2}} & \mbox{\hyperlink{spruch:34}{\mycombination[0.5em]{Erde}{Feuer}{Metall}~34}} & \mbox{\hyperlink{spruch:53}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~53}}
+   \mbox{\hyperlink{spruch:19}{\mycombination[0.5em]{Feuer}{Metall}{Wasser}~19}} & \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~20}} & \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~21}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:2}{\mycombination[0.5em]{Holz}{Feuer}{Metall}~2}} & \mbox{\hyperlink{spruch:29}{\mycombination[0.5em]{Erde}{Feuer}{Metall}~29}} & \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~57}}
    \end{tabular*}\par}
 \newpage
 \paar{Feuer}{Wasser}{Der Regen}{Feuer stellt sich dem Wasser. Die Begeisterung trifft auf Kühle.}
@@ -851,19 +917,9 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
   {Gegen jede Kühle anzukämpfen, kostet Kraft, und manches kalte Wort löscht schneller als nötig. Lass dich abkühlen, ohne zu erlöschen; was bleibt, ist echt.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
-   \mbox{\hyperlink{spruch:19}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~19}} & \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Wasser}{Erde}~20}} & \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~21}} \\[0.3ex]
-   \mbox{\hyperlink{spruch:3}{\mycombination[0.5em]{Holz}{Feuer}{Wasser}~3}} & \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Feuer}{Wasser}~35}} & \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Feuer}{Wasser}~44}}
+   \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~22}} & \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~23}} & \mbox{\hyperlink{spruch:24}{\mycombination[0.5em]{Feuer}{Wasser}{Erde}~24}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:3}{\mycombination[0.5em]{Holz}{Feuer}{Wasser}~3}} & \mbox{\hyperlink{spruch:30}{\mycombination[0.5em]{Erde}{Feuer}{Wasser}~30}} & \mbox{\hyperlink{spruch:48}{\mycombination[0.5em]{Metall}{Feuer}{Wasser}~48}}
    \end{tabular*}\par}
-\newpage
-\paar{Feuer}{Holz}{Das Brennholz}{Feuer kehrt heim zum Holz. Die Flamme sucht, was sie nährt.}
-  {Du erinnerst dich, warum du brennst: an die Ideen, Menschen und Pläne, die dich entzündet haben. Daraus schöpfst du neue Kraft.}
-  {Man kann von alten Erfolgen zehren oder vergessen, woher die Glut kommt. Erinnere dich gern an deine Quellen, und lass dich von ihnen zu Neuem entzünden.}
-  {{\small Alle sechs Tripel:}\par\smallskip
-   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
-   \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~22}} & \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Holz}{Metall}~23}} & \mbox{\hyperlink{spruch:24}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~24}} \\[0.3ex]
-   \mbox{\hyperlink{spruch:36}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~36}} & \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~45}} & \mbox{\hyperlink{spruch:54}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~54}}
-   \end{tabular*}\par}
-
 \newpage
 \markright{\element{Erde}}
 \paar{Erde}{Metall}{Der Schatz}{Erde nährt Metall. Aus Fürsorge wird Klarheit.}
@@ -872,7 +928,16 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:25}{\mycombination[0.5em]{Erde}{Metall}{Wasser}~25}} & \mbox{\hyperlink{spruch:26}{\mycombination[0.5em]{Erde}{Metall}{Holz}~26}} & \mbox{\hyperlink{spruch:27}{\mycombination[0.5em]{Erde}{Metall}{Feuer}~27}} \\[0.3ex]
-   \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Erde}{Metall}~4}} & \mbox{\hyperlink{spruch:13}{\mycombination[0.5em]{Feuer}{Erde}{Metall}~13}} & \mbox{\hyperlink{spruch:55}{\mycombination[0.5em]{Wasser}{Erde}{Metall}~55}}
+   \mbox{\hyperlink{spruch:7}{\mycombination[0.5em]{Holz}{Erde}{Metall}~7}} & \mbox{\hyperlink{spruch:13}{\mycombination[0.5em]{Feuer}{Erde}{Metall}~13}} & \mbox{\hyperlink{spruch:58}{\mycombination[0.5em]{Wasser}{Erde}{Metall}~58}}
+   \end{tabular*}\par}
+\newpage
+\paar{Erde}{Feuer}{Die Feuerstelle}{Erde nimmt das Feuer an. Der Halt sucht seine Wärme.}
+  {Du nimmst die Wärme an, die dich einmal begeistert hat. Sie gibt deiner Beständigkeit neuen Sinn.}
+  {Erinnerungen können wärmen oder ersetzen, was heute fehlt. Hol dir die alte Wärme, und entzünde damit etwas Neues.}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~28}} & \mbox{\hyperlink{spruch:29}{\mycombination[0.5em]{Erde}{Feuer}{Metall}~29}} & \mbox{\hyperlink{spruch:30}{\mycombination[0.5em]{Erde}{Feuer}{Wasser}~30}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~8}} & \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~40}} & \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~59}}
    \end{tabular*}\par}
 \newpage
 \paar{Erde}{Wasser}{Das Bett}{Erde bändigt Wasser. Der Halt gibt dem Fluss eine Richtung.}
@@ -880,8 +945,8 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
   {Halt kann zum Stau werden, und ohne Halt läuft alles davon. Gib dem Fließenden ein Bett mit Ufern, die atmen.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
-   \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Wasser}{Holz}~28}} & \mbox{\hyperlink{spruch:29}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~29}} & \mbox{\hyperlink{spruch:30}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~30}} \\[0.3ex]
-   \mbox{\hyperlink{spruch:5}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~5}} & \mbox{\hyperlink{spruch:14}{\mycombination[0.5em]{Feuer}{Erde}{Wasser}~14}} & \mbox{\hyperlink{spruch:46}{\mycombination[0.5em]{Metall}{Erde}{Wasser}~46}}
+   \mbox{\hyperlink{spruch:31}{\mycombination[0.5em]{Erde}{Wasser}{Holz}~31}} & \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~32}} & \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~33}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~9}} & \mbox{\hyperlink{spruch:14}{\mycombination[0.5em]{Feuer}{Erde}{Wasser}~14}} & \mbox{\hyperlink{spruch:41}{\mycombination[0.5em]{Metall}{Erde}{Wasser}~41}}
    \end{tabular*}\par}
 \newpage
 \paar{Erde}{Holz}{Die Lockerung}{Erde stellt sich dem Holz. Die Ruhe trifft auf Wachstum.}
@@ -889,19 +954,9 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
   {Veränderung kann sich wie Bedrohung anfühlen, und zu viel davon wie Selbstverlust. Lass dich lockern, und bleib dabei der Boden, der du bist.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
-   \mbox{\hyperlink{spruch:31}{\mycombination[0.5em]{Erde}{Holz}{Feuer}~31}} & \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Holz}{Metall}~32}} & \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~33}} \\[0.3ex]
-   \mbox{\hyperlink{spruch:15}{\mycombination[0.5em]{Feuer}{Erde}{Holz}~15}} & \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Erde}{Holz}~47}} & \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Erde}{Holz}~56}}
+   \mbox{\hyperlink{spruch:34}{\mycombination[0.5em]{Erde}{Holz}{Feuer}~34}} & \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~35}} & \mbox{\hyperlink{spruch:36}{\mycombination[0.5em]{Erde}{Holz}{Metall}~36}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:15}{\mycombination[0.5em]{Feuer}{Erde}{Holz}~15}} & \mbox{\hyperlink{spruch:42}{\mycombination[0.5em]{Metall}{Erde}{Holz}~42}} & \mbox{\hyperlink{spruch:60}{\mycombination[0.5em]{Wasser}{Erde}{Holz}~60}}
    \end{tabular*}\par}
-\newpage
-\paar{Erde}{Feuer}{Die Feuerstelle}{Erde kehrt heim zum Feuer. Der Halt sucht seine Wärme.}
-  {Du gehst zurück zu dem, was dich einmal begeistert hat. Die alte Wärme gibt deiner Beständigkeit neuen Sinn.}
-  {Erinnerungen können wärmen oder ersetzen, was heute fehlt. Hol dir die alte Wärme, und entzünde damit etwas Neues.}
-  {{\small Alle sechs Tripel:}\par\smallskip
-   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
-   \mbox{\hyperlink{spruch:34}{\mycombination[0.5em]{Erde}{Feuer}{Metall}~34}} & \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Feuer}{Wasser}~35}} & \mbox{\hyperlink{spruch:36}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~36}} \\[0.3ex]
-   \mbox{\hyperlink{spruch:6}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~6}} & \mbox{\hyperlink{spruch:48}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~48}} & \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~57}}
-   \end{tabular*}\par}
-
 \newpage
 \markright{\element{Metall}}
 \paar{Metall}{Wasser}{Die Klärung}{Metall nährt Wasser. Aus Klarheit wird Weisheit.}
@@ -910,7 +965,16 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:37}{\mycombination[0.5em]{Metall}{Wasser}{Holz}~37}} & \mbox{\hyperlink{spruch:38}{\mycombination[0.5em]{Metall}{Wasser}{Feuer}~38}} & \mbox{\hyperlink{spruch:39}{\mycombination[0.5em]{Metall}{Wasser}{Erde}~39}} \\[0.3ex]
-   \mbox{\hyperlink{spruch:7}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~7}} & \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Metall}{Wasser}~16}} & \mbox{\hyperlink{spruch:25}{\mycombination[0.5em]{Erde}{Metall}{Wasser}~25}}
+   \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~10}} & \mbox{\hyperlink{spruch:19}{\mycombination[0.5em]{Feuer}{Metall}{Wasser}~19}} & \mbox{\hyperlink{spruch:25}{\mycombination[0.5em]{Erde}{Metall}{Wasser}~25}}
+   \end{tabular*}\par}
+\newpage
+\paar{Metall}{Erde}{Der Berg}{Metall nimmt die Erde an. Die Klarheit sucht ihren Grund.}
+  {Du nimmst an, was dich hervorgebracht hat. Darin findest du Halt und Wärme hinter deiner Strenge.}
+  {Im Vertrauten kann man sich verstecken, und ohne Herkunft fehlt der Boden. Nimm an, was dich stärkt, und triff dann deine Entscheidung.}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~40}} & \mbox{\hyperlink{spruch:41}{\mycombination[0.5em]{Metall}{Erde}{Wasser}~41}} & \mbox{\hyperlink{spruch:42}{\mycombination[0.5em]{Metall}{Erde}{Holz}~42}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Metall}{Erde}~11}} & \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~20}} & \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~52}}
    \end{tabular*}\par}
 \newpage
 \paar{Metall}{Holz}{Das Beil}{Metall bändigt Holz. Die Klarheit schneidet das Wuchernde.}
@@ -918,8 +982,8 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
   {Wer zu viel schneidet, lässt wenig wachsen; wer nie schneidet, verliert die Übersicht. Ein guter Schnitt ist ein Geschenk an das Wachstum.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
-   \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Holz}{Feuer}~40}} & \mbox{\hyperlink{spruch:41}{\mycombination[0.5em]{Metall}{Holz}{Erde}~41}} & \mbox{\hyperlink{spruch:42}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~42}} \\[0.3ex]
-   \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~17}} & \mbox{\hyperlink{spruch:26}{\mycombination[0.5em]{Erde}{Metall}{Holz}~26}} & \mbox{\hyperlink{spruch:58}{\mycombination[0.5em]{Wasser}{Metall}{Holz}~58}}
+   \mbox{\hyperlink{spruch:43}{\mycombination[0.5em]{Metall}{Holz}{Feuer}~43}} & \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~44}} & \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Holz}{Erde}~45}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~21}} & \mbox{\hyperlink{spruch:26}{\mycombination[0.5em]{Erde}{Metall}{Holz}~26}} & \mbox{\hyperlink{spruch:53}{\mycombination[0.5em]{Wasser}{Metall}{Holz}~53}}
    \end{tabular*}\par}
 \newpage
 \paar{Metall}{Feuer}{Die Hitze}{Metall stellt sich dem Feuer. Die Form trifft auf die Leidenschaft.}
@@ -927,19 +991,9 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
   {Unter großem Druck kann man die Form verlieren, oder man verhärtet sich. Lass dich bewegen, und vertrau darauf, dass dein Kern bleibt.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
-   \mbox{\hyperlink{spruch:43}{\mycombination[0.5em]{Metall}{Feuer}{Erde}~43}} & \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Feuer}{Wasser}~44}} & \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~45}} \\[0.3ex]
-   \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~8}} & \mbox{\hyperlink{spruch:27}{\mycombination[0.5em]{Erde}{Metall}{Feuer}~27}} & \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Metall}{Feuer}~59}}
+   \mbox{\hyperlink{spruch:46}{\mycombination[0.5em]{Metall}{Feuer}{Erde}~46}} & \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~47}} & \mbox{\hyperlink{spruch:48}{\mycombination[0.5em]{Metall}{Feuer}{Wasser}~48}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~12}} & \mbox{\hyperlink{spruch:27}{\mycombination[0.5em]{Erde}{Metall}{Feuer}~27}} & \mbox{\hyperlink{spruch:54}{\mycombination[0.5em]{Wasser}{Metall}{Feuer}~54}}
    \end{tabular*}\par}
-\newpage
-\paar{Metall}{Erde}{Der Berg}{Metall kehrt heim zur Erde. Die Klarheit sucht ihren Grund.}
-  {Du gehst zurück zu dem, was dich hervorgebracht hat. Dort findest du Halt und Wärme hinter deiner Strenge.}
-  {Im Vertrauten kann man sich verstecken, und ohne Herkunft fehlt der Boden. Kehr zurück, um Kraft zu holen, und triff dann deine Entscheidung.}
-  {{\small Alle sechs Tripel:}\par\smallskip
-   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
-   \mbox{\hyperlink{spruch:46}{\mycombination[0.5em]{Metall}{Erde}{Wasser}~46}} & \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Erde}{Holz}~47}} & \mbox{\hyperlink{spruch:48}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~48}} \\[0.3ex]
-   \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Metall}{Erde}~9}} & \mbox{\hyperlink{spruch:18}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~18}} & \mbox{\hyperlink{spruch:60}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~60}}
-   \end{tabular*}\par}
-
 \newpage
 \markright{\element{Wasser}}
 \paar{Wasser}{Holz}{Der Frühling}{Wasser nährt Holz. Aus Stille wird Wachstum.}
@@ -948,7 +1002,16 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:49}{\mycombination[0.5em]{Wasser}{Holz}{Feuer}~49}} & \mbox{\hyperlink{spruch:50}{\mycombination[0.5em]{Wasser}{Holz}{Erde}~50}} & \mbox{\hyperlink{spruch:51}{\mycombination[0.5em]{Wasser}{Holz}{Metall}~51}} \\[0.3ex]
-   \mbox{\hyperlink{spruch:19}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~19}} & \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Wasser}{Holz}~28}} & \mbox{\hyperlink{spruch:37}{\mycombination[0.5em]{Metall}{Wasser}{Holz}~37}}
+   \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~22}} & \mbox{\hyperlink{spruch:31}{\mycombination[0.5em]{Erde}{Wasser}{Holz}~31}} & \mbox{\hyperlink{spruch:37}{\mycombination[0.5em]{Metall}{Wasser}{Holz}~37}}
+   \end{tabular*}\par}
+\newpage
+\paar{Wasser}{Metall}{Das Gestein}{Wasser nimmt das Metall an. Die Tiefe sucht ihre Klarheit.}
+  {Du nimmst deine Grundsätze an, das, was du klar weißt. Daraus fließt dein Handeln rein.}
+  {Alte Gewissheiten können starr machen, und ohne sie treibt man leicht. Prüfe deine Grundsätze freundlich, und behalte die, die dich wirklich tragen.}
+  {{\small Alle sechs Tripel:}\par\smallskip
+   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
+   \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~52}} & \mbox{\hyperlink{spruch:53}{\mycombination[0.5em]{Wasser}{Metall}{Holz}~53}} & \mbox{\hyperlink{spruch:54}{\mycombination[0.5em]{Wasser}{Metall}{Feuer}~54}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~4}} & \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~23}} & \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~32}}
    \end{tabular*}\par}
 \newpage
 \paar{Wasser}{Feuer}{Das Löschen}{Wasser bändigt Feuer. Die Ruhe dämpft die Hitze.}
@@ -956,8 +1019,8 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
   {Wer jede Begeisterung dämpft, macht das Leben grau, und wer alles lodern lässt, riskiert den Brand. Bring Ruhe, und lass die Freude leben.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
-   \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Feuer}{Erde}~52}} & \mbox{\hyperlink{spruch:53}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~53}} & \mbox{\hyperlink{spruch:54}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~54}} \\[0.3ex]
-   \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Wasser}{Feuer}~10}} & \mbox{\hyperlink{spruch:29}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~29}} & \mbox{\hyperlink{spruch:38}{\mycombination[0.5em]{Metall}{Wasser}{Feuer}~38}}
+   \mbox{\hyperlink{spruch:55}{\mycombination[0.5em]{Wasser}{Feuer}{Erde}~55}} & \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~56}} & \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~57}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:5}{\mycombination[0.5em]{Holz}{Wasser}{Feuer}~5}} & \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~33}} & \mbox{\hyperlink{spruch:38}{\mycombination[0.5em]{Metall}{Wasser}{Feuer}~38}}
    \end{tabular*}\par}
 \newpage
 \paar{Wasser}{Erde}{Die Küste}{Wasser stellt sich der Erde. Der Fluss trifft auf seine Grenze.}
@@ -965,17 +1028,8 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
   {An denselben Grenzen stößt man sich immer wieder, oder man gibt nach und versickert. Nimm die Grenze als Ufer, das dir Richtung gibt.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
-   \mbox{\hyperlink{spruch:55}{\mycombination[0.5em]{Wasser}{Erde}{Metall}~55}} & \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Erde}{Holz}~56}} & \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~57}} \\[0.3ex]
-   \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Wasser}{Erde}~11}} & \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Wasser}{Erde}~20}} & \mbox{\hyperlink{spruch:39}{\mycombination[0.5em]{Metall}{Wasser}{Erde}~39}}
-   \end{tabular*}\par}
-\newpage
-\paar{Wasser}{Metall}{Das Gestein}{Wasser kehrt heim zum Metall. Die Tiefe sucht ihre Klarheit.}
-  {Du gehst zurück zu deinen Grundsätzen, zu dem, was du klar weißt. Von dort aus fließt dein Handeln rein.}
-  {Alte Gewissheiten können starr machen, und ohne sie treibt man leicht. Prüfe deine Grundsätze freundlich, und behalte die, die dich wirklich tragen.}
-  {{\small Alle sechs Tripel:}\par\smallskip
-   \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
-   \mbox{\hyperlink{spruch:58}{\mycombination[0.5em]{Wasser}{Metall}{Holz}~58}} & \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Metall}{Feuer}~59}} & \mbox{\hyperlink{spruch:60}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~60}} \\[0.3ex]
-   \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~12}} & \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~21}} & \mbox{\hyperlink{spruch:30}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~30}}
+   \mbox{\hyperlink{spruch:58}{\mycombination[0.5em]{Wasser}{Erde}{Metall}~58}} & \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~59}} & \mbox{\hyperlink{spruch:60}{\mycombination[0.5em]{Wasser}{Erde}{Holz}~60}} \\[0.3ex]
+   \mbox{\hyperlink{spruch:6}{\mycombination[0.5em]{Holz}{Wasser}{Erde}~6}} & \mbox{\hyperlink{spruch:24}{\mycombination[0.5em]{Feuer}{Wasser}{Erde}~24}} & \mbox{\hyperlink{spruch:39}{\mycombination[0.5em]{Metall}{Wasser}{Erde}~39}}
    \end{tabular*}\par}
 
 \newpage
@@ -983,7 +1037,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \addchap{Die zwölf Muster}\markboth{Die zwölf Muster}{\mbox{}}\label{kap:muster}
 
 \begin{einleitung}
-Ein Muster sind zwei Beziehungen hintereinander: zwei Schritte im Wandlungskreis, dazu die Beziehung zwischen Anfang und Ende. Für den ersten Schritt gibt es vier Möglichkeiten, für den zweiten drei, denn er darf nicht zum Anfang zurückführen. Das ergibt zwölf Muster.
+Ein Muster sind zwei Beziehungen hintereinander: zwei Schritte im Wandlungskreis, dazu die Beziehung zwischen Anfang und Ende. Für den ersten Schritt gibt es vier Möglichkeiten, für den zweiten drei, denn er darf den ersten nicht aufheben: Auf +1 folgt nie −1, auf +2 nie −2. Das ergibt zwölf Muster.
 
 Das Bild über jedem Muster zeigt die zwei Schritte auf dem Brett, wie bei den Beziehungen schwarz von außen und rot von innen. Auch hier kann die Ecke oben jedes Element sein. Es geht dabei nicht um Spielzüge, sondern um die Kombinatorik der fünf Elemente: Das Brett macht nur sichtbar, wohin zwei Schritte im Wandlungskreis führen.
 
@@ -1019,7 +1073,7 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 
 \markright{III \quad Die Lehrzeit}
 \begin{orakelblock}
-\musterkopf{III}{Die Lehrzeit}{1}{3}{Nähren}{Sich stellen}{Heimkehren}
+\musterkopf{III}{Die Lehrzeit}{1}{3}{Nähren}{Sich stellen}{Annehmen}
 \textbf{Du förderst etwas, das sich seiner Prüfung stellt. Am Ende findest du deine eigene Quelle.}\par
 \smallskip
 \lichtschatten{Wer anderen beim Wachsen hilft, lernt selbst am meisten. Du förderst etwas, begleitest es durch seine Prüfung, und plötzlich stehst du an deiner eigenen Quelle. Lehrzeit heißt: Geben und Lernen sind hier dasselbe.}
@@ -1029,111 +1083,111 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 \end{orakelblock}
 \newpage
 
-\markright{IV \quad Der Damm}
+\markright{IV \quad Die Wurzelsuche}
 \begin{orakelblock}
-\musterkopf{IV}{Der Damm}{2}{1}{Bändigen}{Nähren}{Sich stellen}
-\textbf{Deine Grenze bringt Neues hervor. Dieses Neue fordert dich am Ende selbst heraus.}\par
-\smallskip
-\lichtschatten{Grenzen sind schöpferisch. Wo du etwas aufhältst, staut sich Kraft, und daraus entsteht Neues. Nur will dieses Neue nicht ewig in deinen Grenzen bleiben. Sei bereit, dich von deinem eigenen Werk herausfordern zu lassen.}
-  {Der Damm wird zur Mauer. Du hältst fest, weil du Angst vor dem hast, was entstehen könnte, und das Gestaute wird faul statt fruchtbar. Oder der Damm bricht, weil du nichts mehr halten willst, und alles fließt ungeformt davon. Jede gute Grenze braucht ein Tor.}
-\linkteil
-{\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Erde}{Metall}~4}} \hfill \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Metall}{Wasser}~16}} \hfill \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Wasser}{Holz}~28}} \hfill \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Holz}{Feuer}~40}} \hfill \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Feuer}{Erde}~52}}\par
-\end{orakelblock}
-\newpage
-
-\markright{V \quad Der strenge Weg}
-\begin{orakelblock}
-\musterkopf{V}{Der strenge Weg}{2}{2}{Bändigen}{Bändigen}{Heimkehren}
-\textbf{Strenge wird weitergereicht. Durch Disziplin kommst du zurück zu deinen Wurzeln.}\par
-\smallskip
-\lichtschatten{Es gibt Zeiten, in denen Ordnung vor Gefühl geht. Strenge wird weitergegeben, Regel folgt auf Regel. Das klingt hart, aber am Ende dieses Weges wartet etwas Weiches: die Rückkehr zu dem, was dich trägt. Disziplin kann ein Heimweg sein.}
-  {Aus Strenge wird Härte, gegen andere und gegen dich selbst. Regel folgt auf Regel, und keiner weiß mehr, wofür. Das Gegenteil ist ebenso gefährlich: Wer jede Disziplin scheut, findet nie den Weg nach Hause. Frag bei jeder Regel, ob sie dich noch zu deinen Wurzeln führt.}
-\linkteil
-{\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:5}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~5}} \hfill \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~17}} \hfill \mbox{\hyperlink{spruch:29}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~29}} \hfill \mbox{\hyperlink{spruch:41}{\mycombination[0.5em]{Metall}{Holz}{Erde}~41}} \hfill \mbox{\hyperlink{spruch:53}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~53}}\par
-\end{orakelblock}
-\newpage
-
-\markright{VI \quad Die Abkürzung}
-\begin{orakelblock}
-\musterkopf{VI}{Die Abkürzung}{2}{4}{Bändigen}{Heimkehren}{Nähren}
-\textbf{Du greifst beherzt ein und gehst dann geradewegs zurück zur Quelle. Am Ende entsteht, was du hervorbringen wolltest, schneller als gedacht.}\par
-\smallskip
-\lichtschatten{Manchmal ist der direkte Weg der richtige. Du siehst klar, was zu tun ist, greifst ein und gehst ohne Umschweife weiter. So kommst du schneller ans Ziel, als alle dachten, und ersparst dir und anderen viele Zwischenschritte. Vertrau deinem Blick, wenn er wirklich klar ist.}
-  {Wer nur geradeaus stürmt, lässt unterwegs etwas liegen: Menschen, die mitkommen wollten, Erfahrungen, die man nur auf dem längeren Weg macht. Das Ziel ist erreicht, aber nichts trägt dich weiter. Oder das Gegenteil: Du traust dem kurzen Weg nie und verlierst dich in Umständlichkeit. Frag dich, was du auf der Abkürzung zurücklässt.}
-\linkteil
-{\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:6}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~6}} \hfill \mbox{\hyperlink{spruch:18}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~18}} \hfill \mbox{\hyperlink{spruch:30}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~30}} \hfill \mbox{\hyperlink{spruch:42}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~42}} \hfill \mbox{\hyperlink{spruch:54}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~54}}\par
-\end{orakelblock}
-\newpage
-
-\markright{VII \quad Die Läuterung}
-\begin{orakelblock}
-\musterkopf{VII}{Die Läuterung}{3}{1}{Sich stellen}{Nähren}{Heimkehren}
-\textbf{Du stellst dich deinem Prüfstein. Die Krise wird zur Kraftquelle.}\par
-\smallskip
-\lichtschatten{Wenn du dich dem stellst, was dich bedrängt, verwandelt es sich. Aus der Krise wird Nahrung, aus dem Widerstand eine Quelle. Läuterung heißt nicht, dass es nicht wehtut. Es heißt, dass der Schmerz zu etwas wird.}
-  {Du suchst die Krise, weil nur sie dich lebendig fühlen lässt, und verwechselst Leiden mit Wachsen. Oder du meidest jede Konfrontation und bleibst, wo du bist. Nicht jeder Schmerz läutert. Prüfe, ob er dich nährt oder nur verbraucht.}
-\linkteil
-{\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:7}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~7}} \hfill \mbox{\hyperlink{spruch:19}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~19}} \hfill \mbox{\hyperlink{spruch:31}{\mycombination[0.5em]{Erde}{Holz}{Feuer}~31}} \hfill \mbox{\hyperlink{spruch:43}{\mycombination[0.5em]{Metall}{Feuer}{Erde}~43}} \hfill \mbox{\hyperlink{spruch:55}{\mycombination[0.5em]{Wasser}{Erde}{Metall}~55}}\par
-\end{orakelblock}
-\newpage
-
-\markright{VIII \quad Der Aufstand}
-\begin{orakelblock}
-\musterkopf{VIII}{Der Aufstand}{3}{3}{Sich stellen}{Sich stellen}{Nähren}
-\textbf{Widerstand trifft auf Widerstand. Wenn er ein Ziel hat, wird er fruchtbar.}\par
-\smallskip
-\lichtschatten{Zweimal Widerstand, zweimal Mut: Das ist der wildeste aller Wege, und er ist fruchtbar, wenn er ein Ziel hat. Ein Aufstand aus Liebe zu etwas baut auf, ein Aufstand nur gegen etwas reißt nieder. Frag dich, wofür dein Herz schlägt.}
-  {Der Aufstand wird zum Selbstzweck. Du kämpfst gegen alles, was dich begrenzt, und merkst nicht, wie du dich dabei aufreibst. Oder du schluckst jeden Widerstand und wirst bitter. Beides verbrennt dich. Fruchtbar wird der Widerstand erst, wenn er auch etwas aufbauen will.}
-\linkteil
-{\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~8}} \hfill \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Wasser}{Erde}~20}} \hfill \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Holz}{Metall}~32}} \hfill \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Feuer}{Wasser}~44}} \hfill \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Erde}{Holz}~56}}\par
-\end{orakelblock}
-\newpage
-
-\markright{IX \quad Die List}
-\begin{orakelblock}
-\musterkopf{IX}{Die List}{3}{4}{Sich stellen}{Heimkehren}{Bändigen}
-\textbf{Du stellst dich und weichst dann geschickt aus. Am Ende hast du die Oberhand.}\par
-\smallskip
-\lichtschatten{Klugheit ist auch eine Form von Stärke. Du stellst dich, weichst dann aus, sammelst dich und kommst gestärkt zurück. Das ist kein Davonlaufen, sondern Strategie. Wer den richtigen Moment abwarten kann, gewinnt, ohne kämpfen zu müssen.}
-  {List wird zur Unehrlichkeit. Du weichst so geschickt aus, dass niemand mehr weiß, wo du stehst, nicht einmal du selbst. Oder du verachtest jede Taktik und rennst mit dem Kopf gegen die Wand. Klugheit braucht ein gutes Herz, sonst wird sie zur Manipulation.}
-\linkteil
-{\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Metall}{Erde}~9}} \hfill \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~21}} \hfill \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~33}} \hfill \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~45}} \hfill \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~57}}\par
-\end{orakelblock}
-\newpage
-
-\markright{X \quad Die gesammelte Kraft}
-\begin{orakelblock}
-\musterkopf{X}{Die gesammelte Kraft}{4}{2}{Heimkehren}{Bändigen}{Nähren}
-\textbf{Erst schöpfst du Kraft, dann greifst du ein. Am Ende wächst, was du nährst.}\par
-\smallskip
-\lichtschatten{Bevor du handelst, kehr heim. Hol dir, was dich stärkt, und dann greif ein, ruhig und bestimmt. Was aus gesammelter Kraft geschieht, nährt am Ende alle, auch dich. Das ist die Kunst, aus Fülle zu handeln statt aus Not.}
-  {Du sammelst und sammelst, und der richtige Moment zum Handeln kommt nie. Oder du stürmst los, ohne aufzutanken, und brennst aus, bevor etwas wächst. Kraft will gesammelt und verschenkt werden. Beides gehört zusammen wie Ein- und Ausatmen.}
-\linkteil
-{\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Wasser}{Feuer}~10}} \hfill \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~22}} \hfill \mbox{\hyperlink{spruch:34}{\mycombination[0.5em]{Erde}{Feuer}{Metall}~34}} \hfill \mbox{\hyperlink{spruch:46}{\mycombination[0.5em]{Metall}{Erde}{Wasser}~46}} \hfill \mbox{\hyperlink{spruch:58}{\mycombination[0.5em]{Wasser}{Metall}{Holz}~58}}\par
-\end{orakelblock}
-\newpage
-
-\markright{XI \quad Der Rückhalt}
-\begin{orakelblock}
-\musterkopf{XI}{Der Rückhalt}{4}{3}{Heimkehren}{Sich stellen}{Bändigen}
-\textbf{Gestützt auf deine Herkunft stellst du dich. Am Ende bestimmst du die Lage.}\par
-\smallskip
-\lichtschatten{Niemand muss sich allein stellen. Hinter dir stehen deine Herkunft, deine Geschichte, deine Menschen. Mit diesem Rückhalt kannst du dich dem Schweren zuwenden, und am Ende bist du es, der die Richtung bestimmt.}
-  {Der Rückhalt wird zur Ausrede: Du stellst dich nur, wenn alle hinter dir stehen, oder du stützt dich so sehr auf deine Herkunft, dass du nichts Eigenes wagst. Das Gegenteil ist der einsame Held, der niemanden braucht und daran zerbricht. Lass dich tragen, aber geh deine Schritte selbst.}
-\linkteil
-{\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Wasser}{Erde}~11}} \hfill \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Holz}{Metall}~23}} \hfill \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Feuer}{Wasser}~35}} \hfill \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Erde}{Holz}~47}} \hfill \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Metall}{Feuer}~59}}\par
-\end{orakelblock}
-\newpage
-
-\markright{XII \quad Die Wurzelsuche}
-\begin{orakelblock}
-\musterkopf{XII}{Die Wurzelsuche}{4}{4}{Heimkehren}{Heimkehren}{Sich stellen}
+\musterkopf{IV}{Die Wurzelsuche}{4}{4}{Annehmen}{Annehmen}{Sich stellen}
 \textbf{Zweimal gehst du zurück zum Ursprung und triffst auf das, was dich begrenzt. Kläre es, aber bleib nicht darin stehen.}\par
 \smallskip
 \lichtschatten{Zweimal zurück, ganz nach unten. Dort, wo alles anfing, wartet oft auch das, was uns bis heute klein hält. Schau es dir mit Mitgefühl an, auch dich selbst von damals. Dann kannst du es dort lassen und mit leichterem Gepäck weitergehen.}
   {Du gräbst immer tiefer und kommst nicht mehr heraus. Die Vergangenheit wird zur Erklärung für alles und zur Ausrede für nichts. Oder du willst gar nicht zurückschauen, und das Alte bestimmt dich unbemerkt weiter. Schau hin, aber kehr zurück ins Heute.}
 \linkteil
-{\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~12}} \hfill \mbox{\hyperlink{spruch:24}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~24}} \hfill \mbox{\hyperlink{spruch:36}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~36}} \hfill \mbox{\hyperlink{spruch:48}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~48}} \hfill \mbox{\hyperlink{spruch:60}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~60}}\par
+{\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~4}} \hfill \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~16}} \hfill \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~28}} \hfill \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~40}} \hfill \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~52}}\par
+\end{orakelblock}
+\newpage
+
+\markright{V \quad Die gesammelte Kraft}
+\begin{orakelblock}
+\musterkopf{V}{Die gesammelte Kraft}{4}{2}{Annehmen}{Bändigen}{Nähren}
+\textbf{Erst schöpfst du Kraft, dann greifst du ein. Am Ende wächst, was du nährst.}\par
+\smallskip
+\lichtschatten{Bevor du handelst, nimm an, was dich stärkt, und dann greif ein, ruhig und bestimmt. Was aus gesammelter Kraft geschieht, nährt am Ende alle, auch dich. Das ist die Kunst, aus Fülle zu handeln statt aus Not.}
+  {Du sammelst und sammelst, und der richtige Moment zum Handeln kommt nie. Oder du stürmst los, ohne aufzutanken, und brennst aus, bevor etwas wächst. Kraft will gesammelt und verschenkt werden. Beides gehört zusammen wie Ein- und Ausatmen.}
+\linkteil
+{\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:5}{\mycombination[0.5em]{Holz}{Wasser}{Feuer}~5}} \hfill \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~17}} \hfill \mbox{\hyperlink{spruch:29}{\mycombination[0.5em]{Erde}{Feuer}{Metall}~29}} \hfill \mbox{\hyperlink{spruch:41}{\mycombination[0.5em]{Metall}{Erde}{Wasser}~41}} \hfill \mbox{\hyperlink{spruch:53}{\mycombination[0.5em]{Wasser}{Metall}{Holz}~53}}\par
+\end{orakelblock}
+\newpage
+
+\markright{VI \quad Der Rückhalt}
+\begin{orakelblock}
+\musterkopf{VI}{Der Rückhalt}{4}{3}{Annehmen}{Sich stellen}{Bändigen}
+\textbf{Gestützt auf deine Herkunft stellst du dich. Am Ende bestimmst du die Lage.}\par
+\smallskip
+\lichtschatten{Niemand muss sich allein stellen. Hinter dir stehen deine Herkunft, deine Geschichte, deine Menschen. Mit diesem Rückhalt kannst du dich dem Schweren zuwenden, und am Ende bist du es, der die Richtung bestimmt.}
+  {Der Rückhalt wird zur Ausrede: Du stellst dich nur, wenn alle hinter dir stehen, oder du stützt dich so sehr auf deine Herkunft, dass du nichts Eigenes wagst. Das Gegenteil ist der einsame Held, der niemanden braucht und daran zerbricht. Lass dich tragen, aber geh deine Schritte selbst.}
+\linkteil
+{\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:6}{\mycombination[0.5em]{Holz}{Wasser}{Erde}~6}} \hfill \mbox{\hyperlink{spruch:18}{\mycombination[0.5em]{Feuer}{Holz}{Metall}~18}} \hfill \mbox{\hyperlink{spruch:30}{\mycombination[0.5em]{Erde}{Feuer}{Wasser}~30}} \hfill \mbox{\hyperlink{spruch:42}{\mycombination[0.5em]{Metall}{Erde}{Holz}~42}} \hfill \mbox{\hyperlink{spruch:54}{\mycombination[0.5em]{Wasser}{Metall}{Feuer}~54}}\par
+\end{orakelblock}
+\newpage
+
+\markright{VII \quad Der Damm}
+\begin{orakelblock}
+\musterkopf{VII}{Der Damm}{2}{1}{Bändigen}{Nähren}{Sich stellen}
+\textbf{Deine Grenze bringt Neues hervor. Dieses Neue fordert dich am Ende selbst heraus.}\par
+\smallskip
+\lichtschatten{Grenzen sind schöpferisch. Wo du etwas aufhältst, staut sich Kraft, und daraus entsteht Neues. Nur will dieses Neue nicht ewig in deinen Grenzen bleiben. Sei bereit, dich von deinem eigenen Werk herausfordern zu lassen.}
+  {Der Damm wird zur Mauer. Du hältst fest, weil du Angst vor dem hast, was entstehen könnte, und das Gestaute wird faul statt fruchtbar. Oder der Damm bricht, weil du nichts mehr halten willst, und alles fließt ungeformt davon. Jede gute Grenze braucht ein Tor.}
+\linkteil
+{\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:7}{\mycombination[0.5em]{Holz}{Erde}{Metall}~7}} \hfill \mbox{\hyperlink{spruch:19}{\mycombination[0.5em]{Feuer}{Metall}{Wasser}~19}} \hfill \mbox{\hyperlink{spruch:31}{\mycombination[0.5em]{Erde}{Wasser}{Holz}~31}} \hfill \mbox{\hyperlink{spruch:43}{\mycombination[0.5em]{Metall}{Holz}{Feuer}~43}} \hfill \mbox{\hyperlink{spruch:55}{\mycombination[0.5em]{Wasser}{Feuer}{Erde}~55}}\par
+\end{orakelblock}
+\newpage
+
+\markright{VIII \quad Die Abkürzung}
+\begin{orakelblock}
+\musterkopf{VIII}{Die Abkürzung}{2}{4}{Bändigen}{Annehmen}{Nähren}
+\textbf{Du greifst beherzt ein und gehst dann geradewegs zurück zur Quelle. Am Ende entsteht, was du hervorbringen wolltest, schneller als gedacht.}\par
+\smallskip
+\lichtschatten{Manchmal ist der direkte Weg der richtige. Du siehst klar, was zu tun ist, greifst ein und gehst ohne Umschweife weiter. So kommst du schneller ans Ziel, als alle dachten, und ersparst dir und anderen viele Zwischenschritte. Vertrau deinem Blick, wenn er wirklich klar ist.}
+  {Wer nur geradeaus stürmt, lässt unterwegs etwas liegen: Menschen, die mitkommen wollten, Erfahrungen, die man nur auf dem längeren Weg macht. Das Ziel ist erreicht, aber nichts trägt dich weiter. Oder das Gegenteil: Du traust dem kurzen Weg nie und verlierst dich in Umständlichkeit. Frag dich, was du auf der Abkürzung zurücklässt.}
+\linkteil
+{\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~8}} \hfill \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~20}} \hfill \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~32}} \hfill \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~44}} \hfill \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~56}}\par
+\end{orakelblock}
+\newpage
+
+\markright{IX \quad Der strenge Weg}
+\begin{orakelblock}
+\musterkopf{IX}{Der strenge Weg}{2}{2}{Bändigen}{Bändigen}{Annehmen}
+\textbf{Strenge wird weitergereicht. Durch Disziplin kommst du zurück zu deinen Wurzeln.}\par
+\smallskip
+\lichtschatten{Es gibt Zeiten, in denen Ordnung vor Gefühl geht. Strenge wird weitergegeben, Regel folgt auf Regel. Das klingt hart, aber am Ende dieses Weges wartet etwas Weiches: das Annehmen dessen, was dich trägt. Disziplin kann ein Heimweg sein.}
+  {Aus Strenge wird Härte, gegen andere und gegen dich selbst. Regel folgt auf Regel, und keiner weiß mehr, wofür. Das Gegenteil ist ebenso gefährlich: Wer jede Disziplin scheut, findet nie den Weg nach Hause. Frag bei jeder Regel, ob sie dich noch zu deinen Wurzeln führt.}
+\linkteil
+{\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~9}} \hfill \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~21}} \hfill \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~33}} \hfill \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Holz}{Erde}~45}} \hfill \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~57}}\par
+\end{orakelblock}
+\newpage
+
+\markright{X \quad Die Läuterung}
+\begin{orakelblock}
+\musterkopf{X}{Die Läuterung}{3}{1}{Sich stellen}{Nähren}{Annehmen}
+\textbf{Du stellst dich deinem Prüfstein. Die Krise wird zur Kraftquelle.}\par
+\smallskip
+\lichtschatten{Wenn du dich dem stellst, was dich bedrängt, verwandelt es sich. Aus der Krise wird Nahrung, aus dem Widerstand eine Quelle. Läuterung heißt nicht, dass es nicht wehtut. Es heißt, dass der Schmerz zu etwas wird.}
+  {Du suchst die Krise, weil nur sie dich lebendig fühlen lässt, und verwechselst Leiden mit Wachsen. Oder du meidest jede Konfrontation und bleibst, wo du bist. Nicht jeder Schmerz läutert. Prüfe, ob er dich nährt oder nur verbraucht.}
+\linkteil
+{\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~10}} \hfill \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~22}} \hfill \mbox{\hyperlink{spruch:34}{\mycombination[0.5em]{Erde}{Holz}{Feuer}~34}} \hfill \mbox{\hyperlink{spruch:46}{\mycombination[0.5em]{Metall}{Feuer}{Erde}~46}} \hfill \mbox{\hyperlink{spruch:58}{\mycombination[0.5em]{Wasser}{Erde}{Metall}~58}}\par
+\end{orakelblock}
+\newpage
+
+\markright{XI \quad Die List}
+\begin{orakelblock}
+\musterkopf{XI}{Die List}{3}{4}{Sich stellen}{Annehmen}{Bändigen}
+\textbf{Du stellst dich und weichst dann geschickt aus. Am Ende hast du die Oberhand.}\par
+\smallskip
+\lichtschatten{Klugheit ist auch eine Form von Stärke. Du stellst dich, weichst dann aus, sammelst dich und kommst gestärkt zurück. Das ist kein Davonlaufen, sondern Strategie. Wer den richtigen Moment abwarten kann, gewinnt, ohne kämpfen zu müssen.}
+  {List wird zur Unehrlichkeit. Du weichst so geschickt aus, dass niemand mehr weiß, wo du stehst, nicht einmal du selbst. Oder du verachtest jede Taktik und rennst mit dem Kopf gegen die Wand. Klugheit braucht ein gutes Herz, sonst wird sie zur Manipulation.}
+\linkteil
+{\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Metall}{Erde}~11}} \hfill \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~23}} \hfill \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~35}} \hfill \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~47}} \hfill \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~59}}\par
+\end{orakelblock}
+\newpage
+
+\markright{XII \quad Der Aufstand}
+\begin{orakelblock}
+\musterkopf{XII}{Der Aufstand}{3}{3}{Sich stellen}{Sich stellen}{Nähren}
+\textbf{Widerstand trifft auf Widerstand. Wenn er ein Ziel hat, wird er fruchtbar.}\par
+\smallskip
+\lichtschatten{Zweimal Widerstand, zweimal Mut: Das ist der wildeste aller Wege, und er ist fruchtbar, wenn er ein Ziel hat. Ein Aufstand aus Liebe zu etwas baut auf, ein Aufstand nur gegen etwas reißt nieder. Frag dich, wofür dein Herz schlägt.}
+  {Der Aufstand wird zum Selbstzweck. Du kämpfst gegen alles, was dich begrenzt, und merkst nicht, wie du dich dabei aufreibst. Oder du schluckst jeden Widerstand und wirst bitter. Beides verbrennt dich. Fruchtbar wird der Widerstand erst, wenn er auch etwas aufbauen will.}
+\linkteil
+{\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~12}} \hfill \mbox{\hyperlink{spruch:24}{\mycombination[0.5em]{Feuer}{Wasser}{Erde}~24}} \hfill \mbox{\hyperlink{spruch:36}{\mycombination[0.5em]{Erde}{Holz}{Metall}~36}} \hfill \mbox{\hyperlink{spruch:48}{\mycombination[0.5em]{Metall}{Feuer}{Wasser}~48}} \hfill \mbox{\hyperlink{spruch:60}{\mycombination[0.5em]{Wasser}{Erde}{Holz}~60}}\par
 \end{orakelblock}
 \newpage
 
@@ -1161,41 +1215,41 @@ Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe f
   {Du hast viel gegeben, vielleicht mehr, als gut für dich war. Wenn die Flamme jetzt kleiner wird, ist das kein Scheitern. Es ist die Einladung, still zu werden und zu trinken. In der Tiefe liegt die Quelle, aus der du kommst. Nimm dir die Zeit. Ein Baum, der am Wasser steht, wächst wieder.}
   {Wer sich mit Hingabe verausgabt, merkt oft spät, wie müde er geworden ist. Manchmal zieht man sich aber auch zu früh zurück. Hör auf deine Kraft: Sie sagt dir, wann es Zeit zum Brennen ist und wann zum Trinken.}
 \newpage
-\spruch{4}{Holz}{Erde}{Metall}{IV Damm}{Die Wurzel bricht das Feld}{Dein Wille dringt in harten Grund, und darin kommt Erz zutage. Was du dir hart erarbeitest, wird wertvoll, aber es prüft deine Ziele.}
-  {Du eroberst dir gerade etwas mühsam, Zentimeter für Zentimeter durch harten Boden. Bleib dran: In diesem Boden liegt etwas Kostbares, und du wirst es finden. Aber sei darauf gefasst, dass dein Fund dich fragt, warum du das alles tust. Hab eine gute Antwort, oder finde sie unterwegs.}
-  {Auf hartem Grund kann aus Ausdauer leicht Verbissenheit werden. Und manchmal gibt man genau dann auf, wenn das Erz schon nah ist. Frag dich ab und zu, wofür du gräbst, dann findest du das rechte Maß.}
+\spruch{4}{Holz}{Wasser}{Metall}{IV Wurzelsuche}{Die Jahresringe}{Du gehst weit zurück, tiefer als deine Wurzeln. Dort triffst du auf das, was dich begrenzt. Erkenne es und wachse weiter.}
+  {Es ist Zeit für einen Blick nach innen, tief, Ring um Ring zurück. Dort stößt du auf etwas, das dich bis heute begrenzt: ein altes Urteil, eine Angst, ein Satz, den jemand einmal gesagt hat. Schau es freundlich an. Was erkannt ist, verliert seine Macht, und du wächst weiter.}
+  {Wer in seiner Geschichte gräbt, findet manchmal mehr Gründe zu bleiben als zu wachsen. Andere schauen lieber gar nicht zurück. Ein freundlicher Blick nach hinten genügt, um leichter nach vorn zu gehen.}
 \newpage
-\spruch{5}{Holz}{Erde}{Wasser}{V Strenger Weg}{Der Pflug}{Du ziehst Furchen und bringst Ordnung ins Feld. Gerade die harte Arbeit führt dich zurück zu deiner Quelle.}
-  {Gerade ist es Arbeit, keine Romantik: Furche um Furche, Tag für Tag. Das darf sich auch mal schwer anfühlen. Doch genau diese Ordnung bringt dich zu dir zurück. Wenn das Feld bestellt ist, wirst du merken, dass die Quelle die ganze Zeit unter deinen Füßen lag.}
-  {Ordnung kann zur Pflicht werden, die keine Freude mehr macht. Manchmal wünscht man sich auch, die Quelle käme ohne Mühe. Gönn dir zwischen den Furchen einen Blick auf das ganze Feld, dann trägt dich die Arbeit.}
-\newpage
-\spruch{6}{Holz}{Erde}{Feuer}{VI Abkürzung}{Das Rodungsfeuer}{Du greifst entschlossen ein und lässt dann los. Daraus entsteht die Begeisterung, die du dir gewünscht hast.}
-  {Manchmal muss man beherzt eingreifen, Platz schaffen, Altes wegräumen. Das hast du getan oder wirst es tun. Dann geh geradewegs weiter und halte dich nicht mit Nebensachen auf. Aus dem freigeräumten Boden steigt schneller als gedacht genau die Freude auf, nach der du dich gesehnt hast. Nur schau dich ab und zu um, ob du auf dem kurzen Weg niemanden zurückgelassen hast.}
-  {Beim Aufräumen geht manchmal auch etwas Gutes mit. Und manchmal traut man sich nicht, Altes wegzunehmen. Geh beherzt vor, mit offenen Augen für das, was bleiben darf.}
-\newpage
-\spruch{7}{Holz}{Metall}{Wasser}{VII Läuterung}{Der Schnitt im Frühling}{Du stellst dich der Schere, die dich beschneidet. Der Verlust führt dich zu neuer Kraft.}
-  {Etwas wird dir genommen, oder du musst selbst etwas abschneiden, mitten im schönsten Wachsen. Das tut weh, und das darf es. Jeder Gärtner weiß aber: Der Schnitt im Frühling macht den Baum stärker. Lass die Trauer zu. Sie führt dich zu einer Kraft, die du vorher nicht hattest.}
-  {Ein Verlust kann größer wirken, als er ist, solange man ihn festhält. Manchmal beschneidet man sich auch selbst, aus Sorge, zu viel Raum zu nehmen. Du darfst trauern, und du darfst groß werden.}
-\newpage
-\spruch{8}{Holz}{Metall}{Feuer}{VIII Aufstand}{Der Trieb gegen die Klinge}{Du widersetzt dich der Strenge, und dein Widerstand entfacht ein eigenes Feuer. Kämpfe, aber wisse, wofür.}
-  {Du sollst dich fügen, kleiner werden, nicht so wild sein. Und alles in dir sagt nein. Gut so! Dein Widerstand hat Feuer, und dieses Feuer gehört dir. Nur prüfe ehrlich, wofür du kämpfst. Ein Aufstand mit Herz und Ziel verändert die Welt, einer aus bloßem Trotz verbrennt nur dich selbst.}
-  {Widerstand kann so viel Kraft binden, dass er mehr verbrennt, als er befreit. Manchmal schluckt man ihn auch herunter. Beides ist verständlich. Wähl die Kämpfe, die dir wirklich wichtig sind, und schenk ihnen dein Feuer.}
-\newpage
-\spruch{9}{Holz}{Metall}{Erde}{IX List}{Der Bambus im Sturm}{Du beugst dich vor der Härte, statt zu brechen. Danach findest du Boden, auf dem du dich durchsetzt.}
-  {Gegen diese Härte kommst du nicht mit Gewalt an, und du musst es auch nicht. Sei wie der Bambus: biegsam, geduldig, verwurzelt. Der Sturm geht vorbei, und du stehst noch. Danach findest du Boden, auf dem du in aller Ruhe bauen kannst, was du wolltest.}
-  {Wer oft nachgibt, kann vergessen, wofür er steht. Und wer nie nachgibt, bricht leichter. Bleib biegsam und halte deine Wurzeln fest, dann übersteht dein Kern jeden Sturm.}
-\newpage
-\spruch{10}{Holz}{Wasser}{Feuer}{X Gesammelte Kraft}{Der Saft steigt}{Geh zurück zur Wurzel und trink dich satt, dann handle. Aus dieser Sammlung wächst dein Werk.}
+\spruch{5}{Holz}{Wasser}{Feuer}{V Gesammelte Kraft}{Der Saft steigt}{Geh zurück zur Wurzel und trink dich satt, dann handle. Aus dieser Sammlung wächst dein Werk.}
   {Du willst loslegen, aber dir fehlt noch etwas. Hör auf dieses Gefühl. Geh zurück zu dem, was dich nährt: zu Menschen, Orten, Stille, Erinnerungen. Trink dich satt. Dann kommt dein Handeln nicht aus Ungeduld, sondern aus Fülle, und es wird leuchten.}
   {Manchmal sammelt man Kraft und wartet zu lange auf den richtigen Moment. Manchmal startet man auch, bevor man genug getankt hat. Spür hin, wann du bereit bist; dein Gefühl dafür ist meist gut.}
 \newpage
-\spruch{11}{Holz}{Wasser}{Erde}{XI Rückhalt}{Das Ufer}{Getragen von deiner Herkunft stellst du dich dem, was dich eindämmen will. Am Ende bestimmst du das Gelände.}
+\spruch{6}{Holz}{Wasser}{Erde}{VI Rückhalt}{Das Ufer}{Getragen von deiner Herkunft stellst du dich dem, was dich eindämmen will. Am Ende bestimmst du das Gelände.}
   {Du bist nicht allein. Hinter dir steht, woher du kommst: deine Familie, deine Freunde, deine Geschichte. Lehn dich daran an. Mit diesem Rückhalt kannst du dich den Grenzen stellen, die man dir setzen will, und am Ende bist du es, der das Gelände bestimmt.}
   {Herkunft kann so viel Halt geben, dass man sich nicht mehr allein hinauswagt. Und manchmal will man alles allein schaffen. Lass dich stützen und geh trotzdem deine eigenen Schritte; beides gehört zusammen.}
 \newpage
-\spruch{12}{Holz}{Wasser}{Metall}{XII Wurzelsuche}{Die Jahresringe}{Du gehst weit zurück, tiefer als deine Wurzeln. Dort triffst du auf das, was dich begrenzt. Erkenne es und wachse weiter.}
-  {Es ist Zeit für einen Blick nach innen, tief, Ring um Ring zurück. Dort stößt du auf etwas, das dich bis heute begrenzt: ein altes Urteil, eine Angst, ein Satz, den jemand einmal gesagt hat. Schau es freundlich an. Was erkannt ist, verliert seine Macht, und du wächst weiter.}
-  {Wer in seiner Geschichte gräbt, findet manchmal mehr Gründe zu bleiben als zu wachsen. Andere schauen lieber gar nicht zurück. Ein freundlicher Blick nach hinten genügt, um leichter nach vorn zu gehen.}
+\spruch{7}{Holz}{Erde}{Metall}{VII Damm}{Die Wurzel bricht das Feld}{Dein Wille dringt in harten Grund, und darin kommt Erz zutage. Was du dir hart erarbeitest, wird wertvoll, aber es prüft deine Ziele.}
+  {Du eroberst dir gerade etwas mühsam, Zentimeter für Zentimeter durch harten Boden. Bleib dran: In diesem Boden liegt etwas Kostbares, und du wirst es finden. Aber sei darauf gefasst, dass dein Fund dich fragt, warum du das alles tust. Hab eine gute Antwort, oder finde sie unterwegs.}
+  {Auf hartem Grund kann aus Ausdauer leicht Verbissenheit werden. Und manchmal gibt man genau dann auf, wenn das Erz schon nah ist. Frag dich ab und zu, wofür du gräbst, dann findest du das rechte Maß.}
+\newpage
+\spruch{8}{Holz}{Erde}{Feuer}{VIII Abkürzung}{Das Rodungsfeuer}{Du greifst entschlossen ein und lässt dann los. Daraus entsteht die Begeisterung, die du dir gewünscht hast.}
+  {Manchmal muss man beherzt eingreifen, Platz schaffen, Altes wegräumen. Das hast du getan oder wirst es tun. Dann geh geradewegs weiter und halte dich nicht mit Nebensachen auf. Aus dem freigeräumten Boden steigt schneller als gedacht genau die Freude auf, nach der du dich gesehnt hast. Nur schau dich ab und zu um, ob du auf dem kurzen Weg niemanden zurückgelassen hast.}
+  {Beim Aufräumen geht manchmal auch etwas Gutes mit. Und manchmal traut man sich nicht, Altes wegzunehmen. Geh beherzt vor, mit offenen Augen für das, was bleiben darf.}
+\newpage
+\spruch{9}{Holz}{Erde}{Wasser}{IX Strenger Weg}{Der Pflug}{Du ziehst Furchen und bringst Ordnung ins Feld. Gerade die harte Arbeit führt dich zurück zu deiner Quelle.}
+  {Gerade ist es Arbeit, keine Romantik: Furche um Furche, Tag für Tag. Das darf sich auch mal schwer anfühlen. Doch genau diese Ordnung bringt dich zu dir zurück. Wenn das Feld bestellt ist, wirst du merken, dass die Quelle die ganze Zeit unter deinen Füßen lag.}
+  {Ordnung kann zur Pflicht werden, die keine Freude mehr macht. Manchmal wünscht man sich auch, die Quelle käme ohne Mühe. Gönn dir zwischen den Furchen einen Blick auf das ganze Feld, dann trägt dich die Arbeit.}
+\newpage
+\spruch{10}{Holz}{Metall}{Wasser}{X Läuterung}{Der Schnitt im Frühling}{Du stellst dich der Schere, die dich beschneidet. Der Verlust führt dich zu neuer Kraft.}
+  {Etwas wird dir genommen, oder du musst selbst etwas abschneiden, mitten im schönsten Wachsen. Das tut weh, und das darf es. Jeder Gärtner weiß aber: Der Schnitt im Frühling macht den Baum stärker. Lass die Trauer zu. Sie führt dich zu einer Kraft, die du vorher nicht hattest.}
+  {Ein Verlust kann größer wirken, als er ist, solange man ihn festhält. Manchmal beschneidet man sich auch selbst, aus Sorge, zu viel Raum zu nehmen. Du darfst trauern, und du darfst groß werden.}
+\newpage
+\spruch{11}{Holz}{Metall}{Erde}{XI List}{Der Bambus im Sturm}{Du beugst dich vor der Härte, statt zu brechen. Danach findest du Boden, auf dem du dich durchsetzt.}
+  {Gegen diese Härte kommst du nicht mit Gewalt an, und du musst es auch nicht. Sei wie der Bambus: biegsam, geduldig, verwurzelt. Der Sturm geht vorbei, und du stehst noch. Danach findest du Boden, auf dem du in aller Ruhe bauen kannst, was du wolltest.}
+  {Wer oft nachgibt, kann vergessen, wofür er steht. Und wer nie nachgibt, bricht leichter. Bleib biegsam und halte deine Wurzeln fest, dann übersteht dein Kern jeden Sturm.}
+\newpage
+\spruch{12}{Holz}{Metall}{Feuer}{XII Aufstand}{Der Trieb gegen die Klinge}{Du widersetzt dich der Strenge, und dein Widerstand entfacht ein eigenes Feuer. Kämpfe, aber wisse, wofür.}
+  {Du sollst dich fügen, kleiner werden, nicht so wild sein. Und alles in dir sagt nein. Gut so! Dein Widerstand hat Feuer, und dieses Feuer gehört dir. Nur prüfe ehrlich, wofür du kämpfst. Ein Aufstand mit Herz und Ziel verändert die Welt, einer aus bloßem Trotz verbrennt nur dich selbst.}
+  {Widerstand kann so viel Kraft binden, dass er mehr verbrennt, als er befreit. Manchmal schluckt man ihn auch herunter. Beides ist verständlich. Wähl die Kämpfe, die dir wirklich wichtig sind, und schenk ihnen dein Feuer.}
 
 \newpage
 \markright{\element{Feuer}}
@@ -1211,41 +1265,41 @@ Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe f
   {Du bist für andere wie ein warmer Herd, an dem man sich sammelt. Vielleicht merkst du gar nicht, wie viel Halt du gibst. Jetzt kommt etwas zurück: Ideen, Pläne, neue Lust auf Wachstum. Nimm es an. Wer so großzügig wärmt, darf auch selbst genährt werden.}
   {Wer viel wärmt, vergisst manchmal sich selbst. Und manchmal wünscht man sich für die Wärme mehr Dank, als kommt. Beides ist menschlich. Sorg auch für dein eigenes Feuer, dann wärmst du leichter.}
 \newpage
-\spruch{16}{Feuer}{Metall}{Wasser}{IV Damm}{Das Schmelzen}{Deine Leidenschaft bricht eine Starre auf, und Neues beginnt zu fließen. Am Ende steht eine Kühle, die dich fordert.}
-  {Deine Begeisterung bringt etwas in Bewegung, das lange starr war. Das ist wunderbar, und es fließt jetzt. Aber was fließt, wird kühl und still. Vielleicht begegnet dir am Ende eine Nüchternheit, die dich herausfordert. Bleib warm, auch wenn die anderen schon ruhig geworden sind.}
-  {Was in Bewegung kommt, kann mehr ins Fließen geraten, als man wollte. Manchmal hält man aus Gewohnheit an der Starre fest. Gib dem Neuen ein Bett, dann fließt es in eine gute Richtung.}
+\spruch{16}{Feuer}{Holz}{Wasser}{IV Wurzelsuche}{Der Blick ins Dunkel}{Du suchst, woher deine Begeisterung kam, und stößt auf deine Angst. Sie anzusehen löscht dich nicht.}
+  {Woher kommt eigentlich dein Feuer? Wenn du danach gräbst, triffst du vielleicht auf etwas Unerwartetes: eine Angst, die dich antreibt. Erschrick nicht. Sie anzusehen löscht dich nicht, im Gegenteil. Wer seine Angst kennt, brennt ruhiger und länger.}
+  {Angst kann wachsen, wenn man sie zu lange anstarrt, und ebenso, wenn man vor ihr davonläuft. Ein ruhiger Blick genügt. Dann zeigt sich, dass dein Feuer größer ist als sie.}
 \newpage
-\spruch{17}{Feuer}{Metall}{Holz}{V Strenger Weg}{Die geschärfte Axt}{Du formst mit Hitze, und die Klinge schneidet weiter. Durch Strenge findest du zurück zu dem, was dich einst entzündet hat.}
-  {Gerade ist Disziplin gefragt. Du formst, schärfst, schneidest weg, was nicht dazugehört. Das ist nicht immer schön, aber es ist ehrlich. Und mitten in dieser Strenge erinnerst du dich plötzlich, warum du einmal angefangen hast. Diese Erinnerung ist dein Lohn.}
-  {Disziplin kann scharf machen und dabei ein wenig kühl. Manchmal mag man sie auch gar nicht und bleibt ein Strohfeuer. Schärfe dein Werkzeug, und lass dein Herz dabei warm.}
-\newpage
-\spruch{18}{Feuer}{Metall}{Erde}{VI Abkürzung}{Das gegossene Gefäß}{Du setzt dich durch und trittst dann zurück. Es bleibt ein Gefäß, das andere trägt: dein Werk.}
-  {Du hast dich mit ganzer Kraft eingesetzt, jetzt darfst du zurücktreten. Das fällt feurigen Menschen schwer. Aber schau: Was du geschaffen hast, steht von selbst. Es trägt andere, auch wenn du nicht daneben stehst. Vielleicht ist das das schönste Werk: eines, das dich nicht mehr braucht.}
-  {Wer sich durchgesetzt hat, möchte manchmal zu früh weiter. Und manchmal fällt es schwer, das eigene Werk loszulassen. Bleib, bis es trägt, und trau ihm dann zu, allein zu stehen.}
-\newpage
-\spruch{19}{Feuer}{Wasser}{Holz}{VII Läuterung}{Regen nach dem Brand}{Du stellst dich dem, was dich löschen will. Aus der Kühle wächst, was dich wieder entzündet.}
-  {Etwas will dein Feuer löschen: eine Enttäuschung, eine Absage, ein kalter Blick. Stell dich dem und lauf nicht davon. Nach dem Regen ist die Luft klar, und aus der nassen Erde wächst Neues. Genau daran wirst du dich wieder entzünden, vielleicht heller als zuvor.}
-  {Nach einer Enttäuschung erwartet man leicht die nächste. Manchmal möchte man jeder Kühle ausweichen. Nimm den Regen, wie er kommt: Nicht jedes Nein ist ein Zeichen, und nach jedem Regen klart es auf.}
-\newpage
-\spruch{20}{Feuer}{Wasser}{Erde}{VIII Aufstand}{Der Dampf}{Feuer trifft auf Wasser, Wasser auf den Damm. Aus dem Zusammenstoß entsteht festes Land, wenn der Streit ein Ziel hat.}
-  {Es kracht und zischt: Leidenschaft trifft auf Widerstand, und keiner will nachgeben. Streit ist nicht schlimm, wenn er etwas will. Frag dich, was ihr gemeinsam bauen könnt. Aus Feuer und Wasser wird Dampf, und wenn er sich legt, steht ihr vielleicht auf festem, neuem Land.}
-  {Im Streit kann der Dampf so dicht werden, dass man das gemeinsame Ziel nicht mehr sieht. Manchmal schluckt man den Konflikt auch lieber herunter. Sprecht es aus, und schaut dabei auf das Land, das ihr gemeinsam gewinnen könnt.}
-\newpage
-\spruch{21}{Feuer}{Wasser}{Metall}{IX List}{Die Kerze im Wind}{Weich der Übermacht aus, statt dich auslöschen zu lassen. Am Ende hast du Gewicht über das Harte und Kalte.}
-  {Der Wind ist gerade stärker als du. Dagegenzuhalten hieße zu verlöschen. Also schütze deine Flamme: Weich aus, such Deckung, warte. Das ist keine Feigheit, sondern Weisheit. Wenn der Sturm vorbei ist, brennst du noch, und dann hast du mehr Gewicht als alle, die sich verausgabt haben.}
-  {Vorsicht kann so groß werden, dass die eigene Flamme kaum noch jemanden wärmt. Manchmal stellt man sich auch jedem Sturm. Weisheit heißt zu spüren, welcher Wind vorübergeht und wann du wieder leuchten darfst.}
-\newpage
-\spruch{22}{Feuer}{Holz}{Erde}{X Gesammelte Kraft}{Holz nachlegen}{Bevor du strahlst, nähre die Glut. Dann wird das Ergebnis dauerhaft.}
+\spruch{17}{Feuer}{Holz}{Erde}{V Gesammelte Kraft}{Holz nachlegen}{Bevor du strahlst, nähre die Glut. Dann wird das Ergebnis dauerhaft.}
   {Bevor du wieder strahlst, sorg für Nachschub. Was nährt dich? Was gibt dir Lust und Kraft? Leg Holz nach, mit Liebe und ohne Eile. Ein Feuer, das gut versorgt ist, wärmt die ganze Nacht, und was du dann schaffst, wird bleiben.}
   {Man kann so sorgfältig nachlegen, dass man vergisst, das Feuer zu genießen. Oder man verheizt alles auf einmal. Pflege deine Glut, und gönn dir auch ihr Leuchten.}
 \newpage
-\spruch{23}{Feuer}{Holz}{Metall}{XI Rückhalt}{Die Fackel}{Gestützt auf das, was dich nährt, trittst du der Härte entgegen und behältst die Oberhand.}
+\spruch{18}{Feuer}{Holz}{Metall}{VI Rückhalt}{Die Fackel}{Gestützt auf das, was dich nährt, trittst du der Härte entgegen und behältst die Oberhand.}
   {Du gehst auf etwas Hartes zu, und das ist mutig. Aber du gehst nicht allein: Du trägst eine Fackel, und sie nährt sich aus allem, was dich ausmacht. Vergiss das nicht, wenn es kalt wird. Mit diesem Licht in der Hand behältst du die Oberhand.}
   {Manchmal traut man sich nur, wenn andere die Fackel reichen. Und manchmal geht man ganz ohne Licht los. Vertrau auf das, was dich nährt; es leuchtet dir auch dann, wenn niemand zusieht.}
 \newpage
-\spruch{24}{Feuer}{Holz}{Wasser}{XII Wurzelsuche}{Der Blick ins Dunkel}{Du suchst, woher deine Begeisterung kam, und stößt auf deine Angst. Sie anzusehen löscht dich nicht.}
-  {Woher kommt eigentlich dein Feuer? Wenn du danach gräbst, triffst du vielleicht auf etwas Unerwartetes: eine Angst, die dich antreibt. Erschrick nicht. Sie anzusehen löscht dich nicht, im Gegenteil. Wer seine Angst kennt, brennt ruhiger und länger.}
-  {Angst kann wachsen, wenn man sie zu lange anstarrt, und ebenso, wenn man vor ihr davonläuft. Ein ruhiger Blick genügt. Dann zeigt sich, dass dein Feuer größer ist als sie.}
+\spruch{19}{Feuer}{Metall}{Wasser}{VII Damm}{Das Schmelzen}{Deine Leidenschaft bricht eine Starre auf, und Neues beginnt zu fließen. Am Ende steht eine Kühle, die dich fordert.}
+  {Deine Begeisterung bringt etwas in Bewegung, das lange starr war. Das ist wunderbar, und es fließt jetzt. Aber was fließt, wird kühl und still. Vielleicht begegnet dir am Ende eine Nüchternheit, die dich herausfordert. Bleib warm, auch wenn die anderen schon ruhig geworden sind.}
+  {Was in Bewegung kommt, kann mehr ins Fließen geraten, als man wollte. Manchmal hält man aus Gewohnheit an der Starre fest. Gib dem Neuen ein Bett, dann fließt es in eine gute Richtung.}
+\newpage
+\spruch{20}{Feuer}{Metall}{Erde}{VIII Abkürzung}{Das gegossene Gefäß}{Du setzt dich durch und trittst dann zurück. Es bleibt ein Gefäß, das andere trägt: dein Werk.}
+  {Du hast dich mit ganzer Kraft eingesetzt, jetzt darfst du zurücktreten. Das fällt feurigen Menschen schwer. Aber schau: Was du geschaffen hast, steht von selbst. Es trägt andere, auch wenn du nicht daneben stehst. Vielleicht ist das das schönste Werk: eines, das dich nicht mehr braucht.}
+  {Wer sich durchgesetzt hat, möchte manchmal zu früh weiter. Und manchmal fällt es schwer, das eigene Werk loszulassen. Bleib, bis es trägt, und trau ihm dann zu, allein zu stehen.}
+\newpage
+\spruch{21}{Feuer}{Metall}{Holz}{IX Strenger Weg}{Die geschärfte Axt}{Du formst mit Hitze, und die Klinge schneidet weiter. Durch Strenge findest du zurück zu dem, was dich einst entzündet hat.}
+  {Gerade ist Disziplin gefragt. Du formst, schärfst, schneidest weg, was nicht dazugehört. Das ist nicht immer schön, aber es ist ehrlich. Und mitten in dieser Strenge erinnerst du dich plötzlich, warum du einmal angefangen hast. Diese Erinnerung ist dein Lohn.}
+  {Disziplin kann scharf machen und dabei ein wenig kühl. Manchmal mag man sie auch gar nicht und bleibt ein Strohfeuer. Schärfe dein Werkzeug, und lass dein Herz dabei warm.}
+\newpage
+\spruch{22}{Feuer}{Wasser}{Holz}{X Läuterung}{Regen nach dem Brand}{Du stellst dich dem, was dich löschen will. Aus der Kühle wächst, was dich wieder entzündet.}
+  {Etwas will dein Feuer löschen: eine Enttäuschung, eine Absage, ein kalter Blick. Stell dich dem und lauf nicht davon. Nach dem Regen ist die Luft klar, und aus der nassen Erde wächst Neues. Genau daran wirst du dich wieder entzünden, vielleicht heller als zuvor.}
+  {Nach einer Enttäuschung erwartet man leicht die nächste. Manchmal möchte man jeder Kühle ausweichen. Nimm den Regen, wie er kommt: Nicht jedes Nein ist ein Zeichen, und nach jedem Regen klart es auf.}
+\newpage
+\spruch{23}{Feuer}{Wasser}{Metall}{XI List}{Die Kerze im Wind}{Weich der Übermacht aus, statt dich auslöschen zu lassen. Am Ende hast du Gewicht über das Harte und Kalte.}
+  {Der Wind ist gerade stärker als du. Dagegenzuhalten hieße zu verlöschen. Also schütze deine Flamme: Weich aus, such Deckung, warte. Das ist keine Feigheit, sondern Weisheit. Wenn der Sturm vorbei ist, brennst du noch, und dann hast du mehr Gewicht als alle, die sich verausgabt haben.}
+  {Vorsicht kann so groß werden, dass die eigene Flamme kaum noch jemanden wärmt. Manchmal stellt man sich auch jedem Sturm. Weisheit heißt zu spüren, welcher Wind vorübergeht und wann du wieder leuchten darfst.}
+\newpage
+\spruch{24}{Feuer}{Wasser}{Erde}{XII Aufstand}{Der Dampf}{Feuer trifft auf Wasser, Wasser auf den Damm. Aus dem Zusammenstoß entsteht festes Land, wenn der Streit ein Ziel hat.}
+  {Es kracht und zischt: Leidenschaft trifft auf Widerstand, und keiner will nachgeben. Streit ist nicht schlimm, wenn er etwas will. Frag dich, was ihr gemeinsam bauen könnt. Aus Feuer und Wasser wird Dampf, und wenn er sich legt, steht ihr vielleicht auf festem, neuem Land.}
+  {Im Streit kann der Dampf so dicht werden, dass man das gemeinsame Ziel nicht mehr sieht. Manchmal schluckt man den Konflikt auch lieber herunter. Sprecht es aus, und schaut dabei auf das Land, das ihr gemeinsam gewinnen könnt.}
 
 \newpage
 \markright{\element{Erde}}
@@ -1261,41 +1315,41 @@ Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe f
   {Du gibst von deiner Substanz: deine Zeit, dein Wissen, deinen Halt. Und es wird geschliffen, geprüft, manchmal kritisiert. Halte durch. Am Ende kehrt die Wärme zu dir zurück, als Dank, als Freude, als Gemeinschaft. Geben und Empfangen schließen sich hier zum Kreis.}
   {Wer viel gibt, wartet manchmal heimlich auf Wärme zurück. Das ist ganz natürlich. Gib, was du gern gibst, und nimm die Wärme an, wenn sie kommt; oft kommt sie von unerwarteter Seite.}
 \newpage
-\spruch{28}{Erde}{Wasser}{Holz}{IV Damm}{Das Wehr}{Du hältst etwas zurück, und das Gestaute bewässert neues Wachstum. Das Wachstum wird deine Ordnung infrage stellen.}
-  {Du hast lange festgehalten, und es hat sich gelohnt: Etwas Neues blüht, weil du es geschützt hast. Jetzt wird es groß und rüttelt an deinen Regeln. Hab keine Angst davor. Es ist dein eigenes Werk, das dich herausfordert, und darauf darfst du stolz sein.}
-  {Wer lange schützt, hält manchmal zu lange fest. Auch ein Wehr braucht einen offenen Durchlass. Vertrau darauf, dass das, was du bewahrt hast, stark genug ist, um zu fließen.}
+\spruch{28}{Erde}{Feuer}{Holz}{IV Wurzelsuche}{Die alte Brandstelle}{Du forschst nach, woher deine Sicherheit kommt, und triffst auf das, was dich unruhig macht. Halte es aus.}
+  {Woher kommt deine Sicherheit? Wenn du zurückgehst, findest du vielleicht eine alte Brandstelle, einen Moment, in dem es einmal heiß und unruhig war. Halte es aus. Gerade dort wächst inzwischen Neues, und es erzählt dir, wie stark du damals schon warst.}
+  {Alte Wunden ziehen manchmal immer wieder an. Und manchmal möchte man sie lieber ganz vergessen. Ein versöhnlicher Blick zurück macht deinen Halt fester als beides.}
 \newpage
-\spruch{29}{Erde}{Wasser}{Feuer}{V Strenger Weg}{Der Deich}{Du setzt Grenzen, und die Grenze wird weitergegeben. So findest du zurück zu dem, was dich wärmt.}
-  {Grenzen setzen ist kein Liebesentzug. Manchmal ist es die liebevollste Tat überhaupt. Du ziehst eine Linie, und andere lernen daran, selbst Linien zu ziehen. Auf diesem strengen Weg findest du zurück zu der Wärme, die dich ursprünglich bewegt hat.}
-  {Grenzen können sich vermehren, bis man vergisst, was sie schützen sollten. Manchmal scheut man sie auch ganz. Prüfe deine Deiche ab und zu mit liebevollem Blick; die guten dürfen bleiben.}
-\newpage
-\spruch{30}{Erde}{Wasser}{Metall}{VI Abkürzung}{Das Flussbett}{Du gibst die Richtung vor und lässt dann laufen. Was sich absetzt, ist klar und wertvoll: dein Ertrag.}
-  {Du hast die Richtung gegeben, jetzt lass laufen. Es ist nicht deine Aufgabe, jede Welle zu lenken. Schau lieber, was sich absetzt, wenn das Wasser zur Ruhe kommt: klare, wertvolle Körner. Das ist deine Ernte, und sie ist größer, als du denkst.}
-  {Wer die Richtung vorgibt, möchte manchmal jede Welle lenken. Und manchmal überlässt man zu viel dem Zufall. Gib den Weg vor und schau dann gelassen zu; das meiste findet seinen Lauf.}
-\newpage
-\spruch{31}{Erde}{Holz}{Feuer}{VII Läuterung}{Das umgegrabene Feld}{Du lässt zu, dass etwas dich durchwurzelt und aufbricht. Daraus entsteht Wärme, die dich belebt.}
-  {Etwas wühlt dich auf, bricht durch deine Ruhe, durchwurzelt deine Gewohnheiten. Das ist unbequem. Aber umgegrabene Erde atmet. Lass zu, dass dich etwas bewegt. Aus dieser Unruhe steigt eine Wärme, die dich lebendiger macht, als du dich lange gefühlt hast.}
-  {Neue Ideen können so viel aufwühlen, dass keine Ruhe mehr bleibt. Manchmal wehrt man sich auch gegen jede Bewegung. Lass dich bewegen, und gönn dem Boden danach Zeit, sich zu setzen.}
-\newpage
-\spruch{32}{Erde}{Holz}{Metall}{VIII Aufstand}{Der Erdrutsch}{Du stemmst dich gegen das, was dich bewegen will, und hältst stand. Aus dem Ringen geht Klarheit hervor.}
-  {Alles drängt dich zur Veränderung, und du sagst: Nein, hier stehe ich. Das darfst du. Halt stand, aber nicht verkrampft. Im Ringen zeigt sich, was wirklich wichtig ist und was nur Gewohnheit war. Aus diesem Kampf gehst du klarer hervor.}
-  {Standhaftigkeit kann in Sturheit umschlagen und Nachgiebigkeit in Selbstverlust. Beides kennt jeder. Halte fest, was dir wichtig ist, und lass los, was nur Gewohnheit ist.}
-\newpage
-\spruch{33}{Erde}{Holz}{Wasser}{IX List}{Der Acker unter dem Wald}{Du gibst nach und lässt die Wurzeln gewähren. Am Ende lenkst du, was zu fließen begann.}
-  {Du musst nicht jeden Kampf annehmen. Gib nach, lass das Neue gewähren, auch wenn es dich verdrängt. Der Wald wächst auf dir, aber du bist der Boden. Mit der Zeit lenkst du ganz leise, wohin das Wasser fließt. Sanftheit ist auch eine Macht.}
-  {Wer viel nachgibt, wird manchmal kaum noch gesehen. Und wer gar nicht nachgibt, verpasst das Neue. Deine leise Kraft ist wertvoll; zeig sie ruhig auch einmal offen.}
-\newpage
-\spruch{34}{Erde}{Feuer}{Metall}{X Gesammelte Kraft}{Der Brennofen}{Hol dir Wärme und Zuspruch, dann forme. Was du hervorbringst, wird fest und gültig.}
+\spruch{29}{Erde}{Feuer}{Metall}{V Gesammelte Kraft}{Der Brennofen}{Hol dir Wärme und Zuspruch, dann forme. Was du hervorbringst, wird fest und gültig.}
   {Bevor du etwas formst, hol dir Wärme: ein ermutigendes Wort, eine Umarmung, ein Fest. Du gibst so viel, jetzt darfst du dich wärmen lassen. Dann gelingt dir, was du anpackst, und es wird fest und gültig wie gebrannter Ton.}
   {Manchmal wartet man auf Zuspruch, bevor man beginnt. Manchmal arbeitet man ganz ohne Wärme. Hol dir Ermutigung, wo sie guttut, und vertrau auch deinem eigenen Urteil.}
 \newpage
-\spruch{35}{Erde}{Feuer}{Wasser}{XI Rückhalt}{Das Feuer am Damm}{Gestützt von Menschen, die dich wärmen, stellst du dich der Flut und hältst stand.}
+\spruch{30}{Erde}{Feuer}{Wasser}{VI Rückhalt}{Das Feuer am Damm}{Gestützt von Menschen, die dich wärmen, stellst du dich der Flut und hältst stand.}
   {Die Flut steigt, aber du stehst nicht allein am Damm. Um dich sind Menschen, die dich wärmen und mit dir aushalten. Lass sie nah an dich heran. Gemeinsam haltet ihr stand, und wenn das Wasser sinkt, sitzt ihr noch zusammen am Feuer.}
   {Wenn andere mit am Damm stehen, kann man sich auch zu sehr auf sie verlassen. Und manchmal lässt man niemanden heran. Gemeinschaft trägt am besten, wenn jeder ein wenig mit anpackt, auch du.}
 \newpage
-\spruch{36}{Erde}{Feuer}{Holz}{XII Wurzelsuche}{Die alte Brandstelle}{Du forschst nach, woher deine Sicherheit kommt, und triffst auf das, was dich unruhig macht. Halte es aus.}
-  {Woher kommt deine Sicherheit? Wenn du zurückgehst, findest du vielleicht eine alte Brandstelle, einen Moment, in dem es einmal heiß und unruhig war. Halte es aus. Gerade dort wächst inzwischen Neues, und es erzählt dir, wie stark du damals schon warst.}
-  {Alte Wunden ziehen manchmal immer wieder an. Und manchmal möchte man sie lieber ganz vergessen. Ein versöhnlicher Blick zurück macht deinen Halt fester als beides.}
+\spruch{31}{Erde}{Wasser}{Holz}{VII Damm}{Das Wehr}{Du hältst etwas zurück, und das Gestaute bewässert neues Wachstum. Das Wachstum wird deine Ordnung infrage stellen.}
+  {Du hast lange festgehalten, und es hat sich gelohnt: Etwas Neues blüht, weil du es geschützt hast. Jetzt wird es groß und rüttelt an deinen Regeln. Hab keine Angst davor. Es ist dein eigenes Werk, das dich herausfordert, und darauf darfst du stolz sein.}
+  {Wer lange schützt, hält manchmal zu lange fest. Auch ein Wehr braucht einen offenen Durchlass. Vertrau darauf, dass das, was du bewahrt hast, stark genug ist, um zu fließen.}
+\newpage
+\spruch{32}{Erde}{Wasser}{Metall}{VIII Abkürzung}{Das Flussbett}{Du gibst die Richtung vor und lässt dann laufen. Was sich absetzt, ist klar und wertvoll: dein Ertrag.}
+  {Du hast die Richtung gegeben, jetzt lass laufen. Es ist nicht deine Aufgabe, jede Welle zu lenken. Schau lieber, was sich absetzt, wenn das Wasser zur Ruhe kommt: klare, wertvolle Körner. Das ist deine Ernte, und sie ist größer, als du denkst.}
+  {Wer die Richtung vorgibt, möchte manchmal jede Welle lenken. Und manchmal überlässt man zu viel dem Zufall. Gib den Weg vor und schau dann gelassen zu; das meiste findet seinen Lauf.}
+\newpage
+\spruch{33}{Erde}{Wasser}{Feuer}{IX Strenger Weg}{Der Deich}{Du setzt Grenzen, und die Grenze wird weitergegeben. So findest du zurück zu dem, was dich wärmt.}
+  {Grenzen setzen ist kein Liebesentzug. Manchmal ist es die liebevollste Tat überhaupt. Du ziehst eine Linie, und andere lernen daran, selbst Linien zu ziehen. Auf diesem strengen Weg findest du zurück zu der Wärme, die dich ursprünglich bewegt hat.}
+  {Grenzen können sich vermehren, bis man vergisst, was sie schützen sollten. Manchmal scheut man sie auch ganz. Prüfe deine Deiche ab und zu mit liebevollem Blick; die guten dürfen bleiben.}
+\newpage
+\spruch{34}{Erde}{Holz}{Feuer}{X Läuterung}{Das umgegrabene Feld}{Du lässt zu, dass etwas dich durchwurzelt und aufbricht. Daraus entsteht Wärme, die dich belebt.}
+  {Etwas wühlt dich auf, bricht durch deine Ruhe, durchwurzelt deine Gewohnheiten. Das ist unbequem. Aber umgegrabene Erde atmet. Lass zu, dass dich etwas bewegt. Aus dieser Unruhe steigt eine Wärme, die dich lebendiger macht, als du dich lange gefühlt hast.}
+  {Neue Ideen können so viel aufwühlen, dass keine Ruhe mehr bleibt. Manchmal wehrt man sich auch gegen jede Bewegung. Lass dich bewegen, und gönn dem Boden danach Zeit, sich zu setzen.}
+\newpage
+\spruch{35}{Erde}{Holz}{Wasser}{XI List}{Der Acker unter dem Wald}{Du gibst nach und lässt die Wurzeln gewähren. Am Ende lenkst du, was zu fließen begann.}
+  {Du musst nicht jeden Kampf annehmen. Gib nach, lass das Neue gewähren, auch wenn es dich verdrängt. Der Wald wächst auf dir, aber du bist der Boden. Mit der Zeit lenkst du ganz leise, wohin das Wasser fließt. Sanftheit ist auch eine Macht.}
+  {Wer viel nachgibt, wird manchmal kaum noch gesehen. Und wer gar nicht nachgibt, verpasst das Neue. Deine leise Kraft ist wertvoll; zeig sie ruhig auch einmal offen.}
+\newpage
+\spruch{36}{Erde}{Holz}{Metall}{XII Aufstand}{Der Erdrutsch}{Du stemmst dich gegen das, was dich bewegen will, und hältst stand. Aus dem Ringen geht Klarheit hervor.}
+  {Alles drängt dich zur Veränderung, und du sagst: Nein, hier stehe ich. Das darfst du. Halt stand, aber nicht verkrampft. Im Ringen zeigt sich, was wirklich wichtig ist und was nur Gewohnheit war. Aus diesem Kampf gehst du klarer hervor.}
+  {Standhaftigkeit kann in Sturheit umschlagen und Nachgiebigkeit in Selbstverlust. Beides kennt jeder. Halte fest, was dir wichtig ist, und lass los, was nur Gewohnheit ist.}
 
 \newpage
 \markright{\element{Metall}}
@@ -1311,41 +1365,41 @@ Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe f
   {Du gibst weiter, was du weißt, und das ist ein Akt der Liebe. Beim Erklären, Lehren und Teilen entdeckst du etwas Überraschendes: deine eigenen Wurzeln, woher du kommst, wer dich geprägt hat. Lass dich davon berühren. Du bist Teil einer langen Kette.}
   {Beim Weitergeben kann aus Teilen leicht Belehren werden. Und manchmal behält man sein Wissen lieber für sich. Teile es so, wie du es selbst gern empfangen hättest.}
 \newpage
-\spruch{40}{Metall}{Holz}{Feuer}{IV Damm}{Die gefällte Kiefer}{Du schneidest ab, was zu viel ist, und daraus wird Brennholz für Neues. Rechne mit Leidenschaft, die deine Ordnung herausfordert.}
-  {Du räumst auf und schneidest weg, was zu viel war. Das schafft Raum und Brennstoff. Doch rechne damit, dass aus dem Holz ein Feuer wird, das sich nicht an deine Ordnung hält. Freu dich darüber. Leidenschaft ist das, was deine Klarheit lebendig macht.}
-  {Wer aufräumt, schneidet manchmal schneller, als gut ist. Und manchmal stört die Leidenschaft, die daraus entsteht. Lass beides zu: Klarheit und Wärme gehören zusammen.}
+\spruch{40}{Metall}{Erde}{Feuer}{IV Wurzelsuche}{Die Erzsuche}{Du gräbst nach deinem Ursprung und triffst auf die Glut, die dich verformen kann. Fass die Erinnerung mit Vorsicht an.}
+  {Du gräbst nach deinem Ursprung, nach dem, was dich so klar und fest gemacht hat. Dabei triffst du auf eine Glut, eine alte, heiße Erinnerung. Fass sie behutsam an. Sie kann dich verformen, aber auch erwärmen. Vielleicht ist es Zeit, ein wenig weicher zu werden.}
+  {Alte Erinnerungen können noch heiß sein. Manchmal meidet man sie ganz, manchmal stürzt man sich hinein. Geh in deinem Tempo; du bestimmst, wie nah du der Glut kommst.}
 \newpage
-\spruch{41}{Metall}{Holz}{Erde}{V Strenger Weg}{Die Rodung}{Du schneidest, und das Geschnittene dringt in den Boden. Strenge führt zurück zu dem Halt, der dich trägt.}
-  {Gerade ist ein klarer Schnitt nötig, und du hast den Mut dazu. Was du abschneidest, sinkt in den Boden und wird zu Erde. Nichts geht verloren. Auf diesem strengen Weg kommst du zurück zu dem, was dich trägt: dein Halt, dein Zuhause, deine Mitte.}
-  {Ein klarer Schnitt kann den nächsten nach sich ziehen, bis wenig übrig bleibt. Manchmal scheut man ihn auch ganz. Schneide mit Bedacht; der Boden, der dich trägt, braucht auch etwas Grün.}
-\newpage
-\spruch{42}{Metall}{Holz}{Wasser}{VI Abkürzung}{Die Sichel}{Du erntest und lässt das Feld ruhen. Aus der Ruhe entsteht Tiefe, und sie ist deine eigentliche Frucht.}
-  {Die Ernte ist eingebracht. Jetzt kommt die Zeit, in der nichts geschehen muss. Lass das Feld ruhen, und lass dich ruhen. Das ist kein Stillstand, sondern Reifung. In dieser Ruhe wächst eine Tiefe, die vielleicht die wahre Frucht des ganzen Jahres ist.}
-  {Nach der Ernte möchte man oft gleich weiter. Und manchmal ruht man länger, als man wollte. Gönn dir die Pause ganz, dann weißt du von selbst, wann die nächste Saat dran ist.}
-\newpage
-\spruch{43}{Metall}{Feuer}{Erde}{VII Läuterung}{Die Schmelze}{Du gibst dich in die Hitze, die dich verformt. Daraus entsteht neuer Grund, der dich nährt.}
-  {Etwas bringt deine festen Formen zum Schmelzen: eine Liebe, eine Krise, eine Leidenschaft. Das macht Angst, denn du warst so klar. Aber lass dich verformen. Aus der Schmelze entsteht neuer Grund, weicher und nahrhafter als zuvor, und du wirst dich darin wohler fühlen.}
-  {In großer Hitze kann man sich selbst ein wenig verlieren. Manchmal schützt man sich auch so sehr, dass einen nichts mehr berührt. Lass dich berühren, und vertrau darauf, dass dein Kern bleibt.}
-\newpage
-\spruch{44}{Metall}{Feuer}{Wasser}{VIII Aufstand}{Der Hammer gegen die Glut}{Du hältst dem Druck stand, und das Feuer versinkt in stiller Tiefe. Am Ende siegt die Weisheit.}
-  {Man setzt dich unter Druck, und du hältst stand, Schlag um Schlag. Das kostet Kraft, aber es lohnt sich. Irgendwann versinkt die ganze Hitze in einer tiefen Stille, und dann zeigt sich: Nicht die Lautesten gewinnen, sondern die, die wissen, was sie wollen.}
-  {Wer lange standhält, wird manchmal härter, als er möchte. Und manchmal gibt man zu früh nach. Gönn dir zwischen den Schlägen Ruhe; Standhaftigkeit wächst aus Gelassenheit.}
-\newpage
-\spruch{45}{Metall}{Feuer}{Holz}{IX List}{Die abgekühlte Form}{Du weichst der Hitze aus und ziehst dich zurück. Am Ende kannst du zurechtschneiden, was wild gewachsen ist.}
-  {Die Hitze ist gerade zu groß, die Stimmung zu aufgeladen. Zieh dich zurück, ohne Groll, und lass alles abkühlen. Später, mit ruhiger Hand, kannst du das, was in der Zwischenzeit wild gewachsen ist, in eine gute Form bringen. Geduld ist hier deine schärfste Klinge.}
-  {Wer sich zurückzieht, verpasst manchmal den Moment, zurückzukehren. Und später schneidet man vielleicht strenger als nötig. Komm zur rechten Zeit wieder, mit ruhiger, freundlicher Hand.}
-\newpage
-\spruch{46}{Metall}{Erde}{Wasser}{X Gesammelte Kraft}{Die Ader im Berg}{Erst zurück in den Schoß, dann Grenzen setzen. Was danach fließt, ist rein.}
+\spruch{41}{Metall}{Erde}{Wasser}{V Gesammelte Kraft}{Die Ader im Berg}{Erst zurück in den Schoß, dann Grenzen setzen. Was danach fließt, ist rein.}
   {Bevor du klare Grenzen ziehst, geh zurück in den Schoß, dorthin, wo du dich geborgen fühlst. Von dort aus bist du nicht hart, sondern klar. Und was dann aus deiner Entscheidung fließt, ist rein und frei von Bitterkeit.}
   {In der Geborgenheit kann man Entscheidungen auch vor sich herschieben. Und manchmal entscheidet man kühler, als man ist. Sammle dich, und dann sprich klar und warm zugleich.}
 \newpage
-\spruch{47}{Metall}{Erde}{Holz}{XI Rückhalt}{Der eiserne Pflug}{Mit dem Rückhalt deiner Herkunft stellst du dich dem Wuchernden und lenkst es.}
+\spruch{42}{Metall}{Erde}{Holz}{VI Rückhalt}{Der eiserne Pflug}{Mit dem Rückhalt deiner Herkunft stellst du dich dem Wuchernden und lenkst es.}
   {Etwas wuchert, wächst durcheinander, droht dich zu überrollen. Du musst es nicht allein bändigen. Stütz dich auf das, was dich trägt: deine Erfahrung, deine Herkunft, die Menschen hinter dir. Mit diesem Halt lenkst du das Wilde in gute Bahnen, ohne es zu zerstören.}
   {Wer das Wilde lenkt, greift manchmal fester zu als nötig. Und Erfahrung kann den Blick für Neues trüben. Lenke mit leichter Hand und bleib neugierig auf das, was wachsen will.}
 \newpage
-\spruch{48}{Metall}{Erde}{Feuer}{XII Wurzelsuche}{Die Erzsuche}{Du gräbst nach deinem Ursprung und triffst auf die Glut, die dich verformen kann. Fass die Erinnerung mit Vorsicht an.}
-  {Du gräbst nach deinem Ursprung, nach dem, was dich so klar und fest gemacht hat. Dabei triffst du auf eine Glut, eine alte, heiße Erinnerung. Fass sie behutsam an. Sie kann dich verformen, aber auch erwärmen. Vielleicht ist es Zeit, ein wenig weicher zu werden.}
-  {Alte Erinnerungen können noch heiß sein. Manchmal meidet man sie ganz, manchmal stürzt man sich hinein. Geh in deinem Tempo; du bestimmst, wie nah du der Glut kommst.}
+\spruch{43}{Metall}{Holz}{Feuer}{VII Damm}{Die gefällte Kiefer}{Du schneidest ab, was zu viel ist, und daraus wird Brennholz für Neues. Rechne mit Leidenschaft, die deine Ordnung herausfordert.}
+  {Du räumst auf und schneidest weg, was zu viel war. Das schafft Raum und Brennstoff. Doch rechne damit, dass aus dem Holz ein Feuer wird, das sich nicht an deine Ordnung hält. Freu dich darüber. Leidenschaft ist das, was deine Klarheit lebendig macht.}
+  {Wer aufräumt, schneidet manchmal schneller, als gut ist. Und manchmal stört die Leidenschaft, die daraus entsteht. Lass beides zu: Klarheit und Wärme gehören zusammen.}
+\newpage
+\spruch{44}{Metall}{Holz}{Wasser}{VIII Abkürzung}{Die Sichel}{Du erntest und lässt das Feld ruhen. Aus der Ruhe entsteht Tiefe, und sie ist deine eigentliche Frucht.}
+  {Die Ernte ist eingebracht. Jetzt kommt die Zeit, in der nichts geschehen muss. Lass das Feld ruhen, und lass dich ruhen. Das ist kein Stillstand, sondern Reifung. In dieser Ruhe wächst eine Tiefe, die vielleicht die wahre Frucht des ganzen Jahres ist.}
+  {Nach der Ernte möchte man oft gleich weiter. Und manchmal ruht man länger, als man wollte. Gönn dir die Pause ganz, dann weißt du von selbst, wann die nächste Saat dran ist.}
+\newpage
+\spruch{45}{Metall}{Holz}{Erde}{IX Strenger Weg}{Die Rodung}{Du schneidest, und das Geschnittene dringt in den Boden. Strenge führt zurück zu dem Halt, der dich trägt.}
+  {Gerade ist ein klarer Schnitt nötig, und du hast den Mut dazu. Was du abschneidest, sinkt in den Boden und wird zu Erde. Nichts geht verloren. Auf diesem strengen Weg kommst du zurück zu dem, was dich trägt: dein Halt, dein Zuhause, deine Mitte.}
+  {Ein klarer Schnitt kann den nächsten nach sich ziehen, bis wenig übrig bleibt. Manchmal scheut man ihn auch ganz. Schneide mit Bedacht; der Boden, der dich trägt, braucht auch etwas Grün.}
+\newpage
+\spruch{46}{Metall}{Feuer}{Erde}{X Läuterung}{Die Schmelze}{Du gibst dich in die Hitze, die dich verformt. Daraus entsteht neuer Grund, der dich nährt.}
+  {Etwas bringt deine festen Formen zum Schmelzen: eine Liebe, eine Krise, eine Leidenschaft. Das macht Angst, denn du warst so klar. Aber lass dich verformen. Aus der Schmelze entsteht neuer Grund, weicher und nahrhafter als zuvor, und du wirst dich darin wohler fühlen.}
+  {In großer Hitze kann man sich selbst ein wenig verlieren. Manchmal schützt man sich auch so sehr, dass einen nichts mehr berührt. Lass dich berühren, und vertrau darauf, dass dein Kern bleibt.}
+\newpage
+\spruch{47}{Metall}{Feuer}{Holz}{XI List}{Die abgekühlte Form}{Du weichst der Hitze aus und ziehst dich zurück. Am Ende kannst du zurechtschneiden, was wild gewachsen ist.}
+  {Die Hitze ist gerade zu groß, die Stimmung zu aufgeladen. Zieh dich zurück, ohne Groll, und lass alles abkühlen. Später, mit ruhiger Hand, kannst du das, was in der Zwischenzeit wild gewachsen ist, in eine gute Form bringen. Geduld ist hier deine schärfste Klinge.}
+  {Wer sich zurückzieht, verpasst manchmal den Moment, zurückzukehren. Und später schneidet man vielleicht strenger als nötig. Komm zur rechten Zeit wieder, mit ruhiger, freundlicher Hand.}
+\newpage
+\spruch{48}{Metall}{Feuer}{Wasser}{XII Aufstand}{Der Hammer gegen die Glut}{Du hältst dem Druck stand, und das Feuer versinkt in stiller Tiefe. Am Ende siegt die Weisheit.}
+  {Man setzt dich unter Druck, und du hältst stand, Schlag um Schlag. Das kostet Kraft, aber es lohnt sich. Irgendwann versinkt die ganze Hitze in einer tiefen Stille, und dann zeigt sich: Nicht die Lautesten gewinnen, sondern die, die wissen, was sie wollen.}
+  {Wer lange standhält, wird manchmal härter, als er möchte. Und manchmal gibt man zu früh nach. Gönn dir zwischen den Schlägen Ruhe; Standhaftigkeit wächst aus Gelassenheit.}
 
 \newpage
 \markright{\element{Wasser}}
@@ -1361,41 +1415,41 @@ Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe f
   {Du förderst etwas, das wächst und dann auf Widerstand trifft. Bleib dabei, auch wenn es geprüft wird. Gerade in dieser Prüfung findest du zu einer Klarheit, die dich selbst überrascht. Das Floß trägt, und am Ende trägt es auch dich.}
   {Wer andere fördert, vergisst manchmal sich selbst. Und wenn Widerstand kommt, möchte man aufgeben. Bleib dabei, und gönn dir unterwegs auch eigene Klarheit.}
 \newpage
-\spruch{52}{Wasser}{Feuer}{Erde}{IV Damm}{Das gelöschte Feuer}{Du dämpfst eine Begeisterung, und aus der Asche wird Boden. Dieser Boden wird dich eindämmen wollen.}
-  {Du hast eine Begeisterung gedämpft, vielleicht deine eigene, vielleicht die eines anderen. Das war vernünftig. Aus der Asche wird fruchtbarer Boden. Doch sei darauf gefasst: Dieser Boden will Ordnung, und er wird auch dich ein wenig eindämmen. Bleib im Fluss.}
-  {Vernunft kann jede Begeisterung dämpfen, auch die eigene. Manchmal lässt man aber auch alles lodern. Finde das Maß, bei dem die Freude bleibt und nichts verbrennt.}
+\spruch{52}{Wasser}{Metall}{Erde}{IV Wurzelsuche}{Der Grund des Brunnens}{Du gehst bis zum Ursprung, tiefer als die Tiefe, und triffst auf das Ufer, das dich hält und begrenzt. Hier schließt sich der Kreis.}
+  {Du gehst bis ganz nach unten, tiefer als je zuvor. Dort findest du keine Leere, sondern ein Ufer: etwas, das dich hält und zugleich begrenzt. Vielleicht ist das die wichtigste Erkenntnis von allen: Du bist getragen. Hier schließt sich der Kreis, und ein neuer kann beginnen.}
+  {In der Tiefe kann man sich verlieren, und manchmal scheut man sie ganz. Beides ist verständlich. Geh so tief, wie es dir guttut, und tauche dann wieder auf; der Kreis trägt dich.}
 \newpage
-\spruch{53}{Wasser}{Feuer}{Metall}{V Strenger Weg}{Die Härtung}{Du kühlst, was glüht, und die Kühle macht es hart. Die Strenge führt dich zurück zur Klarheit, aus der du kommst.}
-  {Du kühlst, was glüht, und dadurch wird es hart und belastbar. Das ist Handwerk, und es ist streng. Aber die Strenge führt dich zurück zu deiner eigenen Klarheit, zu dem, was du im Innersten weißt. Vertrau diesem Wissen. Es hält mehr aus, als du glaubst.}
-  {Wer viel kühlt, wird manchmal selbst ein wenig spröde. Und manches bleibt formlos, wenn es nie abkühlen darf. Gutes Handwerk kennt das rechte Maß, und du kannst es lernen.}
-\newpage
-\spruch{54}{Wasser}{Feuer}{Holz}{VI Abkürzung}{Der Wolkenbruch}{Du löschst und ziehst dich zurück. Wo es gebrannt hat, wächst das Neue, das du säen wolltest.}
-  {Du hast gelöscht, was zu heftig brannte, und dich dann zurückgezogen. Gut so. Jetzt schau zu, was passiert: Wo es gebrannt hat, keimt etwas, und es ist genau das, was du säen wolltest. Manchmal wächst das Schönste dort, wo wir nicht mehr hinsehen.}
-  {Wer schnell löscht, sieht manchmal nicht, was dabei verloren geht. Und wer sich zurückzieht, verpasst leicht, was keimt. Wirf ab und zu einen zweiten Blick zurück; vielleicht wächst dort schon dein Neues.}
-\newpage
-\spruch{55}{Wasser}{Erde}{Metall}{VII Läuterung}{Die Mündung}{Du stellst dich dem Ufer, das dich begrenzt. Was sich dort ablagert, macht dich klarer.}
-  {Du stößt an ein Ufer, an eine Grenze, die du nicht überfluten kannst. Nimm sie an. An der Mündung lagert sich ab, was du mitgetragen hast, und das Wasser wird klar. Diese Begrenzung ist kein Ende, sondern eine Reinigung. Danach siehst du bis auf den Grund.}
-  {An derselben Grenze anzustoßen, kann sich wie Schicksal anfühlen. Manchmal ergibt man sich ihr auch zu schnell. Nimm sie an, ohne dich aufzugeben, dann wird das Wasser klar.}
-\newpage
-\spruch{56}{Wasser}{Erde}{Holz}{VIII Aufstand}{Die Flut}{Du durchbrichst Grenzen, und die Grenzen brechen auf zu Wurzelwerk. Aus dem Überschreiten wächst etwas Lebendiges.}
-  {Du lässt dich nicht mehr eindämmen. Die Grenzen brechen, und das ist gewaltig. Aber schau, was geschieht: Wo die Flut hinkommt, wächst Leben. Dein Überschreiten ist keine Zerstörung, sondern Befreiung. Lenk deine Kraft dorthin, wo etwas wachsen will.}
-  {Wer Grenzen durchbricht, reißt manchmal mehr mit als gedacht. Und manchmal lässt man sich zu lange eindämmen. Lenk deine Kraft dahin, wo sie Leben bringt.}
-\newpage
-\spruch{57}{Wasser}{Erde}{Feuer}{IX List}{Das Grundwasser}{Du gehst unter dem Hindernis hindurch, statt dagegen anzurennen. Am Ende hast du Macht über das, was laut ist.}
-  {Gegen das Hindernis anzurennen bringt nichts. Nimm den leisen Weg, unter der Oberfläche, geduldig und unsichtbar. Wasser findet immer einen Weg. Am Ende hast du mehr Einfluss als die, die am lautesten sind, und du hast dafür nicht einmal die Stimme erhoben.}
-  {Wer leise wirkt, wird manchmal kaum verstanden. Und manchmal rennt man doch offen gegen die Wand. Sag ruhig auch einmal laut, was du willst; Wasser darf auch an die Oberfläche.}
-\newpage
-\spruch{58}{Wasser}{Metall}{Holz}{X Gesammelte Kraft}{Der Winterschlaf}{Zieh dich in die Klarheit zurück, sammle Kraft, dann handle. Was danach wächst, kommt von dir.}
+\spruch{53}{Wasser}{Metall}{Holz}{V Gesammelte Kraft}{Der Winterschlaf}{Zieh dich in die Klarheit zurück, sammle Kraft, dann handle. Was danach wächst, kommt von dir.}
   {Jetzt ist Winter, und das ist gut so. Zieh dich zurück, werde klar, sammle Kraft. Niemand verlangt, dass du jetzt blühst. Wenn die Zeit gekommen ist, wirst du handeln, und was dann wächst, kommt ganz aus dir.}
   {Manchmal dauert der Winter länger, als man möchte. Und manchmal will man blühen, bevor die Kraft da ist. Hab Geduld mit dir; jede Zeit hat ihr eigenes Maß.}
 \newpage
-\spruch{59}{Wasser}{Metall}{Feuer}{XI Rückhalt}{Die Quelle im Erz}{Mit festem Halt im Rücken stellst du dich dem Brennenden und dämpfst es.}
+\spruch{54}{Wasser}{Metall}{Feuer}{VI Rückhalt}{Die Quelle im Erz}{Mit festem Halt im Rücken stellst du dich dem Brennenden und dämpfst es.}
   {Da brennt etwas lichterloh, und du sollst es beruhigen. Das kannst du, weil du festen Halt hast: deine Klarheit, deine Grundsätze, deine Erfahrung. Geh ruhig auf das Feuer zu. Du musst es nicht ersticken, nur dämpfen, bis es wieder wärmt, statt zu verbrennen.}
   {Grundsätze können mit der Zeit kühl werden. Und manchmal traut man seinem Halt zu wenig. Prüfe, was dir wirklich Halt gibt, und geh dann ruhig auf das Feuer zu.}
 \newpage
-\spruch{60}{Wasser}{Metall}{Erde}{XII Wurzelsuche}{Der Grund des Brunnens}{Du gehst bis zum Ursprung, tiefer als die Tiefe, und triffst auf das Ufer, das dich hält und begrenzt. Hier schließt sich der Kreis.}
-  {Du gehst bis ganz nach unten, tiefer als je zuvor. Dort findest du keine Leere, sondern ein Ufer: etwas, das dich hält und zugleich begrenzt. Vielleicht ist das die wichtigste Erkenntnis von allen: Du bist getragen. Hier schließt sich der Kreis, und ein neuer kann beginnen.}
-  {In der Tiefe kann man sich verlieren, und manchmal scheut man sie ganz. Beides ist verständlich. Geh so tief, wie es dir guttut, und tauche dann wieder auf; der Kreis trägt dich.}
+\spruch{55}{Wasser}{Feuer}{Erde}{VII Damm}{Das gelöschte Feuer}{Du dämpfst eine Begeisterung, und aus der Asche wird Boden. Dieser Boden wird dich eindämmen wollen.}
+  {Du hast eine Begeisterung gedämpft, vielleicht deine eigene, vielleicht die eines anderen. Das war vernünftig. Aus der Asche wird fruchtbarer Boden. Doch sei darauf gefasst: Dieser Boden will Ordnung, und er wird auch dich ein wenig eindämmen. Bleib im Fluss.}
+  {Vernunft kann jede Begeisterung dämpfen, auch die eigene. Manchmal lässt man aber auch alles lodern. Finde das Maß, bei dem die Freude bleibt und nichts verbrennt.}
+\newpage
+\spruch{56}{Wasser}{Feuer}{Holz}{VIII Abkürzung}{Der Wolkenbruch}{Du löschst und ziehst dich zurück. Wo es gebrannt hat, wächst das Neue, das du säen wolltest.}
+  {Du hast gelöscht, was zu heftig brannte, und dich dann zurückgezogen. Gut so. Jetzt schau zu, was passiert: Wo es gebrannt hat, keimt etwas, und es ist genau das, was du säen wolltest. Manchmal wächst das Schönste dort, wo wir nicht mehr hinsehen.}
+  {Wer schnell löscht, sieht manchmal nicht, was dabei verloren geht. Und wer sich zurückzieht, verpasst leicht, was keimt. Wirf ab und zu einen zweiten Blick zurück; vielleicht wächst dort schon dein Neues.}
+\newpage
+\spruch{57}{Wasser}{Feuer}{Metall}{IX Strenger Weg}{Die Härtung}{Du kühlst, was glüht, und die Kühle macht es hart. Die Strenge führt dich zurück zur Klarheit, aus der du kommst.}
+  {Du kühlst, was glüht, und dadurch wird es hart und belastbar. Das ist Handwerk, und es ist streng. Aber die Strenge führt dich zurück zu deiner eigenen Klarheit, zu dem, was du im Innersten weißt. Vertrau diesem Wissen. Es hält mehr aus, als du glaubst.}
+  {Wer viel kühlt, wird manchmal selbst ein wenig spröde. Und manches bleibt formlos, wenn es nie abkühlen darf. Gutes Handwerk kennt das rechte Maß, und du kannst es lernen.}
+\newpage
+\spruch{58}{Wasser}{Erde}{Metall}{X Läuterung}{Die Mündung}{Du stellst dich dem Ufer, das dich begrenzt. Was sich dort ablagert, macht dich klarer.}
+  {Du stößt an ein Ufer, an eine Grenze, die du nicht überfluten kannst. Nimm sie an. An der Mündung lagert sich ab, was du mitgetragen hast, und das Wasser wird klar. Diese Begrenzung ist kein Ende, sondern eine Reinigung. Danach siehst du bis auf den Grund.}
+  {An derselben Grenze anzustoßen, kann sich wie Schicksal anfühlen. Manchmal ergibt man sich ihr auch zu schnell. Nimm sie an, ohne dich aufzugeben, dann wird das Wasser klar.}
+\newpage
+\spruch{59}{Wasser}{Erde}{Feuer}{XI List}{Das Grundwasser}{Du gehst unter dem Hindernis hindurch, statt dagegen anzurennen. Am Ende hast du Macht über das, was laut ist.}
+  {Gegen das Hindernis anzurennen bringt nichts. Nimm den leisen Weg, unter der Oberfläche, geduldig und unsichtbar. Wasser findet immer einen Weg. Am Ende hast du mehr Einfluss als die, die am lautesten sind, und du hast dafür nicht einmal die Stimme erhoben.}
+  {Wer leise wirkt, wird manchmal kaum verstanden. Und manchmal rennt man doch offen gegen die Wand. Sag ruhig auch einmal laut, was du willst; Wasser darf auch an die Oberfläche.}
+\newpage
+\spruch{60}{Wasser}{Erde}{Holz}{XII Aufstand}{Die Flut}{Du durchbrichst Grenzen, und die Grenzen brechen auf zu Wurzelwerk. Aus dem Überschreiten wächst etwas Lebendiges.}
+  {Du lässt dich nicht mehr eindämmen. Die Grenzen brechen, und das ist gewaltig. Aber schau, was geschieht: Wo die Flut hinkommt, wächst Leben. Dein Überschreiten ist keine Zerstörung, sondern Befreiung. Lenk deine Kraft dorthin, wo etwas wachsen will.}
+  {Wer Grenzen durchbricht, reißt manchmal mehr mit als gedacht. Und manchmal lässt man sich zu lange eindämmen. Lenk deine Kraft dahin, wo sie Leben bringt.}
 
 \endgroup
 
@@ -1409,11 +1463,11 @@ Mit diesen Tafeln findest du jede Kombination, ohne zu blättern. Suche die erst
 \begin{center}\renewcommand{\arraystretch}{1.6}\setlength{\tabcolsep}{5pt}
 \begin{tabular}{r|ccccc}
 {\footnotesize 1.\ \textbackslash\ 2.} & \kreis{Holz} & \kreis{Feuer} & \kreis{Erde} & \kreis{Metall} & \kreis{Wasser} \\ \hline
-\kreis{Holz} & -- & \hyperlink{paar:Holz-Feuer}{\textcolor{ueberschriftfarbe}{\textbf{1}}} & \hyperlink{paar:Holz-Erde}{\textcolor{ueberschriftfarbe}{\textbf{2}}} & \hyperlink{paar:Holz-Metall}{\textcolor{ueberschriftfarbe}{\textbf{3}}} & \hyperlink{paar:Holz-Wasser}{\textcolor{ueberschriftfarbe}{\textbf{4}}} \\
-\kreis{Feuer} & \hyperlink{paar:Feuer-Holz}{\textcolor{ueberschriftfarbe}{\textbf{8}}} & -- & \hyperlink{paar:Feuer-Erde}{\textcolor{ueberschriftfarbe}{\textbf{5}}} & \hyperlink{paar:Feuer-Metall}{\textcolor{ueberschriftfarbe}{\textbf{6}}} & \hyperlink{paar:Feuer-Wasser}{\textcolor{ueberschriftfarbe}{\textbf{7}}} \\
-\kreis{Erde} & \hyperlink{paar:Erde-Holz}{\textcolor{ueberschriftfarbe}{\textbf{11}}} & \hyperlink{paar:Erde-Feuer}{\textcolor{ueberschriftfarbe}{\textbf{12}}} & -- & \hyperlink{paar:Erde-Metall}{\textcolor{ueberschriftfarbe}{\textbf{9}}} & \hyperlink{paar:Erde-Wasser}{\textcolor{ueberschriftfarbe}{\textbf{10}}} \\
-\kreis{Metall} & \hyperlink{paar:Metall-Holz}{\textcolor{ueberschriftfarbe}{\textbf{14}}} & \hyperlink{paar:Metall-Feuer}{\textcolor{ueberschriftfarbe}{\textbf{15}}} & \hyperlink{paar:Metall-Erde}{\textcolor{ueberschriftfarbe}{\textbf{16}}} & -- & \hyperlink{paar:Metall-Wasser}{\textcolor{ueberschriftfarbe}{\textbf{13}}} \\
-\kreis{Wasser} & \hyperlink{paar:Wasser-Holz}{\textcolor{ueberschriftfarbe}{\textbf{17}}} & \hyperlink{paar:Wasser-Feuer}{\textcolor{ueberschriftfarbe}{\textbf{18}}} & \hyperlink{paar:Wasser-Erde}{\textcolor{ueberschriftfarbe}{\textbf{19}}} & \hyperlink{paar:Wasser-Metall}{\textcolor{ueberschriftfarbe}{\textbf{20}}} & -- \\
+\kreis{Holz} & -- & \hyperlink{paar:Holz-Feuer}{\textcolor{ueberschriftfarbe}{\textbf{1}}} & \hyperlink{paar:Holz-Erde}{\textcolor{ueberschriftfarbe}{\textbf{3}}} & \hyperlink{paar:Holz-Metall}{\textcolor{ueberschriftfarbe}{\textbf{4}}} & \hyperlink{paar:Holz-Wasser}{\textcolor{ueberschriftfarbe}{\textbf{2}}} \\
+\kreis{Feuer} & \hyperlink{paar:Feuer-Holz}{\textcolor{ueberschriftfarbe}{\textbf{6}}} & -- & \hyperlink{paar:Feuer-Erde}{\textcolor{ueberschriftfarbe}{\textbf{5}}} & \hyperlink{paar:Feuer-Metall}{\textcolor{ueberschriftfarbe}{\textbf{7}}} & \hyperlink{paar:Feuer-Wasser}{\textcolor{ueberschriftfarbe}{\textbf{8}}} \\
+\kreis{Erde} & \hyperlink{paar:Erde-Holz}{\textcolor{ueberschriftfarbe}{\textbf{12}}} & \hyperlink{paar:Erde-Feuer}{\textcolor{ueberschriftfarbe}{\textbf{10}}} & -- & \hyperlink{paar:Erde-Metall}{\textcolor{ueberschriftfarbe}{\textbf{9}}} & \hyperlink{paar:Erde-Wasser}{\textcolor{ueberschriftfarbe}{\textbf{11}}} \\
+\kreis{Metall} & \hyperlink{paar:Metall-Holz}{\textcolor{ueberschriftfarbe}{\textbf{15}}} & \hyperlink{paar:Metall-Feuer}{\textcolor{ueberschriftfarbe}{\textbf{16}}} & \hyperlink{paar:Metall-Erde}{\textcolor{ueberschriftfarbe}{\textbf{14}}} & -- & \hyperlink{paar:Metall-Wasser}{\textcolor{ueberschriftfarbe}{\textbf{13}}} \\
+\kreis{Wasser} & \hyperlink{paar:Wasser-Holz}{\textcolor{ueberschriftfarbe}{\textbf{17}}} & \hyperlink{paar:Wasser-Feuer}{\textcolor{ueberschriftfarbe}{\textbf{19}}} & \hyperlink{paar:Wasser-Erde}{\textcolor{ueberschriftfarbe}{\textbf{20}}} & \hyperlink{paar:Wasser-Metall}{\textcolor{ueberschriftfarbe}{\textbf{18}}} & -- \\
 \end{tabular}
 \end{center}
 
@@ -1423,29 +1477,29 @@ Mit diesen Tafeln findest du jede Kombination, ohne zu blättern. Suche die erst
 \begin{tabular}{r|ccccc}
 {\footnotesize 1.\,2.\ \textbackslash\ 3.} & \kreis{Holz} & \kreis{Feuer} & \kreis{Erde} & \kreis{Metall} & \kreis{Wasser} \\ \hline
 \mypair[0.5em]{Holz}{Feuer} &  &  & \hyperlink{spruch:1}{\textbf{1}} & \hyperlink{spruch:2}{\textbf{2}} & \hyperlink{spruch:3}{\textbf{3}} \\
-\mypair[0.5em]{Holz}{Erde} &  & \hyperlink{spruch:6}{\textbf{6}} &  & \hyperlink{spruch:4}{\textbf{4}} & \hyperlink{spruch:5}{\textbf{5}} \\
-\mypair[0.5em]{Holz}{Metall} &  & \hyperlink{spruch:8}{\textbf{8}} & \hyperlink{spruch:9}{\textbf{9}} &  & \hyperlink{spruch:7}{\textbf{7}} \\
-\mypair[0.5em]{Holz}{Wasser} &  & \hyperlink{spruch:10}{\textbf{10}} & \hyperlink{spruch:11}{\textbf{11}} & \hyperlink{spruch:12}{\textbf{12}} &  \\
+\mypair[0.5em]{Holz}{Erde} &  & \hyperlink{spruch:8}{\textbf{8}} &  & \hyperlink{spruch:7}{\textbf{7}} & \hyperlink{spruch:9}{\textbf{9}} \\
+\mypair[0.5em]{Holz}{Metall} &  & \hyperlink{spruch:12}{\textbf{12}} & \hyperlink{spruch:11}{\textbf{11}} &  & \hyperlink{spruch:10}{\textbf{10}} \\
+\mypair[0.5em]{Holz}{Wasser} &  & \hyperlink{spruch:5}{\textbf{5}} & \hyperlink{spruch:6}{\textbf{6}} & \hyperlink{spruch:4}{\textbf{4}} &  \\
 \hline
-\mypair[0.5em]{Feuer}{Holz} &  &  & \hyperlink{spruch:22}{\textbf{22}} & \hyperlink{spruch:23}{\textbf{23}} & \hyperlink{spruch:24}{\textbf{24}} \\
+\mypair[0.5em]{Feuer}{Holz} &  &  & \hyperlink{spruch:17}{\textbf{17}} & \hyperlink{spruch:18}{\textbf{18}} & \hyperlink{spruch:16}{\textbf{16}} \\
 \mypair[0.5em]{Feuer}{Erde} & \hyperlink{spruch:15}{\textbf{15}} &  &  & \hyperlink{spruch:13}{\textbf{13}} & \hyperlink{spruch:14}{\textbf{14}} \\
-\mypair[0.5em]{Feuer}{Metall} & \hyperlink{spruch:17}{\textbf{17}} &  & \hyperlink{spruch:18}{\textbf{18}} &  & \hyperlink{spruch:16}{\textbf{16}} \\
-\mypair[0.5em]{Feuer}{Wasser} & \hyperlink{spruch:19}{\textbf{19}} &  & \hyperlink{spruch:20}{\textbf{20}} & \hyperlink{spruch:21}{\textbf{21}} &  \\
+\mypair[0.5em]{Feuer}{Metall} & \hyperlink{spruch:21}{\textbf{21}} &  & \hyperlink{spruch:20}{\textbf{20}} &  & \hyperlink{spruch:19}{\textbf{19}} \\
+\mypair[0.5em]{Feuer}{Wasser} & \hyperlink{spruch:22}{\textbf{22}} &  & \hyperlink{spruch:24}{\textbf{24}} & \hyperlink{spruch:23}{\textbf{23}} &  \\
 \hline
-\mypair[0.5em]{Erde}{Holz} &  & \hyperlink{spruch:31}{\textbf{31}} &  & \hyperlink{spruch:32}{\textbf{32}} & \hyperlink{spruch:33}{\textbf{33}} \\
-\mypair[0.5em]{Erde}{Feuer} & \hyperlink{spruch:36}{\textbf{36}} &  &  & \hyperlink{spruch:34}{\textbf{34}} & \hyperlink{spruch:35}{\textbf{35}} \\
+\mypair[0.5em]{Erde}{Holz} &  & \hyperlink{spruch:34}{\textbf{34}} &  & \hyperlink{spruch:36}{\textbf{36}} & \hyperlink{spruch:35}{\textbf{35}} \\
+\mypair[0.5em]{Erde}{Feuer} & \hyperlink{spruch:28}{\textbf{28}} &  &  & \hyperlink{spruch:29}{\textbf{29}} & \hyperlink{spruch:30}{\textbf{30}} \\
 \mypair[0.5em]{Erde}{Metall} & \hyperlink{spruch:26}{\textbf{26}} & \hyperlink{spruch:27}{\textbf{27}} &  &  & \hyperlink{spruch:25}{\textbf{25}} \\
-\mypair[0.5em]{Erde}{Wasser} & \hyperlink{spruch:28}{\textbf{28}} & \hyperlink{spruch:29}{\textbf{29}} &  & \hyperlink{spruch:30}{\textbf{30}} &  \\
+\mypair[0.5em]{Erde}{Wasser} & \hyperlink{spruch:31}{\textbf{31}} & \hyperlink{spruch:33}{\textbf{33}} &  & \hyperlink{spruch:32}{\textbf{32}} &  \\
 \hline
-\mypair[0.5em]{Metall}{Holz} &  & \hyperlink{spruch:40}{\textbf{40}} & \hyperlink{spruch:41}{\textbf{41}} &  & \hyperlink{spruch:42}{\textbf{42}} \\
-\mypair[0.5em]{Metall}{Feuer} & \hyperlink{spruch:45}{\textbf{45}} &  & \hyperlink{spruch:43}{\textbf{43}} &  & \hyperlink{spruch:44}{\textbf{44}} \\
-\mypair[0.5em]{Metall}{Erde} & \hyperlink{spruch:47}{\textbf{47}} & \hyperlink{spruch:48}{\textbf{48}} &  &  & \hyperlink{spruch:46}{\textbf{46}} \\
+\mypair[0.5em]{Metall}{Holz} &  & \hyperlink{spruch:43}{\textbf{43}} & \hyperlink{spruch:45}{\textbf{45}} &  & \hyperlink{spruch:44}{\textbf{44}} \\
+\mypair[0.5em]{Metall}{Feuer} & \hyperlink{spruch:47}{\textbf{47}} &  & \hyperlink{spruch:46}{\textbf{46}} &  & \hyperlink{spruch:48}{\textbf{48}} \\
+\mypair[0.5em]{Metall}{Erde} & \hyperlink{spruch:42}{\textbf{42}} & \hyperlink{spruch:40}{\textbf{40}} &  &  & \hyperlink{spruch:41}{\textbf{41}} \\
 \mypair[0.5em]{Metall}{Wasser} & \hyperlink{spruch:37}{\textbf{37}} & \hyperlink{spruch:38}{\textbf{38}} & \hyperlink{spruch:39}{\textbf{39}} &  &  \\
 \hline
 \mypair[0.5em]{Wasser}{Holz} &  & \hyperlink{spruch:49}{\textbf{49}} & \hyperlink{spruch:50}{\textbf{50}} & \hyperlink{spruch:51}{\textbf{51}} &  \\
-\mypair[0.5em]{Wasser}{Feuer} & \hyperlink{spruch:54}{\textbf{54}} &  & \hyperlink{spruch:52}{\textbf{52}} & \hyperlink{spruch:53}{\textbf{53}} &  \\
-\mypair[0.5em]{Wasser}{Erde} & \hyperlink{spruch:56}{\textbf{56}} & \hyperlink{spruch:57}{\textbf{57}} &  & \hyperlink{spruch:55}{\textbf{55}} &  \\
-\mypair[0.5em]{Wasser}{Metall} & \hyperlink{spruch:58}{\textbf{58}} & \hyperlink{spruch:59}{\textbf{59}} & \hyperlink{spruch:60}{\textbf{60}} &  &  \\
+\mypair[0.5em]{Wasser}{Feuer} & \hyperlink{spruch:56}{\textbf{56}} &  & \hyperlink{spruch:55}{\textbf{55}} & \hyperlink{spruch:57}{\textbf{57}} &  \\
+\mypair[0.5em]{Wasser}{Erde} & \hyperlink{spruch:60}{\textbf{60}} & \hyperlink{spruch:59}{\textbf{59}} &  & \hyperlink{spruch:58}{\textbf{58}} &  \\
+\mypair[0.5em]{Wasser}{Metall} & \hyperlink{spruch:53}{\textbf{53}} & \hyperlink{spruch:54}{\textbf{54}} & \hyperlink{spruch:52}{\textbf{52}} &  &  \\
 \end{tabular}
 \end{center}
 

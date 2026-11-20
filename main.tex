@@ -225,7 +225,7 @@
   \end{pentdiag}}}
 \def\tripelmuster#1 #2\endtripelmuster{#1}
 
-% \kreis{Holz}: ein einzelner Kreis mit Zeichen (Register)
+% \kreis{Holz}: ein einzelner Kreis mit Zeichen (Schlüssel)
 \newcommand{\kreis}[2][0.6em]{\tikz[baseline=-0.6ex]{\elementkreis{#1}{0}{#2}}}
 
 % \mypair[Radius]{Holz}{Feuer}: zwei Kreise mit Pfeil dazwischen
@@ -387,7 +387,7 @@
 %   ohne Option: nur der Kreis des Hervorbringens (sheng)
 %   [ke]:     dazu innen das Pentagramm des Bändigens (ke)
 %   [gegen]:  die Gegenrichtungen: außen xie, innen wu
-\newcommand{\wkscale}{1}% Größe des Wandlungskreises (Radius 3 cm mal \wkscale)
+\newcommand{\wkscale}{0.82}% Größe des Wandlungskreises (Radius 3 cm mal \wkscale), überall gleich
 \newcommand{\wandlungskreis}[1][]{%
   \begin{tikzpicture}[>=latex]
     \pgfmathsetmacro{\R}{3*\wkscale}\pgfmathsetmacro{\RN}{\R+1.25}\pgfmathsetmacro{\RL}{\R+0.55}%
@@ -401,25 +401,27 @@
       \node at (\w:\RN cm) {\scriptsize\e};
       \ifx\art\artgegen
         \draw[<-, thick] ({\w-\d}:\myradius) arc[start angle={\w-\d}, end angle={\w-72+\d}, radius=\myradius];
-        \node[font=\scriptsize, fill=white, inner sep=1pt] at ({\w-36}:\RL cm) {{\cjk 泄} xiè};
+        \ifnum\i=1 \node[font=\scriptsize, fill=white, inner sep=1pt] at ({\w-36}:\RL cm) {{\cjk 泄} xiè};\fi
       \else
         \draw[->, thick] ({\w-\d}:\myradius) arc[start angle={\w-\d}, end angle={\w-72+\d}, radius=\myradius];
-        \node[font=\scriptsize, fill=white, inner sep=1pt] at ({\w-36}:\RL cm) {{\cjk 生} shēng};
+        \ifnum\i=1 \node[font=\scriptsize, fill=white, inner sep=1pt] at ({\w-36}:\RL cm) {{\cjk 生} shēng};\fi
       \fi
     }
     \ifx\art\artke
       \foreach \i/\ii in {1/3,2/4,3/5,4/1,5/2}
-        \draw[->, red!75!black] (w\i) -- node[fill=white, pos=0.3, inner sep=1pt, text=black] {\scriptsize{\cjk 克} kè} (w\ii);
+        \draw[->, red!75!black] (w\i) -- (w\ii);
+      \node[inner sep=1pt, font=\scriptsize] at (0,0) {{\cjk 克} kè};
     \fi
     \ifx\art\artgegen
       \foreach \i/\ii in {3/1,4/2,5/3,1/4,2/5}
-        \draw[->, red!75!black] (w\i) -- node[fill=white, pos=0.3, inner sep=1pt, text=black] {\scriptsize{\cjk 侮} wǔ} (w\ii);
+        \draw[->, red!75!black] (w\i) -- (w\ii);
+      \node[inner sep=1pt, font=\scriptsize] at (0,0) {{\cjk 侮} wǔ};
     \fi
   \end{tikzpicture}}
 
 \title{Pentagame-Orakel\\[0.3em]\large Das Buch der 60 Wandlungen}
 \author{Jan Suchanek}
-\date{19.\ November 2026}
+\date{2026}
 
 \makeatletter\renewcommand\@pnumwidth{2em}\makeatother % Platz für dreistellige Seitenzahlen im Inhaltsverzeichnis
 
@@ -468,7 +470,8 @@
 \thispagestyle{empty}
 \null\vfill
 {\centering
-  BC-CC-BY Jan Suchanek 2026\\
+  \copyright\ 2026 Jan Suchanek\\
+  Lizenz: \href{https://creativecommons.org/licenses/by-nc/4.0/deed.de}{CC BY-NC 4.0}\\
   \href{https://pentagame.org/}{pentagame.org}\par}
 \bigskip
 {\small\centering
@@ -557,7 +560,7 @@ Der Beutel ist aber nur der kürzeste Weg. Brett und Buch beruhen auf denselben 
 
 \noindent Beim Paar fallen Weg und Frucht zusammen: Die zweite Farbe zeigt, wohin die Wurzel führt.
 
-Zum Deuten lies zuerst den Spruch. Du kannst auf jeder Stufe einsteigen: Bei jedem Eintrag stehen Querverweise auf die verwandten Einträge der anderen Stufen. Bei jedem Element stehen Verweise auf seine vier Paare. Bei jeder Beziehung findest du die fünf Paare, in denen sie vorkommt. Bei jedem Paar stehen Verweise auf seine beiden Elemente, seine Beziehung und die sechs Tripel, in denen es steckt. Bei jedem Muster findest du seine Beziehungen und seine fünf Tripel. Und bei jedem Tripel stehen Verweise auf sein Muster und die beiden Paare, aus denen es besteht. Am schnellsten findest du eine Kombination über das \hyperref[kap:register]{Register} am Ende des Buches. Die Sprüche geben eine Richtung vor, keine Vorhersage.
+Zum Deuten lies zuerst den Spruch. Du kannst auf jeder Stufe einsteigen: Bei jedem Eintrag stehen Querverweise auf die verwandten Einträge der anderen Stufen. Bei jedem Element stehen Verweise auf seine vier Paare. Bei jeder Beziehung findest du die fünf Paare, in denen sie vorkommt. Bei jedem Paar stehen Verweise auf seine beiden Elemente, seine Beziehung und die sechs Tripel, in denen es steckt. Bei jedem Muster findest du seine Beziehungen und seine fünf Tripel. Und bei jedem Tripel stehen Verweise auf sein Muster und die beiden Paare, aus denen es besteht. Am schnellsten findest du eine Kombination über den \hyperref[kap:register]{Schlüssel} am Ende des Buches. Die Sprüche geben eine Richtung vor, keine Vorhersage.
 
 \newpage
 \begingroup
@@ -753,7 +756,7 @@ Verbindet man die fünf Elemente im Wandlungskreis miteinander, dann führt von 
 
 \begin{center}
 \begin{minipage}{\linewidth}\centering
-{\renewcommand{\wkscale}{0.82}\wandlungskreis[ke]}\par
+\wandlungskreis[ke]\par
 \smallskip
 {\small\itshape Außen der Kreis des Hervorbringens ({\cjk 生} shēng), innen das Pentagramm des Bändigens ({\cjk 克} kè).\par}
 \end{minipage}
@@ -765,7 +768,7 @@ Zu shēng und kè gibt es jeweils ein Gegenstück in der Gegenrichtung. Einen Sc
 
 \begin{center}
 \begin{minipage}{\linewidth}\centering
-{\renewcommand{\wkscale}{0.82}\wandlungskreis[gegen]}\par
+\wandlungskreis[gegen]\par
 \smallskip
 {\small\itshape Die Gegenrichtungen: außen das Annehmen ({\cjk 泄} xiè), innen das Sich stellen ({\cjk 侮} wǔ).\par}
 \end{minipage}
@@ -847,7 +850,7 @@ Jedes Bild zeigt seine Beziehung zweimal: schwarz von außen, von der Ecke oben,
 \smallskip
 
 \textit{Im Wandlungskreis: ein Schritt zurück, gegen den Sheng-Zyklus.}\\
-\textit{Auf dem Brett: gegen den Uhrzeigersinn außen auf dem Ring oder innen auf dem Pentagon voran.}\par
+\textit{Auf dem Brett: gegen den Uhrzeigersinn außen auf dem Ring oder innen auf dem Pentagon zurück.}\par
 \smallskip
 
 \textbf{Du nimmst an, was deine „Mutter“ dir gibt, die Quelle, die dich nährt.}\par
@@ -893,7 +896,7 @@ Jedes Bild zeigt seine Beziehung zweimal: schwarz von außen, von der Ecke oben,
 \smallskip
 
 \textit{Im Wandlungskreis: zwei Schritte zurück, gegen den Ke-Zyklus.}\\
-\textit{Auf dem Brett: im Uhrzeigersinn vom Ring nach innen oder von innen nach außen.}\par
+\textit{Auf dem Brett: im Uhrzeigersinn vom Ring nach innen oder von innen zum Ring.}\par
 \smallskip
 
 \textbf{Du gehst auf das zu, was dich bändigt. Dort wirst du geprüft.}\par
@@ -948,7 +951,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \newpage
 \paar{Holz}{Metall}{Die Schere}{Holz stellt sich dem Metall. Das Wachsen trifft auf den Schnitt.}
   {Du stellst dich dem, was dich zurechtstutzt: Kritik, Regeln, Grenzen. Das macht dich klarer und stärker, wie einen beschnittenen Baum.}
-  {Gegen jede Grenze anzuwachsen, kann wehtun. Und wer sich zu sehr beschneiden lässt, verliert etwas Eigenes. Nimm an, was dich stärkt, und bewahre, was dich ausmacht.}
+  {Gegen jede Grenze anzuwachsen, kann wehtun. Und wer sich zu sehr beschneiden lässt, verliert etwas Eigenes. Lass zurechtstutzen, was dich schwächt, und bewahre, was dich ausmacht.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~10}} & \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Metall}{Erde}~11}} & \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~12}} \\[0.3ex]
@@ -985,7 +988,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 \newpage
 \paar{Feuer}{Wasser}{Der Regen}{Feuer stellt sich dem Wasser. Die Begeisterung trifft auf Kühle.}
   {Du stellst dich der Ernüchterung, statt ihr auszuweichen. Was danach noch brennt, ist echt.}
-  {Gegen jede Kühle anzukämpfen, kostet Kraft, und manches kalte Wort löscht schneller als nötig. Lass dich abkühlen, ohne zu erlöschen; was bleibt, ist echt.}
+  {Gegen jede Kühle anzukämpfen, kostet Kraft, und manches kalte Wort löscht schneller als nötig. Lass dich abkühlen, ohne zu erlöschen.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~22}} & \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~23}} & \mbox{\hyperlink{spruch:24}{\mycombination[0.5em]{Feuer}{Wasser}{Erde}~24}} \\[0.3ex]
@@ -1095,7 +1098,7 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
    \end{tabular*}\par}
 \newpage
 \paar{Wasser}{Erde}{Die Küste}{Wasser stellt sich der Erde. Der Fluss trifft auf seine Grenze.}
-  {Du nimmst deine Grenzen an und gewinnst dadurch Richtung. Am Ufer wird das Wasser klar.}
+  {Du stellst dich deinen Grenzen und gewinnst dadurch Richtung. Am Ufer wird das Wasser klar.}
   {An denselben Grenzen stößt man sich immer wieder, oder man gibt nach und versickert. Nimm die Grenze als Ufer, das dir Richtung gibt.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
@@ -1112,7 +1115,7 @@ Ein Muster sind zwei Beziehungen hintereinander: zwei Schritte im Wandlungskreis
 
 Das Bild über jedem Muster zeigt die zwei Schritte auf dem Brett, wie bei den Beziehungen schwarz von außen und rot von innen. Auch hier kann die Ecke oben jedes Element sein. Es geht dabei nicht um Spielzüge, sondern um die Kombinatorik der fünf Elemente: Das Brett macht nur sichtbar, wohin zwei Schritte im Wandlungskreis führen.
 
-Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmten Element, wird daraus eines der 60 Tripel im letzten Kapitel. Unter jedem Muster stehen deshalb die fünf Tripel, in denen es vorkommt.
+Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmten Element, wird daraus eines der 60 Tripel im folgenden Kapitel. Unter jedem Muster stehen deshalb die fünf Tripel, in denen es vorkommt.
 \end{einleitung}
 
 \newpage
@@ -1217,8 +1220,8 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 \musterkopf{IX}{Der strenge Weg}{2}{2}{Bändigen}{Bändigen}{Annehmen}
 \textbf{Strenge wird weitergereicht. Durch Disziplin kommst du zurück zu deinen Wurzeln.}\par
 \smallskip
-\lichtschatten{Es gibt Zeiten, in denen Ordnung vor Gefühl geht. Strenge wird weitergegeben, Regel folgt auf Regel. Das klingt hart, aber am Ende dieses Weges wartet etwas Weiches: das Annehmen dessen, was dich trägt. Disziplin kann ein Heimweg sein.}
-  {Aus Strenge wird Härte, gegen andere und gegen dich selbst. Regel folgt auf Regel, und keiner weiß mehr, wofür. Das Gegenteil ist ebenso gefährlich: Wer jede Disziplin scheut, findet nie den Weg nach Hause. Frag bei jeder Regel, ob sie dich noch zu deinen Wurzeln führt.}
+\lichtschatten{Es gibt Zeiten, in denen Ordnung vor Gefühl geht. Strenge wird weitergegeben, Regel folgt auf Regel. Das klingt hart, aber am Ende dieses Weges wartet etwas Weiches: das Annehmen dessen, was dich trägt. Disziplin kann zu den eigenen Wurzeln führen.}
+  {Aus Strenge wird Härte, gegen andere und gegen dich selbst. Regel folgt auf Regel, und keiner weiß mehr, wofür. Das Gegenteil ist ebenso gefährlich: Wer jede Disziplin scheut, findet nie zu sich selbst. Frag bei jeder Regel, ob sie dich noch zu deinen Wurzeln führt.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~9}} \hfill \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~21}} \hfill \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~33}} \hfill \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Holz}{Erde}~45}} \hfill \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~57}}\par
 \end{orakelblock}
@@ -1482,7 +1485,7 @@ Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe f
 \newpage
 \spruch{51}{Wasser}{Holz}{Metall}{III Lehrzeit}{Das Floß}{Du förderst ein Wachstum, das auf die Klinge trifft. Daraus kehrt Klarheit zu dir zurück, deine eigene Quelle.}
   {Du förderst etwas, das wächst und dann auf Widerstand trifft. Bleib dabei, auch wenn es geprüft wird. Gerade in dieser Prüfung findest du zu einer Klarheit, die dich selbst überrascht. Das Floß trägt, und am Ende trägt es auch dich.}
-  {Wer andere fördert, vergisst manchmal sich selbst. Und wenn Widerstand kommt, möchte man aufgeben. Bleib dabei, und gönn dir unterwegs auch eigene Klarheit.}
+  {Wer andere fördert, vergisst manchmal sich selbst. Und wenn Widerstand kommt, möchte man aufgeben. Halte durch, und gönn dir unterwegs auch eigene Klarheit.}
 \newpage
 \spruch{52}{Wasser}{Metall}{Erde}{IV Wurzelsuche}{Der Grund des Brunnens}{Du gehst bis zum Ursprung, tiefer als die Tiefe, und triffst auf das Ufer, das dich hält und begrenzt. Hier schließt sich der Kreis.}
   {Du gehst bis ganz nach unten, tiefer als je zuvor. Dort findest du keine Leere, sondern ein Ufer: etwas, das dich hält und zugleich begrenzt. Vielleicht ist das die wichtigste Erkenntnis von allen: Du bist getragen. Hier schließt sich der Kreis, und ein neuer kann beginnen.}
@@ -1494,7 +1497,7 @@ Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe f
 \newpage
 \spruch{54}{Wasser}{Metall}{Feuer}{VI Rückhalt}{Die Quelle im Erz}{Mit festem Halt im Rücken stellst du dich dem Brennenden und dämpfst es.}
   {Da brennt etwas lichterloh, und du sollst es beruhigen. Das kannst du, weil du festen Halt hast: deine Klarheit, deine Grundsätze, deine Erfahrung. Geh ruhig auf das Feuer zu. Du musst es nicht ersticken, nur dämpfen, bis es wieder wärmt, statt zu verbrennen.}
-  {Grundsätze können mit der Zeit kühl werden. Und manchmal traut man seinem Halt zu wenig. Prüfe, was dir wirklich Halt gibt, und geh dann ruhig auf das Feuer zu.}
+  {Grundsätze können mit der Zeit kühl werden. Und manchmal traut man seinem Halt zu wenig. Prüfe, was dir wirklich Halt gibt, und vertrau ihm dann.}
 \newpage
 \spruch{55}{Wasser}{Feuer}{Erde}{VII Damm}{Das gelöschte Feuer}{Du dämpfst eine Begeisterung, und aus der Asche wird Boden. Dieser Boden wird dich eindämmen wollen.}
   {Du hast eine Begeisterung gedämpft, vielleicht deine eigene, vielleicht die eines anderen. Das war vernünftig. Aus der Asche wird fruchtbarer Boden. Doch sei darauf gefasst: Dieser Boden will Ordnung, und er wird auch dich ein wenig eindämmen. Bleib im Fluss.}
@@ -1510,7 +1513,7 @@ Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe f
 \newpage
 \spruch{58}{Wasser}{Erde}{Metall}{X Läuterung}{Die Mündung}{Du stellst dich dem Ufer, das dich begrenzt. Was sich dort ablagert, macht dich klarer.}
   {Du stößt an ein Ufer, an eine Grenze, die du nicht überfluten kannst. Nimm sie an. An der Mündung lagert sich ab, was du mitgetragen hast, und das Wasser wird klar. Diese Begrenzung ist kein Ende, sondern eine Reinigung. Danach siehst du bis auf den Grund.}
-  {An derselben Grenze anzustoßen, kann sich wie Schicksal anfühlen. Manchmal ergibt man sich ihr auch zu schnell. Nimm sie an, ohne dich aufzugeben, dann wird das Wasser klar.}
+  {An derselben Grenze anzustoßen, kann sich wie Schicksal anfühlen. Manchmal ergibt man sich ihr auch zu schnell. Achte die Grenze, ohne dich aufzugeben.}
 \newpage
 \spruch{59}{Wasser}{Erde}{Feuer}{XI List}{Das Grundwasser}{Du gehst unter dem Hindernis hindurch, statt dagegen anzurennen. Am Ende hast du Macht über das, was laut ist.}
   {Gegen das Hindernis anzurennen bringt nichts. Nimm den leisen Weg, unter der Oberfläche, geduldig und unsichtbar. Wasser findet immer einen Weg. Am Ende hast du mehr Einfluss als die, die am lautesten sind, und du hast dafür nicht einmal die Stimme erhoben.}
@@ -1518,11 +1521,11 @@ Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe f
 \newpage
 \spruch{60}{Wasser}{Erde}{Holz}{XII Aufstand}{Die Flut}{Du durchbrichst Grenzen, und die Grenzen brechen auf zu Wurzelwerk. Aus dem Überschreiten wächst etwas Lebendiges.}
   {Du lässt dich nicht mehr eindämmen. Die Grenzen brechen, und das ist gewaltig. Aber schau, was geschieht: Wo die Flut hinkommt, wächst Leben. Dein Überschreiten ist keine Zerstörung, sondern Befreiung. Lenk deine Kraft dorthin, wo etwas wachsen will.}
-  {Wer Grenzen durchbricht, reißt manchmal mehr mit als gedacht. Und manchmal lässt man sich zu lange eindämmen. Lenk deine Kraft dahin, wo sie Leben bringt.}
+  {Wer Grenzen durchbricht, reißt manchmal mehr mit als gedacht. Und manchmal lässt man sich zu lange eindämmen. Bleib dir treu, und achte darauf, was du mitreißt.}
 
 \endgroup
 
-\addchap{Register}\markboth{Register}{\mbox{}}\label{kap:register}
+\addchap{Schlüssel}\markboth{Schlüssel}{\mbox{}}\label{kap:register}
 
 \begin{einleitung}
 Mit diesen Tafeln findest du jede Kombination, ohne zu blättern. Suche die erste Farbe in der linken Spalte und die nächste in der Kopfzeile; die Nummer im Schnittpunkt verweist auf das Paar oder das Tripel.

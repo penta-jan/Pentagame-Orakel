@@ -265,21 +265,23 @@
 \expandafter\def\csname bznr Bändigen\endcsname{2}
 \expandafter\def\csname bznr Sich stellen\endcsname{3}
 \expandafter\def\csname bznr Annehmen\endcsname{4}
+% \bnlink{Nähren}: nur der Name der Richtung, als Link
+\newcommand{\bnlink}[1]{\hyperlink{beziehung:\csname bznr #1\endcsname}{#1}}
 \newcommand{\blink}[1]{\hyperlink{beziehung:\csname bznr #1\endcsname}{\csname bzlabel\csname bznr #1\endcsname\endcsname~#1}}
 
 % Dreiecksform jeder Wendung: stumpf = drei Elemente hintereinander im Kreis, spitz = eines ausgelassen
-\expandafter\def\csname musterdreieck I\endcsname{stumpf (Kreis)}
-\expandafter\def\csname musterdreieck II\endcsname{spitz (Stern)}
-\expandafter\def\csname musterdreieck III\endcsname{stumpf (Kreis)}
-\expandafter\def\csname musterdreieck IV\endcsname{stumpf (Kreis)}
-\expandafter\def\csname musterdreieck V\endcsname{stumpf (Kreis)}
-\expandafter\def\csname musterdreieck VI\endcsname{spitz (Stern)}
-\expandafter\def\csname musterdreieck VII\endcsname{spitz (Stern)}
-\expandafter\def\csname musterdreieck VIII\endcsname{stumpf (Kreis)}
-\expandafter\def\csname musterdreieck IX\endcsname{spitz (Stern)}
-\expandafter\def\csname musterdreieck X\endcsname{stumpf (Kreis)}
-\expandafter\def\csname musterdreieck XI\endcsname{spitz (Stern)}
-\expandafter\def\csname musterdreieck XII\endcsname{spitz (Stern)}
+\expandafter\def\csname musterdreieck I\endcsname{Yin}
+\expandafter\def\csname musterdreieck II\endcsname{Yang}
+\expandafter\def\csname musterdreieck III\endcsname{Yin}
+\expandafter\def\csname musterdreieck IV\endcsname{Yin}
+\expandafter\def\csname musterdreieck V\endcsname{Yin}
+\expandafter\def\csname musterdreieck VI\endcsname{Yang}
+\expandafter\def\csname musterdreieck VII\endcsname{Yang}
+\expandafter\def\csname musterdreieck VIII\endcsname{Yin}
+\expandafter\def\csname musterdreieck IX\endcsname{Yang}
+\expandafter\def\csname musterdreieck X\endcsname{Yin}
+\expandafter\def\csname musterdreieck XI\endcsname{Yang}
+\expandafter\def\csname musterdreieck XII\endcsname{Yang}
 % \dreieckbild{(p1)--(p2)--(p3)--cycle}: kleines Fünfeck mit hervorgehobenem Dreieck
 \newcommand{\dreieckbild}[1]{%
   \begin{tikzpicture}[scale=0.9]
@@ -302,10 +304,8 @@
   \smallskip
   {\large\bfseries\color{ueberschriftfarbe} #2}\par
   \smallskip
-  \textit{1.\ Richtung: \blink{#5}}\\
-  \textit{2.\ Richtung: \blink{#6}}\\
-  \textit{Anfang\ra Ende: \blink{#7}}\\
-  \textit{Dreieck: \csname musterdreieck #1\endcsname}\par
+  {\small\bnlink{#5}, dann \bnlink{#6}: \bnlink{#7}.\\
+  Ein \csname musterdreieck #1\endcsname-Dreieck.\par}
   \smallskip}
 
 % Blocksatz-Einleitung innerhalb der zentrierten Kapitel
@@ -1171,37 +1171,39 @@ Das Bild über jeder Wendung zeigt die zwei Richtungen auf dem Brett, wie bei de
 Eine Wendung gilt für jedes der fünf Elemente. Beginnt man sie bei einem bestimmten Element, wird daraus eines der 60 Tripel im folgenden Kapitel. Unter jeder Wendung stehen deshalb die fünf Tripel, in denen sie vorkommt.
 
 \textbf{Dreiecke.} Jede Wendung beschreibt zugleich ein Dreieck. Die drei Elemente, die sie verbindet, liegen im Wandlungskreis entweder hintereinander, dann ist das Dreieck stumpf; oder eines ist ausgelassen, dann ist es spitz. Im stumpfen Dreieck verbinden zwei Seiten benachbarte Elemente (±1) und eine Seite übernächste (±2): Es ist vom Hervorbringen geprägt, ein Stück vom Kreis. Im spitzen ist es umgekehrt, zwei Seiten ±2 und eine ±1: Es ist vom Bändigen geprägt, ein Stück vom Stern.
+
+Damit liegt der Vergleich mit Yin und Yang nahe. Das stumpfe Dreieck, geprägt von Nähren und Empfangen, von Mutter und Kind, ist ein Yin-Dreieck. Das spitze, geprägt von Grenze, Form und Spannung, ist ein Yang-Dreieck. Die Tradition ordnet Yin und Yang den Elementen zu, nicht den beiden Zyklen; diese Zuordnung ist eine Deutung dieses Buches. Sie ist auch nicht dasselbe wie Licht und Schatten: Jede Wendung hat beide Seiten, und das Dreieck sagt nur, ob sie mehr vom Yin oder mehr vom Yang hat.
 \end{einleitung}
 
 \begin{center}
 \begin{tabular}{c@{\hspace{3em}}c}
 \dreieckbild{(p1)--(p2)--(p3)--cycle} & \dreieckbild{(p1)--(p2)--(p4)--cycle} \\[0.5ex]
-{\small stumpf: Holz, Feuer, Erde} & {\small spitz: Holz, Feuer, Metall}
+{\small\begin{tabular}[t]{@{}c@{}}stumpf, Yin\\Holz, Feuer, Erde\end{tabular}} & {\small\begin{tabular}[t]{@{}c@{}}spitz, Yang\\Holz, Feuer, Metall\end{tabular}}
 \end{tabular}
 \end{center}
 
 \begin{einleitung}
-Sechs Wendungen sind stumpf, sechs spitz:
+Sechs Wendungen sind stumpf und Yin, sechs spitz und Yang:
 \end{einleitung}
 
 \begin{center}
-\footnotesize\renewcommand{\arraystretch}{1.15}\setlength{\tabcolsep}{4pt}
+\footnotesize\renewcommand{\arraystretch}{1.15}\setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}rlccl@{}}
 \toprule
 \multicolumn{2}{c}{\textbf{Wendung}} & \textbf{Richtungen} & \textbf{Anfang\ra Ende} & \textbf{Dreieck} \\
 \midrule
-I    & \hyperlink{muster:I}{Der Strom} & +1, +1 & +2 & stumpf \\
-II   & \hyperlink{muster:II}{Die Prüfung} & +1, +2 & −2 & spitz \\
-III  & \hyperlink{muster:III}{Die Lehrzeit} & +1, −2 & −1 & stumpf \\
-IV   & \hyperlink{muster:IV}{Die Wurzelsuche} & −1, −1 & −2 & stumpf \\
-V    & \hyperlink{muster:V}{Die gesammelte Kraft} & −1, +2 & +1 & stumpf \\
-VI   & \hyperlink{muster:VI}{Der Rückhalt} & −1, −2 & +2 & spitz \\
-VII  & \hyperlink{muster:VII}{Der Damm} & +2, +1 & −2 & spitz \\
-VIII & \hyperlink{muster:VIII}{Die Abkürzung} & +2, −1 & +1 & stumpf \\
-IX   & \hyperlink{muster:IX}{Der strenge Weg} & +2, +2 & −1 & spitz \\
-X    & \hyperlink{muster:X}{Die Läuterung} & −2, +1 & −1 & stumpf \\
-XI   & \hyperlink{muster:XI}{Die List} & −2, −1 & +2 & spitz \\
-XII  & \hyperlink{muster:XII}{Der Aufstand} & −2, −2 & +1 & spitz \\
+I    & \hyperlink{muster:I}{Der Strom} & +1, +1 & +2 & stumpf, Yin \\
+II   & \hyperlink{muster:II}{Die Prüfung} & +1, +2 & −2 & spitz, Yang \\
+III  & \hyperlink{muster:III}{Die Lehrzeit} & +1, −2 & −1 & stumpf, Yin \\
+IV   & \hyperlink{muster:IV}{Die Wurzelsuche} & −1, −1 & −2 & stumpf, Yin \\
+V    & \hyperlink{muster:V}{Die gesammelte Kraft} & −1, +2 & +1 & stumpf, Yin \\
+VI   & \hyperlink{muster:VI}{Der Rückhalt} & −1, −2 & +2 & spitz, Yang \\
+VII  & \hyperlink{muster:VII}{Der Damm} & +2, +1 & −2 & spitz, Yang \\
+VIII & \hyperlink{muster:VIII}{Die Abkürzung} & +2, −1 & +1 & stumpf, Yin \\
+IX   & \hyperlink{muster:IX}{Der strenge Weg} & +2, +2 & −1 & spitz, Yang \\
+X    & \hyperlink{muster:X}{Die Läuterung} & −2, +1 & −1 & stumpf, Yin \\
+XI   & \hyperlink{muster:XI}{Die List} & −2, −1 & +2 & spitz, Yang \\
+XII  & \hyperlink{muster:XII}{Der Aufstand} & −2, −2 & +1 & spitz, Yang \\
 \bottomrule
 \end{tabular}
 \end{center}

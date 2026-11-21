@@ -133,12 +133,19 @@
 % \musterbrett{Schritte 1}{Schritte 2}: der Weg ab Ecke 0 (schwarz) und ab Kreuzung 0a (rot),
 % auf einem kleinen, grauen 100er-Brett (kleinere Ecken, Pfeile besser sichtbar)
 \newcommand{\mustergrau}{black!30}
+\colorlet{dreieckfarbe}{yellow!22}
 \newcommand{\musterbrett}[2]{{%
   \boardwhite
   \renewcommand{\mywhite}{\mustergrau}\renewcommand{\myblue}{\mustergrau}%
   \renewcommand{\mygreen}{\mustergrau}\renewcommand{\myred}{\mustergrau}%
   \renewcommand{\myyellow}{\mustergrau}%
+  \pgfmathtruncatemacro{\dreieckb}{mod(10-#1,5)}%
+  \pgfmathtruncatemacro{\dreieckc}{mod(10-#1-#2,5)}%
   \begin{pentdiag}[stops=100, radius=0.16\textwidth, background=white]
+    % das Dreieck der drei Elemente, aus den Ecken gebildet, hellgelb hinterlegt
+    \begin{scope}[blend mode=multiply]
+      \fill[dreieckfarbe] (0.center) -- (\dreieckb.center) -- (\dreieckc.center) -- cycle;
+    \end{scope}
     \renewcommand{\pfeilfarbe}{pfeilaussen}%
     \gdef\musterpos{0}\gdef\mustertyp{c}%   von der Ecke oben
     \musterschritt{#1}{}
@@ -221,6 +228,9 @@
   \pentcolours[100]{green,red,yellow,white,blue}%
   \xdef\tripelstart{\csname elpos#1\endcsname}%
   \begin{pentdiag}[stops=100, radius=0.17\textwidth, background=white]
+    \begin{scope}[blend mode=multiply]% Dreieck der drei Elemente, hellgelb
+      \fill[dreieckfarbe] (\csname elpos#1\endcsname.center) -- (\csname elpos#2\endcsname.center) -- (\csname elpos#3\endcsname.center) -- cycle;
+    \end{scope}
     \expandafter\expandafter\expandafter\tripelbrettweg\csname musterschritte #4\endcsname
   \end{pentdiag}}}
 \def\tripelmuster#1 #2\endtripelmuster{#1}
@@ -257,6 +267,31 @@
 \expandafter\def\csname bznr Annehmen\endcsname{4}
 \newcommand{\blink}[1]{\hyperlink{beziehung:\csname bznr #1\endcsname}{\csname bzlabel\csname bznr #1\endcsname\endcsname~#1}}
 
+% Dreiecksform jeder Wendung: stumpf = drei Elemente hintereinander im Kreis, spitz = eines ausgelassen
+\expandafter\def\csname musterdreieck I\endcsname{stumpf (Kreis)}
+\expandafter\def\csname musterdreieck II\endcsname{spitz (Stern)}
+\expandafter\def\csname musterdreieck III\endcsname{stumpf (Kreis)}
+\expandafter\def\csname musterdreieck IV\endcsname{stumpf (Kreis)}
+\expandafter\def\csname musterdreieck V\endcsname{stumpf (Kreis)}
+\expandafter\def\csname musterdreieck VI\endcsname{spitz (Stern)}
+\expandafter\def\csname musterdreieck VII\endcsname{spitz (Stern)}
+\expandafter\def\csname musterdreieck VIII\endcsname{stumpf (Kreis)}
+\expandafter\def\csname musterdreieck IX\endcsname{spitz (Stern)}
+\expandafter\def\csname musterdreieck X\endcsname{stumpf (Kreis)}
+\expandafter\def\csname musterdreieck XI\endcsname{spitz (Stern)}
+\expandafter\def\csname musterdreieck XII\endcsname{spitz (Stern)}
+% \dreieckbild{(p1)--(p2)--(p3)--cycle}: kleines Fünfeck mit hervorgehobenem Dreieck
+\newcommand{\dreieckbild}[1]{%
+  \begin{tikzpicture}[scale=0.9]
+    \foreach [count=\i] \e in {Holz,Feuer,Erde,Metall,Wasser}
+      \coordinate (p\i) at ({90-72*(\i-1)}:1.3cm);
+    \draw[gray!50] (p1)--(p2)--(p3)--(p4)--(p5)--cycle;
+    \draw[gray!50] (p1)--(p3)--(p5)--(p2)--(p4)--cycle;
+    \draw[very thick] #1;
+    \foreach [count=\i] \e in {Holz,Feuer,Erde,Metall,Wasser}
+      \filldraw[fill=\e!60, draw=black!60] (p\i) circle (0.17cm);
+  \end{tikzpicture}}
+
 % Kopf eines Musters, aufgebaut wie ein Spruch:
 % Nummer, Bild, Überschrift, dann die Schritte
 % \musterkopf{Nummer}{Name}{Schritte 1}{Schritte 2}{Text 1.}{Text 2.}{Anfang->Ende}
@@ -267,9 +302,10 @@
   \smallskip
   {\large\bfseries\color{ueberschriftfarbe} #2}\par
   \smallskip
-  \textit{1.\ Schritt: \blink{#5}}\\
-  \textit{2.\ Schritt: \blink{#6}}\\
-  \textit{Anfang\ra Ende: \blink{#7}}\par
+  \textit{1.\ Richtung: \blink{#5}}\\
+  \textit{2.\ Richtung: \blink{#6}}\\
+  \textit{Anfang\ra Ende: \blink{#7}}\\
+  \textit{Dreieck: \csname musterdreieck #1\endcsname}\par
   \smallskip}
 
 % Blocksatz-Einleitung innerhalb der zentrierten Kapitel
@@ -297,10 +333,20 @@
 % Position im Wandlungskreis, für die Pfeil-Links
 \newcommand{\elnumHolz}{0}\newcommand{\elnumFeuer}{1}\newcommand{\elnumErde}{2}
 \newcommand{\elnumMetall}{3}\newcommand{\elnumWasser}{4}
+% \verbpfeil{Holz}{Feuer}: Pfeil mit dem Verb der Beziehung klein darüber ("nährt" usw.)
+\expandafter\def\csname bzverb1\endcsname{nährt}
+\expandafter\def\csname bzverb2\endcsname{bändigt}
+\expandafter\def\csname bzverb3\endcsname{stellt sich}
+\expandafter\def\csname bzverb4\endcsname{nimmt an}
+\newcommand{\verbpfeil}[2]{%
+  \pgfmathtruncatemacro{\vpschritt}{mod(\csname elnum#2\endcsname-\csname elnum#1\endcsname+5,5)}%
+  \,\tikz[baseline=-0.6ex]{%
+    \node[font=\tiny, inner sep=0.6pt, anchor=south] (vp) at (0,0.4pt) {\csname bzverb\vpschritt\endcsname};
+    \draw[-{Stealth[length=3pt]}, line width=0.45pt] ([xshift=-2pt]vp.south west) -- ([xshift=2pt]vp.south east);}\,}
 % \rlink{Holz}{Feuer}: "Holz ->" als ein Link auf das Paar Holz -> Feuer;
 % Etikett und Pfeil sind zusammen die Klickfläche
 \newcommand{\rlink}[2]{%
-  \hyperlink{paar:#1-#2}{\element{#1}\,$\rightarrow$\,}\allowbreak}
+  \hyperlink{paar:#1-#2}{\element{#1}\verbpfeil{#1}{#2}}\allowbreak}
 
 % \paar{A}{B}{Titel}{Urteil}{Licht}{Schatten}{Tripel}: Eintrag eines der 20 Paare,
 % Nummer (rot, arabisch) = 4 * Position von A im Wandlungskreis + Nummer der Beziehung (+1, −1, +2, −2 = 1..4)
@@ -314,10 +360,10 @@
    \smallskip
    \mypairlink[1em]{#1}{#2}\par
    \smallskip
-   {\small\element{#1}\,$\rightarrow$\,\element{#2}}\par
+   {\small\element{#1}\verbpfeil{#1}{#2}\element{#2}}\par
    \medskip
    {\large\bfseries #3}\par
-   {\small Beziehung:}~\hyperlink{beziehung:\paarnr}{\textit{\csname bzlabel\paarnr\endcsname~\csname bzname\paarnr\endcsname}}\par
+   {\small Richtung:}~\hyperlink{beziehung:\paarnr}{\textit{\csname bzlabel\paarnr\endcsname~\csname bzname\paarnr\endcsname}}\par
    \smallskip
    \textbf{#4}\par
    \smallskip
@@ -351,7 +397,7 @@
 \expandafter\def\csname mustername VI\endcsname{Der Rückhalt}
 \expandafter\def\csname mustername IV\endcsname{Die Wurzelsuche}
 % Ausgabe: "Muster: II. Die Prüfung", Nummer und Name als Link
-\def\musterref#1 #2\endmusterref{{\small Muster:}~\hyperlink{muster:#1}{\textit{#1.~\csname mustername #1\endcsname}}}
+\def\musterref#1 #2\endmusterref{{\small Wendung:}~\hyperlink{muster:#1}{\textit{#1.~\csname mustername #1\endcsname}}}
 
 % Kleine Kreispfeile für die Drehrichtung
 \newcommand{\uzs}{\tikz[baseline=-0.6ex]\draw[-{Stealth[scale=0.6]}, line width=0.7pt] (90:1.1ex) arc (90:-210:1.1ex);}  % im Uhrzeigersinn
@@ -493,10 +539,10 @@ Wer Pentagame spielt, kennt diesen Moment: Die dritte Figur erreicht ihr Ziel un
 
 \begin{description}[leftmargin=0pt, itemsep=0.5ex]
   \item[Die fünf Elemente.] Im Wu Xing folgen sie in fester Reihenfolge aufeinander, und jedes geht aus dem vorigen hervor. Zu jedem gehört ein Thema mit einem hellen und einem dunklen Aspekt.
-  \item[Die vier Beziehungen.] Zwischen zwei Elementen besteht immer genau eine von vier Beziehungen: \emph{Nähren} (+1), \emph{Annehmen} (−1), \emph{Bändigen} (+2) oder \emph{Sich stellen} (−2). Welche es ist, hängt nur davon ab, ob man in der Reihenfolge der Elemente einen oder zwei Schritte vor- oder zurückgeht.
-  \item[Die 20 Paare.] Ein Element und eine Beziehung ergeben ein Paar, zwei Elemente in fester Reihenfolge, etwa \element*{Holz}\,$\rightarrow$\,\element*{Feuer}. Zu jedem der fünf Elemente gibt es vier Paare: $5 \times 4 = 20$.
-  \item[Die zwölf Muster.] Zwei Beziehungen hintereinander ergeben ein Muster. Für den ersten Schritt gibt es vier Möglichkeiten, für den zweiten drei, denn er darf den ersten nicht aufheben: Auf +1 folgt nie −1, auf +2 nie −2. Das ergibt $4 \times 3 = 12$.
-  \item[Die 60 Tripel.] Ein Element und ein Muster ergeben ein Tripel, eine Folge aus drei verschiedenen Elementen, etwa \element*{Holz}\,$\rightarrow$\,\element*{Feuer}\,$\rightarrow$\,\element*{Erde}. Das sind $5 \times 12 = 60$, genau die Folgen, mit denen man beim Pentagame gewinnt. Jedes Tripel besteht aus zwei Paaren, hier Holz\,$\rightarrow$\,Feuer und Feuer\,$\rightarrow$\,Erde.
+  \item[Die vier Richtungen.] Von einem Element zu einem anderen führt immer genau eine von vier Richtungen: \emph{Nähren} (+1), \emph{Annehmen} (−1), \emph{Bändigen} (+2) oder \emph{Sich stellen} (−2). Welche es ist, hängt nur davon ab, ob man in der Reihenfolge der Elemente einen oder zwei Schritte vor- oder zurückgeht.
+  \item[Die 20 Paare.] Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfolge, zum Beispiel \element*{Holz}\verbpfeil{Holz}{Feuer}\element*{Feuer}. Zu jedem der fünf Elemente gibt es vier Paare: $5 \times 4 = 20$.
+  \item[Die zwölf Wendungen.] Zwei Richtungen hintereinander ergeben eine Wendung. Für die erste Richtung gibt es vier Möglichkeiten, für die zweite drei, denn sie darf die erste nicht aufheben: Auf +1 folgt nie −1, auf +2 nie −2. Das ergibt $4 \times 3 = 12$.
+  \item[Die 60 Tripel.] Ein Element und eine Wendung ergeben ein Tripel, eine Folge aus drei verschiedenen Elementen, etwa \element*{Holz}\verbpfeil{Holz}{Feuer}\element*{Feuer}\verbpfeil{Feuer}{Erde}\element*{Erde}. Das sind $5 \times 12 = 60$, genau die Folgen, mit denen man beim Pentagame traditionell gewinnt. Jedes Tripel besteht aus zwei Paaren, hier \textit{Holz nährt Feuer} und \textit{Feuer nährt Erde}.
 \end{description}
 
 \begin{center}
@@ -506,23 +552,23 @@ Wer Pentagame spielt, kennt diesen Moment: Die dritte Figur erreicht ihr Ziel un
 \textbf{Stufe} & \textbf{Anzahl} & \textbf{entsteht aus} \\
 \midrule
 \hyperref[kap:elemente]{Elemente}    & 5  & dem Wu Xing \\
-\hyperref[kap:beziehungen]{Beziehungen} & 4  & 1 oder 2 Schritten vor oder zurück \\
-\hyperref[kap:paare]{Paare}          & 20 & Element $\times$ Beziehung \\
-\hyperref[kap:muster]{Muster}        & 12 & Beziehung $\times$ Beziehung \\
-\hyperref[kap:tripel]{Tripel}        & 60 & Element $\times$ Muster \\
+\hyperref[kap:beziehungen]{Richtungen}  & 4  & 1 oder 2 vor oder zurück \\
+\hyperref[kap:paare]{Paare}          & 20 & Element $\times$ Richtung \\
+\hyperref[kap:muster]{Wendungen}     & 12 & Richtung $\times$ Richtung \\
+\hyperref[kap:tripel]{Tripel}        & 60 & Element $\times$ Wendung \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-Zu jeder Erscheinung gibt es einen Spruch: zu jedem Element, jeder Beziehung, jedem Paar, jedem Muster und jedem Tripel. Ein Spruch besteht aus einem knappen Urteil, fett gesetzt, und einer Deutung darunter. Die Deutung zeigt immer beide Seiten, wie Yin und Yang: im Licht und im Schatten.
+Zu jeder Erscheinung gibt es einen Spruch: zu jedem Element, jeder Richtung, jedem Paar, jeder Wendung und jedem Tripel. Ein Spruch besteht aus einem knappen Urteil, fett gesetzt, und einer Deutung darunter. Die Deutung zeigt immer beide Seiten, wie Yin und Yang: im Licht und im Schatten.
 
 Das Vorbild ist das \href{https://en.wikipedia.org/wiki/Lingqijing}{Lingqijing} ({\cjk 靈棋經}, „Klassiker der göttlichen Spielsteine“), ein chinesisches Orakel, das wohl in der frühen Wei-Jin-Zeit entstanden ist. Dort ergeben drei Positionen (Himmel, Mensch, Erde) mit je fünf Zuständen 125 Sprüche. Beim Pentagame-Orakel kommt keine Farbe doppelt vor, deshalb sind es 60 Tripel.
 
 Die Sprüche sind keine Übersetzung eines alten Textes, sondern eine moderne Interpretation entlang der Wu-Xing-Zyklen.
 
-Überliefert sind die fünf Elemente und ihre Reihenfolge, die beiden Zyklen des Hervorbringens ({\cjk 生} shēng) und des Bändigens ({\cjk 克} kè) mit ihren Gegenrichtungen wǔ und xiè sowie die Zuordnungen von Jahreszeit, Richtung, Tugend und Gemütsbewegung, Organ, Geschmack und Planet. Nähren und Bändigen sind auch im Deutschen gebräuchliche Namen; Annehmen und Sich stellen sind für dieses Buch gewählt. Neu sind außerdem die Zählung +1, −1, +2, −2, die zwölf Muster mit ihren Namen, die Positionen Wurzel, Weg und Frucht, die Übertragung auf das Pentagame-Brett und alle Sprüche.
+Überliefert sind die fünf Elemente und ihre Reihenfolge, die beiden Zyklen des Hervorbringens ({\cjk 生} shēng) und des Bändigens ({\cjk 克} kè) mit ihren Gegenrichtungen wǔ und xiè sowie die Zuordnungen von Jahreszeit, Himmelsrichtung, Tugend und Gemütsbewegung, Organ, Geschmack und Planet. Nähren und Bändigen sind auch im Deutschen gebräuchliche Namen; Annehmen und Sich stellen sind für dieses Buch gewählt. Die Zählung +1, −1, +2, −2 stammt aus der Notation des \textit{Pentagame Compendium}. Neu sind die zwölf Wendungen mit ihren Namen, die Positionen Wurzel, Weg und Frucht, die Übertragung auf das Pentagame-Brett und alle Sprüche.
 
-Jeder Spruch eines Tripels verbindet das Thema seines Ausgangselements mit seinem Muster und greift dafür die klassischen Bilder der Zyklen auf: Holz nährt das Feuer, Wasser löscht es, die Axt fällt den Baum. Zwei Tripel mit demselben Muster erzählen deshalb eine ähnliche Geschichte, aber in anderen Bildern und unter anderen Aspekten.
+Jeder Spruch eines Tripels verbindet das Thema seines Ausgangselements mit seiner Wendung und greift dafür die klassischen Bilder der Zyklen auf: Holz nährt das Feuer, Wasser löscht es, die Axt fällt den Baum. Zwei Tripel mit derselben Wendung erzählen deshalb eine ähnliche Geschichte, aber in anderen Bildern und unter anderen Aspekten.
 
 Das Wort Trumpf kommt von Triumph: So hießen auch die Bildkarten des ersten Tarots im Italien des 15.~Jahrhunderts, die \textit{trionfi}. Jede gewonnene Partie Pentagame ist ein solcher Triumph, und jeder Spruch dieses Buches ein Trumpf, den man in der Hand hält.
 
@@ -538,15 +584,15 @@ Am einfachsten befragst du das Orakel mit einem Beutel. Lege je eine Figur jeder
 Der Beutel ist aber nur der kürzeste Weg. Brett und Buch beruhen auf denselben fünf Farben und denselben Linien. Deshalb lässt sich fast alles, was in einer Partie Pentagame geschieht, hier nachschlagen und deuten:
 
 \begin{itemize}[leftmargin=*]
-  \item \textbf{Beziehungen:} Jeder Zug, der auf einem farbigen Feld beginnt, einer Ecke oder einer Kreuzung, und auf einem andersfarbigen endet, entspricht einer der vier \hyperref[kap:beziehungen]{Beziehungen}. Welche es ist, hängt nur von den beiden Farben ab.
+  \item \textbf{Richtungen:} Jeder Zug, der auf einem farbigen Feld beginnt, einer Ecke oder einer Kreuzung, und auf einem andersfarbigen endet, entspricht einer der vier \hyperref[kap:beziehungen]{Richtungen}. Welche es ist, hängt nur von den beiden Farben ab.
   \item \textbf{Paare:} Ein solcher Zug verbindet zwei Farben in fester Reihenfolge, von wo nach wohin, und ist damit schon ein \hyperref[kap:paare]{Paar}. Ebenso bilden zwei Figuren verschiedener Farbe ein Paar, etwa wenn sie beim Schlagen ihre Plätze tauschen.
-  \item \textbf{Muster:} Ein Doppelzug, also zwei Züge derselben Figur hintereinander, besteht aus zwei Beziehungen und ergibt so eines der zwölf \hyperref[kap:muster]{Muster}.
+  \item \textbf{Wendungen:} Ein Doppelzug mit derselben Figur besteht aus zwei Richtungen und ergibt so eine der zwölf \hyperref[kap:muster]{Wendungen}.
   \item \textbf{Tripel:} Die drei Figuren, mit denen eine Partie gewonnen wird, ergeben in der Reihenfolge, in der sie herausgezogen wurden, ein \hyperref[kap:tripel]{Tripel}. So wird jede Partie zu einem Spruch. Ebenso lassen sich die ersten drei geschlagenen Blöcke lesen, nach der Farbe der Felder, auf denen sie standen: Sie zeigen, unter welchem Zeichen das Spiel beginnt.
 \end{itemize}
 
 \noindent Das Spiel bringt noch viel reichere Verbindungen hervor: Eine grüne Figur auf einer weißen Kreuzung tauscht mit einer blauen auf einer gelben Ecke, und schon begegnen sich zwei Paare. Wollte man all das deuten, bräuchte es Sprüche für Paare von Paaren und mehr. Dieses Buch beschränkt sich bewusst auf die Grundformen, aus denen sich alles Weitere lesen lässt.
 
-\noindent Alles, was du nachschlägst, folgt derselben Ordnung: vom Element über die Beziehung und das Paar bis zum Muster und zum Tripel. Die Positionen haben dabei jeweils eine eigene Bedeutung:
+\noindent Alles, was du nachschlägst, folgt derselben Ordnung: vom Element über die Richtung und das Paar bis zur Wendung und zum Tripel. Die Positionen haben dabei jeweils eine eigene Bedeutung:
 
 \begin{center}
 \begin{tabular}{lll}
@@ -562,7 +608,7 @@ Der Beutel ist aber nur der kürzeste Weg. Brett und Buch beruhen auf denselben 
 
 \noindent Beim Paar fallen Weg und Frucht zusammen: Die zweite Farbe zeigt, wohin die Wurzel führt.
 
-Zum Deuten lies zuerst den Spruch. Du kannst auf jeder Stufe einsteigen: Bei jedem Eintrag stehen Querverweise auf die verwandten Einträge der anderen Stufen. Bei jedem Element stehen Verweise auf seine vier Paare. Bei jeder Beziehung findest du die fünf Paare, in denen sie vorkommt. Bei jedem Paar stehen Verweise auf seine beiden Elemente, seine Beziehung und die sechs Tripel, in denen es steckt. Bei jedem Muster findest du seine Beziehungen und seine fünf Tripel. Und bei jedem Tripel stehen Verweise auf sein Muster und die beiden Paare, aus denen es besteht. Am schnellsten findest du eine Kombination über den \hyperref[kap:register]{Schlüssel} am Ende des Buches. Die Sprüche geben eine Richtung vor, keine Vorhersage.
+Zum Deuten lies zuerst den Spruch. Du kannst auf jeder Stufe einsteigen: Bei jedem Eintrag stehen Querverweise auf die verwandten Einträge der anderen Stufen. Bei jedem Element stehen Verweise auf seine vier Paare. Bei jeder Richtung findest du die fünf Paare, in denen sie vorkommt. Bei jedem Paar stehen Verweise auf seine beiden Elemente, seine Richtung und die sechs Tripel, in denen es steckt. Bei jeder Wendung findest du ihre Richtungen und ihre fünf Tripel. Und bei jedem Tripel stehen Verweise auf seine Wendung und die beiden Paare, aus denen es besteht. Am schnellsten findest du eine Kombination über den \hyperref[kap:register]{Schlüssel} am Ende des Buches. Die Sprüche geben eine Richtung vor, keine Vorhersage.
 
 \newpage
 \begingroup
@@ -592,14 +638,14 @@ Die fünf Elemente ordnet man im Kreis an, im Lauf der Sonne, also im Uhrzeigers
 \end{center}
 
 \begin{einleitung}
-Hier ist jedes Element eine der fünf Pentagame-Farben. Die Farben folgen der Tradition, nur Wasser ist blau statt schwarz. Zu jedem Element gehört ein Thema, und jedes hat einen hellen und einen dunklen Aspekt.
+Hier ist jedes Element eine der fünf Pentagame-Farben. Die Farben des heutigen Bretts sind bewusst nach dem Wu Xing gewählt und stehen in seiner Reihenfolge; nur Wasser ist blau statt schwarz. Zu jedem Element gehört ein Thema, und jedes hat einen hellen und einen dunklen Aspekt.
 \end{einleitung}
 
 \begin{center}
 \footnotesize\setlength{\tabcolsep}{2.5pt}
 \begin{tabularx}{\textwidth}{@{}lLLLL@{}}
 \toprule
-\textbf{Element} & \textbf{Zeit, Richtung} & \textbf{Thema} & \textbf{Licht:} \newline \textbf{Tugend} & \textbf{Schatten:} \newline \textbf{Emotion} \\
+\textbf{Element} & \textbf{Zeit, Lage} & \textbf{Thema} & \textbf{Licht:} \newline \textbf{Tugend} & \textbf{Schatten:} \newline \textbf{Emotion} \\
 \midrule
 \elementmitfarbe{Holz}{Grün} & Frühling, Osten    & Aufbruch, Plan, Wachstum           & Güte \newline \mbox{({\cjk 仁} rén)} & Zorn \newline \mbox{({\cjk 怒} nù)} \\
 \elementmitfarbe{Feuer}{Rot} & Sommer, Süden      & Ausdruck, Begeisterung, Begegnung  & Anstand \newline \mbox{({\cjk 禮} lǐ)} & Übermut \newline \mbox{({\cjk 喜} xǐ)} \\
@@ -625,7 +671,8 @@ Hier ist jedes Element eine der fünf Pentagame-Farben. Die Farben folgen der Tr
 \smallskip
 {\small\renewcommand{\arraystretch}{1.1}%
 \begin{tabular}{@{}r@{\quad}l@{}}
-Zeit, Richtung & Frühling, Osten \\
+Jahreszeit & Frühling \\
+Himmelsrichtung & Osten \\
 Farbe & Grün \\
 Tugend & Güte ({\cjk 仁} rén) \\
 Gemütsbewegung & Zorn ({\cjk 怒} nù) \\
@@ -652,7 +699,8 @@ Planet & Jupiter
 \smallskip
 {\small\renewcommand{\arraystretch}{1.1}%
 \begin{tabular}{@{}r@{\quad}l@{}}
-Zeit, Richtung & Sommer, Süden \\
+Jahreszeit & Sommer \\
+Himmelsrichtung & Süden \\
 Farbe & Rot \\
 Tugend & Anstand ({\cjk 禮} lǐ) \\
 Gemütsbewegung & Freude ({\cjk 喜} xǐ), im Übermaß Übermut \\
@@ -679,7 +727,8 @@ Planet & Mars
 \smallskip
 {\small\renewcommand{\arraystretch}{1.1}%
 \begin{tabular}{@{}r@{\quad}l@{}}
-Zeit, Richtung & Spätsommer, Übergänge, Mitte \\
+Jahreszeit & Spätsommer, Übergänge \\
+Himmelsrichtung & Mitte \\
 Farbe & Gelb \\
 Tugend & Vertrauen ({\cjk 信} xìn) \\
 Gemütsbewegung & Nachdenken ({\cjk 思} sī), im Übermaß Grübeln \\
@@ -689,7 +738,7 @@ Planet & Saturn
 \medskip
 \textbf{Die Erde ist die Mitte. Sie trägt alles und verbindet die Zeiten.}\par
 \smallskip
-\lichtschatten{Erde ist Sammlung, Fürsorge und Halt. Sie hat keine eigene Jahreszeit, sondern gehört zu jedem Übergang, und sie steht in der Mitte der vier Richtungen. Wer im Zeichen der Erde steht, gibt anderen Boden unter den Füßen und ist verlässlich.}
+\lichtschatten{Erde ist Sammlung, Fürsorge und Halt. Sie hat keine eigene Jahreszeit, sondern gehört zu jedem Übergang, und sie steht in der Mitte der vier Himmelsrichtungen. Wer im Zeichen der Erde steht, gibt anderen Boden unter den Füßen und ist verlässlich.}
   {Wer immer trägt, kann ins Grübeln geraten oder schwer werden. Auch die Erde braucht Lockerung. Lass dich bewegen; fruchtbarer Boden ist nie ganz fest.}
 \linkteil
 {\small Die vier Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Erde-Metall}{\mypair{Erde}{Metall}}} \hfill \mbox{\hyperlink{paar:Erde-Feuer}{\mypair{Erde}{Feuer}}} \hfill \mbox{\hyperlink{paar:Erde-Wasser}{\mypair{Erde}{Wasser}}} \hfill \mbox{\hyperlink{paar:Erde-Holz}{\mypair{Erde}{Holz}}}\par
@@ -706,7 +755,8 @@ Planet & Saturn
 \smallskip
 {\small\renewcommand{\arraystretch}{1.1}%
 \begin{tabular}{@{}r@{\quad}l@{}}
-Zeit, Richtung & Herbst, Westen \\
+Jahreszeit & Herbst \\
+Himmelsrichtung & Westen \\
 Farbe & Weiß \\
 Tugend & Gerechtigkeit ({\cjk 義} yì) \\
 Gemütsbewegung & Trauer, Kummer ({\cjk 憂} yōu) \\
@@ -733,7 +783,8 @@ Planet & Venus
 \smallskip
 {\small\renewcommand{\arraystretch}{1.1}%
 \begin{tabular}{@{}r@{\quad}l@{}}
-Zeit, Richtung & Winter, Norden \\
+Jahreszeit & Winter \\
+Himmelsrichtung & Norden \\
 Farbe & Schwarz, hier Blau \\
 Tugend & Weisheit ({\cjk 智} zhì) \\
 Gemütsbewegung & Furcht ({\cjk 恐} kǒng) \\
@@ -750,10 +801,10 @@ Planet & Merkur
 \end{orakelblock}
 
 \newpage
-\addchap{Die vier Beziehungen}\markboth{Die vier Beziehungen}{\mbox{}}\label{kap:beziehungen}
+\addchap{Die vier Richtungen}\markboth{Die vier Richtungen}{\mbox{}}\label{kap:beziehungen}
 
 \begin{einleitung}
-Verbindet man die fünf Elemente im Wandlungskreis miteinander, dann führt von jedem Element eine Verbindung zu jedem der vier anderen. Jedes Element hat also genau vier Beziehungen. Ein Schritt im Sonnenlauf vorwärts (+1) ist, wie schon beschrieben, das Hervorbringen oder Nähren ({\cjk 生} shēng). Zwei Schritte vorwärts (+2), also über ein Element hinweg, führt eine Diagonale durch den Kreis: Das ist das Bändigen ({\cjk 克} kè). Zusammen bilden die Diagonalen ein Pentagramm. Diese beiden Beziehungen ergeben bereits das vollständige Bild des Wu Xing.
+Verbindet man die fünf Elemente im Wandlungskreis miteinander, dann führt von jedem Element eine Richtung zu jedem der vier anderen. Ein Schritt im Sonnenlauf vorwärts (+1) ist, wie schon beschrieben, das Hervorbringen oder Nähren ({\cjk 生} shēng). Zwei Schritte vorwärts (+2), also über ein Element hinweg, führt eine Diagonale durch den Kreis: Das ist das Bändigen ({\cjk 克} kè). Zusammen bilden die Diagonalen ein Pentagramm. Diese beiden Richtungen ergeben bereits das vollständige Bild des Wu Xing.
 \end{einleitung}
 
 \begin{center}
@@ -777,18 +828,18 @@ Zu shēng und kè gibt es jeweils ein Gegenstück in der Gegenrichtung. Einen Sc
 \end{center}
 
 \begin{einleitung}
-Darum heißen die vier Beziehungen hier +1, −1, +2 und −2: Die Zahl sagt, wie weit, das Vorzeichen, in welche Richtung.
+Darum heißen die vier Richtungen hier +1, −1, +2 und −2: Die Zahl sagt, wie weit, das Vorzeichen, ob vor oder zurück. Dieselbe Zählung verwendet die Notation der Pentagame-Züge im \textit{Pentagame Compendium}: ±1 für Züge auf Ring oder Pentagon, ±2 für Züge entlang des Sterns.
 
 \textbf{Vom Wandlungskreis zum Brett.} Im Pentagame-Brett erscheint der Wandlungskreis zweimal: außen auf den Ecken des Rings und innen auf den Kreuzungen des Pentagons, dort am Mittelpunkt gespiegelt. Damit kommt etwas Neues ins Spiel: Die langen Linien des Pentagramms, die Wege von kè und wǔ, verbinden nicht mehr eine Ecke mit einer Ecke, sondern führen von außen nach innen oder von innen nach außen. Wer auf einer solchen Linie zieht, geht im Wandlungskreis zwei Schritte vor oder zurück.
 
 \begin{center}
 \begin{minipage}{\linewidth}\centering
 \beziehungsuebersicht\par
-{\small\itshape Die vier Beziehungen von \element*{Holz} aus: schwarz von der grünen Ecke, rot von der grünen Kreuzung.\par}
+{\small\itshape Die vier Richtungen von Holz aus: schwarz von der grünen Ecke, rot von der grünen Kreuzung.\par}
 \end{minipage}
 \end{center}
 
-\needspace{8\baselineskip}\noindent So ordnen sich die vier Beziehungen:
+\needspace{4\baselineskip}\noindent So ordnen sich die vier Richtungen:
 
 \begin{itemize}[leftmargin=*]
   \item \textbf{Nähren und Annehmen} (+1 und −1, {\cjk 生} shēng und {\cjk 泄} xiè) sind Bewegungen \emph{auf} einem der beiden Kreise, entweder auf dem Ring oder auf dem Pentagon: im Uhrzeigersinn vor, gegen den Uhrzeigersinn zurück.
@@ -800,20 +851,20 @@ Darum heißen die vier Beziehungen hier +1, −1, +2 und −2: Die Zahl sagt, wi
 \footnotesize\setlength{\tabcolsep}{2pt}\renewcommand{\arraystretch}{1.3}
 \begin{tabularx}{\textwidth}{@{}lLcll@{}}
 \toprule
-\textbf{Beziehung} & \textbf{Im Kreis} & \textbf{Richtung} & \textbf{Weg} & \textbf{Strecke} \\
+\textbf{Richtung} & \textbf{Im Kreis} & \textbf{Drehsinn} & \textbf{Weg} & \textbf{Strecke} \\
 \midrule
-\hyperlink{beziehung:1}{\textbf{+1} Nähren}       & 1 vor \mbox{({\cjk 生} shēng)} & \uzs  & innen oder außen & kurz \\
-\hyperlink{beziehung:4}{\textbf{−1} Annehmen}     & 1 zurück \mbox{({\cjk 泄} xiè)} & \guzs & innen oder außen & kurz \\
-\hyperlink{beziehung:2}{\textbf{+2} Bändigen}     & 2 vor \mbox{({\cjk 克} kè)} & \guzs & innen und außen  & lang \\
-\hyperlink{beziehung:3}{\textbf{−2} Sich stellen} & 2 zurück \mbox{({\cjk 侮} wǔ)} & \uzs  & innen und außen  & lang \\
+\hyperlink{beziehung:1}{\textbf{+1} Nähren}       & 1 vor \newline\mbox{({\cjk 生} shēng)} & \uzs  & innen oder außen & kurz \\
+\hyperlink{beziehung:4}{\textbf{−1} Annehmen}     & 1 zurück \newline\mbox{({\cjk 泄} xiè)} & \guzs & innen oder außen & kurz \\
+\hyperlink{beziehung:2}{\textbf{+2} Bändigen}     & 2 vor \newline\mbox{({\cjk 克} kè)} & \guzs & innen und außen  & lang \\
+\hyperlink{beziehung:3}{\textbf{−2} Sich stellen} & 2 zurück \newline\mbox{({\cjk 侮} wǔ)} & \uzs  & innen und außen  & lang \\
 \bottomrule
 \end{tabularx}
 \end{center}
 
 \begin{einleitung}
-Deshalb zeigen die Bilder auf den folgenden Seiten Bändigen und Sich stellen nicht als Diagonalen in einem Kreis, sondern als Übergänge zwischen außen und innen. Das heißt nicht, dass nur diese Züge dazugehören. Wer auf dem Ring zwei Schritte vorwärts geht, kommt ebenfalls beim übernächsten Element an, und auch das ist Bändigen; diese beiden Schritte bilden das Muster \hyperlink{muster:I}{I, Der Strom}. Die lange Linie ist nur der direkte Weg.
+Deshalb zeigen die Bilder auf den folgenden Seiten Bändigen und Sich stellen nicht als Diagonalen in einem Kreis, sondern als Übergänge zwischen außen und innen. Das heißt nicht, dass nur diese Züge dazugehören. Wer auf dem Ring zwei Schritte vorwärts geht, kommt ebenfalls beim übernächsten Element an, und auch das ist Bändigen; diese beiden Schritte bilden die Wendung \hyperlink{muster:I}{I, Der Strom}. Die lange Linie ist nur der direkte Weg.
 
-Jedes Bild zeigt seine Beziehung zweimal: schwarz von außen, von der Ecke oben, und rot von innen, von der Kreuzung unten in der Mitte. Die Bilder sind bewusst grau: Die Ecke oben kann jedes der fünf Elemente sein, und die Beziehung sieht für alle gleich aus.
+Jedes Bild zeigt seine Richtung zweimal: schwarz von außen, von der Ecke oben, und rot von innen, von der Kreuzung unten in der Mitte. Die Bilder sind bewusst grau: Die Ecke oben kann jedes der fünf Elemente sein, und die Richtung sieht für alle gleich aus.
 \end{einleitung}
 
 
@@ -913,11 +964,11 @@ Jedes Bild zeigt seine Beziehung zweimal: schwarz von außen, von der Ecke oben,
 \addchap{Die 20 Paare}\markboth{Die 20 Paare}{\mbox{}}\label{kap:paare}
 
 \begin{einleitung}
-Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente gibt es vier Paare, eines für jede Beziehung, zusammen also 20. Ein Paar ist der Zwischenschritt zwischen einer Beziehung und einem Tripel: Jedes Tripel besteht aus zwei Paaren, etwa \element*{Holz}\,$\rightarrow$\,\element*{Feuer}\,$\rightarrow$\,\element*{Erde} aus Holz\,$\rightarrow$\,Feuer und Feuer\,$\rightarrow$\,Erde.
+Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente gibt es vier Paare, eines für jede Richtung, zusammen also 20. Ein Paar ist die Stufe zwischen einer Richtung und einem Tripel: Jedes Tripel besteht aus zwei Paaren, etwa das Tripel Holz, Feuer, Erde aus den Paaren \textit{Holz nährt Feuer} und \textit{Feuer nährt Erde}.
 
 \textbf{Mutter und Kind.} Die Tradition beschreibt jedes Element über seine Beziehungen zu den anderen. Das \textit{Nanjing}, ein Klassiker der Medizin, vergleicht das Hervorbringen mit Mutter und Kind (\textit{Nanjing} 69 und 75): Was mich hervorbringt, ist meine Mutter, was ich hervorbringe, mein Kind. Beim Bändigen nennt der \textit{Neijing} (\textit{Suwen} 67) das, was ich bändige, „das von mir Besiegte“ ({\cjk 所勝} suǒ shèng), und das, was mich bändigt, „das von mir nicht Besiegte“ ({\cjk 所不勝} suǒ bù shèng). Ein Paar ist darum nie gleichrangig: Einer gibt, der andere empfängt; einer formt, der andere wird geformt. Die chinesische Schicksalskunde liest diese Beziehungen sogar als Rollen im menschlichen Leben, etwa als Eltern und Kinder oder als Obrigkeit.
 
-\textbf{Zehn Verbindungen, zwanzig Paare.} Im Wandlungskreis gibt es zehn Verbindungen: fünf Bögen des Hervorbringens und fünf Linien des Bändigens. Jede lässt sich von beiden Enden aus lesen, und so werden daraus 20 Paare. \element*{Holz}\,$\rightarrow$\,\element*{Feuer} (+1, Nähren) und \element*{Feuer}\,$\rightarrow$\,\element*{Holz} (−1, Annehmen) sind dieselbe Verbindung, einmal von der Mutter und einmal vom Kind aus gesehen. So hat jedes Paar sein Gegenstück, wie Yin sein Yang. Ein Gegensatz wie Hell und Dunkel ist ein Paar trotzdem nicht, sondern eine gerichtete Beziehung zwischen zwei verschiedenen Kräften.
+\textbf{Zehn Verbindungen, zwanzig Paare.} Im Wandlungskreis gibt es zehn Verbindungen: fünf Bögen des Hervorbringens und fünf Linien des Bändigens. Jede lässt sich von beiden Enden aus lesen, und so werden daraus 20 Paare. \textit{Holz nährt Feuer} (+1) und \textit{Feuer nimmt Holz an} (−1) sind dieselbe Verbindung, einmal von der Mutter und einmal vom Kind aus gesehen. So hat jedes Paar sein Gegenstück, wie Yin sein Yang. Ein Gegensatz wie Hell und Dunkel ist ein Paar trotzdem nicht, sondern eine gerichtete Beziehung zwischen zwei verschiedenen Kräften.
 
 \textbf{Gleichgewicht.} Hervorbringen und Bändigen brauchen einander. Dong Zhongshu fasst das Schema in einen Satz: „Benachbarte bringen einander hervor, übernächste besiegen einander“ ({\cjk 比相生而間相勝}; \textit{Chunqiu fanlu} 58). Der \textit{Neijing} ergänzt: „Übermaß schadet; was folgt, setzt ihm eine Grenze; durch die Grenze entstehen Wachsen und Wandlung“ ({\cjk 亢則害，承乃制，制則生化}; \textit{Suwen} 68). Auch das Nähren kann zu viel sein: Zu viel Wasser lässt das Holz faulen. Und das Bändigen ist nicht nur Zwang: Erst im Feuer wird das Metall zum Gefäß, erst unter der Axt der Baum zum Balken. Darum zeigt sich in jedem Paar beides, das Gelingen und die Gefahr.
 \end{einleitung}
@@ -1110,24 +1161,59 @@ Ein Paar sind zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente g
 
 \newpage
 
-\addchap{Die zwölf Muster}\markboth{Die zwölf Muster}{\mbox{}}\label{kap:muster}
+\addchap{Die zwölf Wendungen}\markboth{Die zwölf Wendungen}{\mbox{}}\label{kap:muster}
 
 \begin{einleitung}
-Ein Muster sind zwei Beziehungen hintereinander: zwei Schritte im Wandlungskreis, dazu die Beziehung zwischen Anfang und Ende. Für den ersten Schritt gibt es vier Möglichkeiten, für den zweiten drei, denn er darf den ersten nicht aufheben: Auf +1 folgt nie −1, auf +2 nie −2. Das ergibt zwölf Muster.
+Eine Wendung sind zwei Richtungen hintereinander im Wandlungskreis, dazu die Richtung, die Anfang und Ende verbindet. Für die erste Richtung gibt es vier Möglichkeiten, für die zweite drei, denn sie darf die erste nicht aufheben: Auf +1 folgt nie −1, auf +2 nie −2. Das ergibt zwölf Wendungen.
 
-Das Bild über jedem Muster zeigt die zwei Schritte auf dem Brett, wie bei den Beziehungen schwarz von außen und rot von innen. Auch hier kann die Ecke oben jedes Element sein. Es geht dabei nicht um Spielzüge, sondern um die Kombinatorik der fünf Elemente: Das Brett macht nur sichtbar, wohin zwei Schritte im Wandlungskreis führen.
+Das Bild über jeder Wendung zeigt die zwei Richtungen auf dem Brett, wie bei den Richtungen schwarz von außen und rot von innen. Auch hier kann die Ecke oben jedes Element sein. Es geht dabei nicht um Spielzüge, sondern um die Kombinatorik der fünf Elemente: Das Brett macht nur sichtbar, wohin zwei Schritte im Wandlungskreis führen. Hellgelb hinterlegt ist das Dreieck der drei Elemente, von dem gleich die Rede ist.
 
-Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmten Element, wird daraus eines der 60 Tripel im folgenden Kapitel. Unter jedem Muster stehen deshalb die fünf Tripel, in denen es vorkommt.
+Eine Wendung gilt für jedes der fünf Elemente. Beginnt man sie bei einem bestimmten Element, wird daraus eines der 60 Tripel im folgenden Kapitel. Unter jeder Wendung stehen deshalb die fünf Tripel, in denen sie vorkommt.
+
+\textbf{Dreiecke.} Jede Wendung beschreibt zugleich ein Dreieck. Die drei Elemente, die sie verbindet, liegen im Wandlungskreis entweder hintereinander, dann ist das Dreieck stumpf; oder eines ist ausgelassen, dann ist es spitz. Im stumpfen Dreieck verbinden zwei Seiten benachbarte Elemente (±1) und eine Seite übernächste (±2): Es ist vom Hervorbringen geprägt, ein Stück vom Kreis. Im spitzen ist es umgekehrt, zwei Seiten ±2 und eine ±1: Es ist vom Bändigen geprägt, ein Stück vom Stern.
 \end{einleitung}
+
+\begin{center}
+\begin{tabular}{c@{\hspace{3em}}c}
+\dreieckbild{(p1)--(p2)--(p3)--cycle} & \dreieckbild{(p1)--(p2)--(p4)--cycle} \\[0.5ex]
+{\small stumpf: Holz, Feuer, Erde} & {\small spitz: Holz, Feuer, Metall}
+\end{tabular}
+\end{center}
+
+\begin{einleitung}
+Sechs Wendungen sind stumpf, sechs spitz:
+\end{einleitung}
+
+\begin{center}
+\footnotesize\renewcommand{\arraystretch}{1.15}\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}rlccl@{}}
+\toprule
+\multicolumn{2}{c}{\textbf{Wendung}} & \textbf{Richtungen} & \textbf{Anfang\ra Ende} & \textbf{Dreieck} \\
+\midrule
+I    & \hyperlink{muster:I}{Der Strom} & +1, +1 & +2 & stumpf \\
+II   & \hyperlink{muster:II}{Die Prüfung} & +1, +2 & −2 & spitz \\
+III  & \hyperlink{muster:III}{Die Lehrzeit} & +1, −2 & −1 & stumpf \\
+IV   & \hyperlink{muster:IV}{Die Wurzelsuche} & −1, −1 & −2 & stumpf \\
+V    & \hyperlink{muster:V}{Die gesammelte Kraft} & −1, +2 & +1 & stumpf \\
+VI   & \hyperlink{muster:VI}{Der Rückhalt} & −1, −2 & +2 & spitz \\
+VII  & \hyperlink{muster:VII}{Der Damm} & +2, +1 & −2 & spitz \\
+VIII & \hyperlink{muster:VIII}{Die Abkürzung} & +2, −1 & +1 & stumpf \\
+IX   & \hyperlink{muster:IX}{Der strenge Weg} & +2, +2 & −1 & spitz \\
+X    & \hyperlink{muster:X}{Die Läuterung} & −2, +1 & −1 & stumpf \\
+XI   & \hyperlink{muster:XI}{Die List} & −2, −1 & +2 & spitz \\
+XII  & \hyperlink{muster:XII}{Der Aufstand} & −2, −2 & +1 & spitz \\
+\bottomrule
+\end{tabular}
+\end{center}
 
 \newpage
 \markright{I \quad Der Strom}
 \begin{orakelblock}
 \musterkopf{I}{Der Strom}{1}{1}{Nähren}{Nähren}{Bändigen}
-\textbf{Kraft wird über zwei Stufen weitergegeben. Was du anstößt, wird größer als du und setzt dir am Ende Grenzen.}\par
+\textbf{Kraft wird über zwei Stufen weitergegeben. Was du anstößt, wird größer als du und setzt dir Grenzen.}\par
 \smallskip
-\lichtschatten{Manchmal setzt man etwas in Gang, und es läuft wie von selbst weiter, Stufe um Stufe. Das ist ein Glück. Aber was du anstößt, bekommt ein eigenes Leben und zeigt dir irgendwann deine Grenzen. Freu dich daran, statt dich zu wehren: Es ist das Zeichen, dass es wirklich gewachsen ist.}
-  {Der Strom reißt dich mit: Was du angestoßen hast, läuft ohne dich weiter, schneller, als dir lieb ist. Oder das Gegenteil: Du traust dich gar nicht erst, etwas in Gang zu setzen, weil du die Kontrolle nicht abgeben willst. Beides kommt aus derselben Angst. Gib den Anstoß, aber halte das Steuer locker.}
+\lichtschatten{Manchmal setzt man etwas in Gang, und es läuft wie von selbst weiter, Stufe um Stufe. Aber was du anstößt, bekommt ein eigenes Leben und zeigt dir irgendwann deine Grenzen. Freu dich daran, statt dich zu wehren: Es ist das Zeichen, dass es wirklich gewachsen ist.}
+  {Der Strom reißt dich mit: Was du angestoßen hast, läuft schneller weiter, als dir lieb ist. Oder du setzt gar nicht erst etwas in Gang, weil du die Kontrolle nicht abgeben willst. Gib den Anstoß, und halte das Steuer locker.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:1}{\mycombination[0.5em]{Holz}{Feuer}{Erde}~1}} \hfill \mbox{\hyperlink{spruch:13}{\mycombination[0.5em]{Feuer}{Erde}{Metall}~13}} \hfill \mbox{\hyperlink{spruch:25}{\mycombination[0.5em]{Erde}{Metall}{Wasser}~25}} \hfill \mbox{\hyperlink{spruch:37}{\mycombination[0.5em]{Metall}{Wasser}{Holz}~37}} \hfill \mbox{\hyperlink{spruch:49}{\mycombination[0.5em]{Wasser}{Holz}{Feuer}~49}}\par
 \end{orakelblock}
@@ -1163,7 +1249,7 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 \textbf{Zweimal gehst du zurück zum Ursprung und triffst auf das, was dich begrenzt. Kläre es, aber bleib nicht darin stehen.}\par
 \smallskip
 \lichtschatten{Zweimal zurück, ganz nach unten. Dort, wo alles anfing, wartet oft auch das, was uns bis heute klein hält. Schau es dir mit Mitgefühl an, auch dich selbst von damals. Dann kannst du es dort lassen und mit leichterem Gepäck weitergehen.}
-  {Du gräbst immer tiefer und kommst nicht mehr heraus. Die Vergangenheit wird zur Erklärung für alles und zur Ausrede für nichts. Oder du willst gar nicht zurückschauen, und das Alte bestimmt dich unbemerkt weiter. Schau hin, aber kehr zurück ins Heute.}
+  {Du gräbst immer tiefer, und die Vergangenheit wird zur Erklärung für alles. Oder du schaust gar nicht zurück, und das Alte bestimmt dich unbemerkt weiter. Schau hin, und kehr dann ins Heute zurück.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~4}} \hfill \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~16}} \hfill \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~28}} \hfill \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~40}} \hfill \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~52}}\par
 \end{orakelblock}
@@ -1208,10 +1294,10 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 \markright{VIII \quad Die Abkürzung}
 \begin{orakelblock}
 \musterkopf{VIII}{Die Abkürzung}{2}{4}{Bändigen}{Annehmen}{Nähren}
-\textbf{Du greifst beherzt ein und gehst dann geradewegs zurück zur Quelle. Am Ende entsteht, was du hervorbringen wolltest, schneller als gedacht.}\par
+\textbf{Du greifst beherzt ein und gehst geradewegs zur Quelle. Was du wolltest, entsteht schneller als gedacht.}\par
 \smallskip
-\lichtschatten{Manchmal ist der direkte Weg der richtige. Du siehst klar, was zu tun ist, greifst ein und gehst ohne Umschweife weiter. So kommst du schneller ans Ziel, als alle dachten, und ersparst dir und anderen viele Zwischenschritte. Vertrau deinem Blick, wenn er wirklich klar ist.}
-  {Wer nur geradeaus stürmt, lässt unterwegs etwas liegen: Menschen, die mitkommen wollten, Erfahrungen, die man nur auf dem längeren Weg macht. Das Ziel ist erreicht, aber nichts trägt dich weiter. Oder das Gegenteil: Du traust dem kurzen Weg nie und verlierst dich in Umständlichkeit. Frag dich, was du auf der Abkürzung zurücklässt.}
+\lichtschatten{Manchmal ist der direkte Weg der richtige. Du siehst klar, was zu tun ist, greifst ein und gehst ohne Umschweife weiter. So kommst du schneller ans Ziel, als alle dachten. Vertrau deinem Blick, wenn er wirklich klar ist.}
+  {Wer nur geradeaus stürmt, lässt unterwegs etwas liegen: Menschen, die mitkommen wollten, Erfahrungen, die nur der längere Weg schenkt. Oder du traust dem kurzen Weg nie und verlierst dich in Umständlichkeit. Frag dich, was du dabei zurücklässt.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~8}} \hfill \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~20}} \hfill \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~32}} \hfill \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~44}} \hfill \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~56}}\par
 \end{orakelblock}
@@ -1223,7 +1309,7 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 \textbf{Strenge wird weitergereicht. Durch Disziplin kommst du zurück zu deinen Wurzeln.}\par
 \smallskip
 \lichtschatten{Es gibt Zeiten, in denen Ordnung vor Gefühl geht. Strenge wird weitergegeben, Regel folgt auf Regel. Das klingt hart, aber am Ende dieses Weges wartet etwas Weiches: das Annehmen dessen, was dich trägt. Disziplin kann zu den eigenen Wurzeln führen.}
-  {Aus Strenge wird Härte, gegen andere und gegen dich selbst. Regel folgt auf Regel, und keiner weiß mehr, wofür. Das Gegenteil ist ebenso gefährlich: Wer jede Disziplin scheut, findet nie zu sich selbst. Frag bei jeder Regel, ob sie dich noch zu deinen Wurzeln führt.}
+  {Aus Strenge wird Härte, gegen andere und gegen dich selbst, und keiner weiß mehr, wofür. Wer dagegen jede Disziplin scheut, findet nie zu sich selbst. Frag bei jeder Regel, ob sie dich noch zu deinen Wurzeln führt.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~9}} \hfill \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~21}} \hfill \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~33}} \hfill \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Holz}{Erde}~45}} \hfill \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~57}}\par
 \end{orakelblock}
@@ -1247,7 +1333,7 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 \textbf{Du stellst dich und weichst dann geschickt aus. Am Ende hast du die Oberhand.}\par
 \smallskip
 \lichtschatten{Klugheit ist auch eine Form von Stärke. Du stellst dich, weichst dann aus, sammelst dich und kommst gestärkt zurück. Das ist kein Davonlaufen, sondern Strategie. Wer den richtigen Moment abwarten kann, gewinnt, ohne kämpfen zu müssen.}
-  {List wird zur Unehrlichkeit. Du weichst so geschickt aus, dass niemand mehr weiß, wo du stehst, nicht einmal du selbst. Oder du verachtest jede Taktik und rennst mit dem Kopf gegen die Wand. Klugheit braucht ein gutes Herz, sonst wird sie zur Manipulation.}
+  {List wird zur Unehrlichkeit: Du weichst so geschickt aus, dass niemand mehr weiß, wo du stehst, nicht einmal du selbst. Oder du rennst mit dem Kopf gegen die Wand. Klugheit braucht ein gutes Herz.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Metall}{Erde}~11}} \hfill \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~23}} \hfill \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~35}} \hfill \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~47}} \hfill \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~59}}\par
 \end{orakelblock}
@@ -1268,11 +1354,11 @@ Ein Muster gilt für jedes der fünf Elemente. Beginnt man es bei einem bestimmt
 \addchap{Die 60 Tripel}\markboth{Die 60 Tripel}{\mbox{}}\label{kap:tripel}
 
 \begin{einleitung}
-Ein Tripel sind drei verschiedene Elemente in fester Reihenfolge. In ihm kommt alles zusammen, was die vorigen Kapitel beschreiben: Das erste und das zweite Element bilden ein Paar, das zweite und das dritte ein zweites. Die Beziehungen dieser beiden Paare ergeben zusammen eines der zwölf Muster, und das Muster verbindet auch Anfang und Ende durch eine Beziehung. So steht zum Beispiel in \element*{Holz}\,$\rightarrow$\,\element*{Feuer}\,$\rightarrow$\,\element*{Erde} zweimal das Nähren, und vom Holz zur Erde führt das Bändigen: Muster I, Der Strom.
+Ein Tripel sind drei verschiedene Elemente in fester Reihenfolge. In ihm kommt alles zusammen, was die vorigen Kapitel beschreiben: Das erste und das zweite Element bilden ein Paar, das zweite und das dritte ein zweites. Die Richtungen dieser beiden Paare ergeben zusammen eine der zwölf Wendungen, und die Wendung verbindet auch Anfang und Ende durch eine Richtung. So steht zum Beispiel im Tripel Holz, Feuer, Erde zweimal das Nähren (\textit{Holz nährt Feuer}, \textit{Feuer nährt Erde}), und vom Holz zur Erde führt das Bändigen: Wendung I, Der Strom.
 
-Fünf Elemente für den Anfang und zwölf Muster für den Weg ergeben die 60 Tripel. Zusammen bilden sie ein vollständiges Weltsystem: Jedes Element, jede Beziehung, jedes Paar und jedes Muster kommt darin vor, und alle greifen ineinander wie im Wandlungskreis selbst.
+Fünf Elemente für den Anfang und zwölf Wendungen für den Weg ergeben die 60 Tripel. Zusammen bilden sie ein vollständiges Weltsystem: Jedes Element, jede Richtung, jedes Paar und jede Wendung kommt darin vor, und alle greifen ineinander wie im Wandlungskreis selbst. Jeder Spruch dieses Buches ist eine Facette dieses einen Systems: Jeder zeigt es von einer anderen Seite, im Licht und im Schatten.
 
-Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe folgen sie den Mustern I bis XII.
+Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe folgen sie den Wendungen I bis XII.
 \end{einleitung}
 
 \newpage
@@ -1391,7 +1477,7 @@ Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe f
 \newpage
 \spruch{28}{Erde}{Feuer}{Holz}{IV Wurzelsuche}{Die alte Brandstelle}{Du forschst nach, woher deine Sicherheit kommt, und triffst auf das, was dich unruhig macht. Halte es aus.}
   {Woher kommt deine Sicherheit? Wenn du zurückgehst, findest du vielleicht eine alte Brandstelle, einen Moment, in dem es einmal heiß und unruhig war. Halte es aus. Gerade dort wächst inzwischen Neues, und es erzählt dir, wie stark du damals schon warst.}
-  {Alte Wunden ziehen manchmal immer wieder an. Und manchmal möchte man sie lieber ganz vergessen. Ein versöhnlicher Blick zurück macht deinen Halt fester als beides.}
+  {Alte Wunden ziehen den Blick manchmal immer wieder an. Und manchmal möchte man sie lieber ganz vergessen. Ein versöhnlicher Blick zurück gibt dir mehr Halt als das Grübeln oder das Verdrängen.}
 \newpage
 \spruch{29}{Erde}{Feuer}{Metall}{V Gesammelte Kraft}{Der Brennofen}{Hol dir Wärme und Zuspruch, dann forme. Was du hervorbringst, wird fest und gültig.}
   {Bevor du etwas formst, hol dir Wärme: ein ermutigendes Wort, eine Umarmung, ein Fest. Du gibst so viel, jetzt darfst du dich wärmen lassen. Dann gelingt dir, was du anpackst, und es wird fest und gültig wie gebrannter Ton.}
@@ -1577,6 +1663,9 @@ Mit diesen Tafeln findest du jede Kombination, ohne zu blättern. Suche die erst
 \end{tabular}
 \end{center}
 
+% Anhang (eigene Datei); zum Abschalten ein % vor die nächste Zeile setzen
+\include{anhang}
+
 \newpage
 
 \addchap{Quellen und Literatur}\markboth{Quellen und Literatur}{\mbox{}}
@@ -1600,6 +1689,7 @@ Klassische chinesische Texte werden nach Titel und Kapitel zitiert, etwa \textit
 \addsec*{Weitere Quellen}
 
 \begin{itemize}[leftmargin=*]
+  \item Jan Suchanek, \textit{Pentagame Compendium}, 1.~Auflage 2022, \href{https://pentagame.org}{pentagame.org}: Regeln, Geschichte, Notation und Theorie des Spiels, auf dem Stand von 2022 (Brett mit 100 Feldern und früherer Farbordnung); zum Wu Xing Teil~III, Kapitel~9.
   \item \href{https://iep.utm.edu/wuxing/}{Wuxing (Internet Encyclopedia of Philosophy)}
   \item \href{https://www.britannica.com/topic/wuxing}{Wuxing (Encyclopaedia Britannica)}
   \item \href{https://plato.stanford.edu/entries/chinese-phil-medicine/}{Chinese Philosophy and Chinese Medicine (Stanford Encyclopedia of Philosophy)}

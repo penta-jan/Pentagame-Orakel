@@ -352,6 +352,7 @@
 % \paar{A}{B}{Titel}{Urteil}{Licht}{Schatten}{Tripel}: Eintrag eines der 20 Paare,
 % Nummer (rot, arabisch) = 4 * Position von A im Wandlungskreis + Nummer der Beziehung (+1, −1, +2, −2 = 1..4)
 \newcommand{\paar}[7]{%
+  \expandafter\gdef\csname paartitel#1-#2\endcsname{#3}%
   \pgfmathtruncatemacro{\paarnr}{mod(\csname elnum#2\endcsname-\csname elnum#1\endcsname+5,5)}%
   \pgfmathtruncatemacro{\paarnum}{4*\csname elnum#1\endcsname+\csname bzidx\paarnr\endcsname}%
   \begin{orakelblock}
@@ -398,6 +399,8 @@
 \expandafter\def\csname mustername VI\endcsname{Der Rückhalt}
 \expandafter\def\csname mustername IV\endcsname{Die Wurzelsuche}
 % Ausgabe: "Muster: II. Die Prüfung", Nummer und Name als Link
+\def\musterlink#1 #2\endmusterlink{\hyperlink{muster:#1}{\textit{#1.~\csname mustername #1\endcsname}}}
+\newcommand{\paartitellink}[2]{\hyperlink{paar:#1-#2}{\textit{\csname paartitel#1-#2\endcsname}}}
 \def\musterref#1 #2\endmusterref{{\small Wendung:}~\hyperlink{muster:#1}{\textit{#1.~\csname mustername #1\endcsname}}}
 
 % Kleine Kreispfeile für die Drehrichtung
@@ -422,7 +425,7 @@
    {\small\rlink{#2}{#3}\rlink{#3}{#4}\element{#4}}\par
    \medskip
    {\large\bfseries #6}\par
-   \musterref#5\endmusterref\par
+   {\small\paartitellink{#2}{#3} \& \paartitellink{#3}{#4}:~\musterlink#5\endmusterlink}\par
    \smallskip
    \textbf{#7}\par
    \smallskip
@@ -1789,7 +1792,7 @@ Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ei
 
 \newpage
 \markright{\element{Metall}}\verzgr{Metall}
-\spruch{37}{Metall}{Wasser}{Holz}{I Strom}{Die Baumschule}{Die Gärtnerin gießt die jungen Linden aus ihrer Zinkkanne. Wenn sie gewachsen sind, stutzt sie sie mit der Schere in Form.}
+\spruch{37}{Metall}{Wasser}{Holz}{I Strom}{Der Rosenschnitt}{Die Gärtnerin gießt ihre Rosen aus der Zinkkanne. Im Frühjahr schneidet sie die Triebe mit der Schere zurück, damit die Rosen reicher blühen.}
   {Gib Maß, wo du den Anfang gemacht hast. Aus deiner Klarheit ist Ruhe geworden, und aus der Ruhe wächst Neues, das nicht mehr dir gehört. Es folgt eigenen Plänen. Doch weil du am Anfang standest, hast du das Recht und die Aufgabe, ihm Form zu geben.}
   {Wer alles zurechtstutzt, was er hat wachsen lassen, erstickt das Eigene darin. Wer nie eingreift, erkennt sein Werk bald nicht wieder.}
 \newpage

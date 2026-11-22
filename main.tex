@@ -299,7 +299,7 @@
 % Nummer, Bild, Überschrift, dann die Schritte
 % \musterkopf{Nummer}{Name}{Schritte 1}{Schritte 2}{Text 1.}{Text 2.}{Anfang->Ende}
 \newcommand{\musterkopf}[7]{%
-  \hypertarget{muster:#1}{{\Large\bfseries #1}}\par
+  \verz{#1}{#2}{muster:#1}\hypertarget{muster:#1}{{\Large\bfseries #1}}\par
   \smallskip
   \musterbrett{#3}{#4}\par
   \smallskip
@@ -355,7 +355,7 @@
   \pgfmathtruncatemacro{\paarnr}{mod(\csname elnum#2\endcsname-\csname elnum#1\endcsname+5,5)}%
   \pgfmathtruncatemacro{\paarnum}{4*\csname elnum#1\endcsname+\csname bzidx\paarnr\endcsname}%
   \begin{orakelblock}
-   \hypertarget{paar:#1-#2}{{\Large\bfseries\color{ueberschriftfarbe}\paarnum}}\par
+   \verz{\paarnum}{#3}{paar:#1-#2}\hypertarget{paar:#1-#2}{{\Large\bfseries\color{ueberschriftfarbe}\paarnum}}\par
    \smallskip
    \paarbrett{#1}{#2}{\paarnr}\par
    \smallskip
@@ -413,7 +413,7 @@
 % Nummer, Kreise, Elemente, Überschrift, Muster, Spruch: untereinander und zentriert
 \newcommand{\spruch}[9]{%
   \begin{orakelblock}
-   \hypertarget{spruch:#1}{{\Large\bfseries #1}}\par
+   \verz{#1}{#6}{spruch:#1}\hypertarget{spruch:#1}{{\Large\bfseries #1}}\par
    \smallskip
    \tripelbrett{#2}{#3}{#4}{\tripelmuster#5\endtripelmuster}\par
    \smallskip
@@ -529,6 +529,18 @@
 \date{2026}
 
 \makeatletter\renewcommand\@pnumwidth{2em}\makeatother % Platz für dreistellige Seitenzahlen im Inhaltsverzeichnis
+
+% Verzeichnis aller Sprüche am Ende (Datei .ver)
+\usepackage{multicol}
+\makeatletter
+\DeclareRobustCommand\verzeile[4]{\par{\leftskip=2.4em \rightskip=1.8em plus 1fil \parfillskip=-\rightskip \parindent=0pt \hskip-2.4em\hyperlink{#3}{\makebox[1.7em][r]{#1}\hspace{0.7em}#2}\nobreak\leaders\hbox to 0.7em{\hss.\hss}\hfill\nobreak\hbox to 1.8em{\hss\hyperlink{#3}{#4}}\par}}
+\DeclareRobustCommand\verzgruppe[1]{\par\addvspace{0.8ex}\noindent #1\par\nobreak\vspace{0.3ex}}
+\DeclareRobustCommand\verzkapitel[1]{\par\addvspace{1.6ex}\noindent\textbf{#1}\par\nobreak\vspace{0.4ex}}
+\newcommand\verz[3]{\edef\verz@tmp{\noexpand\addtocontents{ver}{\noexpand\verzeile{#1}{\unexpanded{#2}}{#3}{\noexpand\thepage}}}\verz@tmp}
+\newcommand\verzkap[1]{\addtocontents{ver}{\protect\verzkapitel{#1}}}
+\newcommand\verzgr[1]{\addtocontents{ver}{\protect\verzgruppe{\protect\element{#1}}}}
+\newcommand\spruchverzeichnis{\@starttoc{ver}}
+\makeatother
 
 % \beziehungsuebersicht: volles, farbiges 50er-Brett (Holz oben), von der grünen Ecke (schwarz) und
 % der grünen Kreuzung (rot) die vier Beziehungen; Punkt am Anfang, Pfeil bis in die Mitte des Ziels
@@ -677,7 +689,7 @@ Wer Pentagame spielt, kennt diesen Moment: Die dritte Figur erreicht ihr Ziel un
 
 Zu jeder Erscheinung gibt es einen Spruch: zu jedem Element, jeder Richtung, jedem Paar, jeder Wendung und jedem Tripel. Ein Spruch besteht aus einem knappen Urteil, fett gesetzt, und einer Deutung darunter. Die Deutung zeigt immer beide Seiten: das Licht und den Schatten.
 
-Die Bilder der Sprüche bauen aufeinander auf. Jedes Paar hat einen eigenen Vorgang aus Natur und Handwerk, wie er tatsächlich geschieht: Holz brennt, der Wall hält das Wasser, die Axt fällt den Baum. Jede Wendung beschreibt eine Lage, wie Menschen sie erleben, etwa die Prüfung oder den Aufstand. Ein Tripel fügt die Vorgänge seiner beiden Paare zu einer Szene zusammen, und seine Wendung gibt ihr den Sinn. Wer die Paare kennt, erkennt sie in den Tripeln wieder.
+Die Bilder der Sprüche bauen aufeinander auf. Jedes Paar hat einen eigenen Vorgang aus Natur und Handwerk, wie er tatsächlich geschieht: Holz brennt, der Wall hält das Wasser, die Klinge schneidet das Holz. Jede Wendung beschreibt eine Lage, wie Menschen sie erleben, etwa die Prüfung oder den Aufstand. Ein Tripel fügt die Vorgänge seiner beiden Paare zu einer Szene zusammen, und seine Wendung gibt ihr den Sinn. Wer die Paare kennt, erkennt sie in den Tripeln wieder.
 
 Das Vorbild ist das \href{https://en.wikipedia.org/wiki/Lingqijing}{Lingqijing} ({\cjk 靈棋經}, „Klassiker der göttlichen Spielsteine“), ein chinesisches Orakel, das wohl in der frühen Wei-Jin-Zeit entstanden ist. Dort ergeben drei Positionen (Himmel, Mensch, Erde) mit je fünf Zuständen 125 Sprüche. Beim Pentagame-Orakel kommt keine Farbe doppelt vor, deshalb sind es 60 Tripel.
 
@@ -731,7 +743,7 @@ Die Sprüche geben Orientierung, keine Vorhersage.
 \setlength{\parskip}{0.3ex}
 \renewcommand{\raggedsection}{\centering}
 
-\addchap{Die fünf Elemente}\markboth{Die fünf Elemente}{\mbox{}}\label{kap:elemente}
+\addchap{Die fünf Elemente}\markboth{Die fünf Elemente}{\mbox{}}\label{kap:elemente}\verzkap{Die fünf Elemente}
 
 \begin{einleitung}
 Die Lehre von den fünf Elementen heißt auf Chinesisch Wu Xing ({\cjk 五行} wǔxíng). Wörtlich bedeutet das „fünf Gänge“: \textit{Xing} heißt gehen, sich wandeln. Gemeint sind deshalb weniger fünf Stoffe als fünf Phasen oder Kräfte, die einander ablösen. Holz, Feuer, Erde, Metall und Wasser sind Bilder für diese Wandlungen.
@@ -776,7 +788,7 @@ Im Pentagame steht jedes Element für eine der fünf Farben. Die Farben des heut
 \newpage
 \markright{\element{Holz}}
 \begin{orakelblock}
-\hypertarget{element:Holz}{\tikz{\elementkreis{1.6em}{0}{Holz}}}\par
+\verz{}{Holz}{element:Holz}\hypertarget{element:Holz}{\tikz{\elementkreis{1.6em}{0}{Holz}}}\par
 \smallskip
 {\large\bfseries\color{ueberschriftfarbe} Holz}\par
 {\cjk 木}~mù\par
@@ -817,7 +829,7 @@ Die Gelehrten der Han-Zeit nannten das Holz das junge Yang ({\cjk 少陽} shàoy
 \newpage
 \markright{\element{Feuer}}
 \begin{orakelblock}
-\hypertarget{element:Feuer}{\tikz{\elementkreis{1.6em}{0}{Feuer}}}\par
+\verz{}{Feuer}{element:Feuer}\hypertarget{element:Feuer}{\tikz{\elementkreis{1.6em}{0}{Feuer}}}\par
 \smallskip
 {\large\bfseries\color{ueberschriftfarbe} Feuer}\par
 {\cjk 火}~huǒ\par
@@ -857,7 +869,7 @@ In derselben Ordnung, die das Holz das junge Yang nennt, ist das Feuer das groß
 \newpage
 \markright{\element{Erde}}
 \begin{orakelblock}
-\hypertarget{element:Erde}{\tikz{\elementkreis{1.6em}{0}{Erde}}}\par
+\verz{}{Erde}{element:Erde}\hypertarget{element:Erde}{\tikz{\elementkreis{1.6em}{0}{Erde}}}\par
 \smallskip
 {\large\bfseries\color{ueberschriftfarbe} Erde}\par
 {\cjk 土}~tǔ\par
@@ -897,7 +909,7 @@ Die Erde ist weder Yin noch Yang, sondern ihr Ausgleich. Darum hat sie keine eig
 \newpage
 \markright{\element{Metall}}
 \begin{orakelblock}
-\hypertarget{element:Metall}{\tikz{\elementkreis{1.6em}{0}{Metall}}}\par
+\verz{}{Metall}{element:Metall}\hypertarget{element:Metall}{\tikz{\elementkreis{1.6em}{0}{Metall}}}\par
 \smallskip
 {\large\bfseries\color{ueberschriftfarbe} Metall}\par
 {\cjk 金}~jīn\par
@@ -937,7 +949,7 @@ In der Ordnung von Yin und Yang ist das Metall das junge Yin ({\cjk 少陰} shà
 \newpage
 \markright{\element{Wasser}}
 \begin{orakelblock}
-\hypertarget{element:Wasser}{\tikz{\elementkreis{1.6em}{0}{Wasser}}}\par
+\verz{}{Wasser}{element:Wasser}\hypertarget{element:Wasser}{\tikz{\elementkreis{1.6em}{0}{Wasser}}}\par
 \smallskip
 {\large\bfseries\color{ueberschriftfarbe} Wasser}\par
 {\cjk 水}~shuǐ\par
@@ -1003,7 +1015,7 @@ Man kann das Pentagame auch räumlich sehen: als Blick von oben auf ein fünfsei
 \end{minipage}\end{center}
 
 \newpage
-\addchap{Die vier Richtungen}\markboth{Die vier Richtungen}{\mbox{}}\label{kap:beziehungen}
+\addchap{Die vier Richtungen}\markboth{Die vier Richtungen}{\mbox{}}\label{kap:beziehungen}\verzkap{Die vier Richtungen}
 
 \begin{einleitung}
 Von jedem Element führt eine Bewegung zu jedem der vier anderen. Diese vier Bewegungen gehen in vier Richtungen: einen oder zwei Schritte im Wandlungskreis, vorwärts oder zurück. Geht man eine Richtung von allen fünf Elementen aus, schließt sich der Kreis; die Tradition spricht deshalb von Zyklen. Hier heißen sie Richtungen.
@@ -1082,7 +1094,7 @@ Dieselbe Zählung verwendet das \textit{Pentagame Compendium} für die Züge: ±
 
 
 \newpage
-\addsec*{Die vier Einträge}\markright{Die vier Einträge}
+\addsec*{Im Einzelnen}\markright{Im Einzelnen}
 
 \begin{einleitung}
 Jede der vier Richtungen hat zwei Seiten: Die erste zeigt sie im Wandlungskreis, die zweite ihre Bewegungen im Pentagame.
@@ -1091,15 +1103,15 @@ Das Bild auf der zweiten Seite zeigt die Richtung zweimal: schwarz von außen, v
 \end{einleitung}
 
 \begin{center}
-\footnotesize\setlength{\tabcolsep}{2pt}\renewcommand{\arraystretch}{1.3}
-\begin{tabularx}{\textwidth}{@{}lLcll@{}}
+\footnotesize\setlength{\tabcolsep}{3pt}\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright}p{0.21\textwidth} >{\raggedright}p{0.31\textwidth} >{\raggedright\arraybackslash}X c@{}}
 \toprule
-\textbf{Richtung} & \textbf{Im Kreis} & \textbf{Drehsinn} & \textbf{Weg} & \textbf{Strecke} \\
+\textbf{Richtung} & \mbox{\textbf{Im Wandlungskreis}} & \textbf{Im Pentagame} & \textbf{Drehsinn} \\
 \midrule
-\hyperlink{beziehung:1}{\textbf{+1} Nähren}       & 1 vor \newline\mbox{({\cjk 生} shēng)} & \uzs  & innen oder außen & kurz \\
-\hyperlink{beziehung:4}{\textbf{−1} Annehmen}     & 1 zurück \newline\mbox{({\cjk 泄} xiè)} & \guzs & innen oder außen & kurz \\
-\hyperlink{beziehung:2}{\textbf{+2} Bändigen}     & 2 vor \newline\mbox{({\cjk 克} kè)} & \guzs & innen und außen  & lang \\
-\hyperlink{beziehung:3}{\textbf{−2} Sich stellen} & 2 zurück \newline\mbox{({\cjk 侮} wǔ)} & \uzs  & innen und außen  & lang \\
+\hyperlink{beziehung:1}{\textbf{+1} Nähren} & 1 vor\newline {\cjk 生} shēng & vor\newline{\scriptsize\itshape kurz, auf Ring oder Pentagon} & \uzs \\
+\hyperlink{beziehung:4}{\textbf{−1} Annehmen} & 1 zurück\newline {\cjk 泄} xiè & zurück\newline{\scriptsize\itshape kurz, auf Ring oder Pentagon} & \guzs \\
+\hyperlink{beziehung:2}{\textbf{+2} Bändigen} & 2 vor\newline {\cjk 克} kè & Wechsel vor\newline{\scriptsize\itshape lang, auf einer Wechselstrecke} & \guzs \\
+\hyperlink{beziehung:3}{\textbf{−2} \mbox{Sich stellen}} & 2 zurück\newline {\cjk 侮} wǔ & Wechsel zurück\newline{\scriptsize\itshape lang, auf einer Wechselstrecke} & \uzs \\
 \bottomrule
 \end{tabularx}
 \end{center}
@@ -1108,7 +1120,7 @@ Das Bild auf der zweiten Seite zeigt die Richtung zweimal: schwarz von außen, v
 \newpage
 \markright{+1 \quad Nähren}
 \begin{orakelblock}
-\hypertarget{beziehung:1}{{\Large\bfseries +1}}\par
+\verz{+1}{Nähren}{beziehung:1}\hypertarget{beziehung:1}{{\Large\bfseries +1}}\par
 \smallskip
 \diagbox{\richtungskreis{1}}\par
 \smallskip
@@ -1142,7 +1154,7 @@ Hervorbringen allein wäre maßloses Wachstum. Erst zusammen mit dem Bändigen e
 
 \markright{−1 \quad Annehmen}
 \begin{orakelblock}
-\hypertarget{beziehung:4}{{\Large\bfseries −1}}\par
+\verz{−1}{Annehmen}{beziehung:4}\hypertarget{beziehung:4}{{\Large\bfseries −1}}\par
 \smallskip
 \diagbox{\richtungskreis{4}}\par
 \smallskip
@@ -1176,7 +1188,7 @@ Ist das Kind aber selbst geschwächt, nimmt es der Mutter mehr, als sie geben ka
 
 \markright{+2 \quad Bändigen}
 \begin{orakelblock}
-\hypertarget{beziehung:2}{{\Large\bfseries +2}}\par
+\verz{+2}{Bändigen}{beziehung:2}\hypertarget{beziehung:2}{{\Large\bfseries +2}}\par
 \smallskip
 \diagbox{\richtungskreis{2}}\par
 \smallskip
@@ -1210,7 +1222,7 @@ Wird das Bändigen selbst maßlos, spricht die Tradition von {\cjk 乘} chéng, 
 
 \markright{−2 \quad Sich stellen}
 \begin{orakelblock}
-\hypertarget{beziehung:3}{{\Large\bfseries −2}}\par
+\verz{−2}{Sich stellen}{beziehung:3}\hypertarget{beziehung:3}{{\Large\bfseries −2}}\par
 \smallskip
 \diagbox{\richtungskreis{3}}\par
 \smallskip
@@ -1240,7 +1252,7 @@ Die Tradition sieht in dieser Richtung vor allem eine Störung der Ordnung. Dies
 \end{orakelblock}
 \newpage
 
-\addchap{Die 20 Paare}\markboth{Die 20 Paare}{\mbox{}}\label{kap:paare}
+\addchap{Die 20 Paare}\markboth{Die 20 Paare}{\mbox{}}\label{kap:paare}\verzkap{Die 20 Paare}
 
 \begin{einleitung}
 Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfolge und die Bewegung zwischen ihnen. Zu jedem der fünf Elemente gibt es vier Paare, eines für jede Richtung, zusammen also 20. Zwei Paare, die aneinander anschließen, ergeben später ein Tripel: Holz, Feuer, Erde etwa besteht aus \textit{Holz nährt Feuer} und \textit{Feuer nährt Erde}.
@@ -1251,11 +1263,11 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
 
 \textbf{Gleichgewicht.} Hervorbringen und Bändigen brauchen einander. Dong Zhongshu fasst das Schema in einen Satz: „Benachbarte bringen einander hervor, übernächste besiegen einander“ ({\cjk 比相生而間相勝}; \textit{Chunqiu fanlu} 58). Der \textit{Neijing} ergänzt: „Übermaß schadet; was folgt, setzt ihm eine Grenze; durch die Grenze entstehen Wachsen und Wandlung“ ({\cjk 亢則害，承乃制，制則生化}; \textit{Suwen} 68). Auch das Nähren kann zu viel sein: Zu viel Wasser lässt das Holz faulen. Und das Bändigen ist nicht nur Zwang: Erst im Feuer wird das Eisen formbar, erst unter der Axt der Baum zum Balken. Darum zeigt sich in jedem Paar beides, das Gelingen und die Gefahr.
 
-\textbf{Bilder.} Jedes Paar hat ein eigenes Bild: einen Vorgang aus Natur oder Handwerk, wie er tatsächlich geschieht. Holz brennt, der Keim bricht durch die Erde, das Holz klemmt die Säge. Das Urteil nennt nur diesen Vorgang; was er für dich bedeutet, sagen Licht und Schatten. Dieselben Bilder kehren in den Tripeln wieder.
+\textbf{Bilder.} Jedes Paar hat ein eigenes Bild: einen Vorgang aus Natur oder Handwerk, wie er tatsächlich geschieht. Holz brennt, der Keim bricht durch die Erde, hartes Holz macht die Klinge stumpf. Das Urteil nennt nur diesen Vorgang; was er für dich bedeutet, sagen Licht und Schatten. Dieselben Bilder kehren in den Tripeln wieder.
 \end{einleitung}
 
 \newpage
-\markright{\element{Holz}}
+\markright{\element{Holz}}\verzgr{Holz}
 \paar{Holz}{Feuer}{Das Brennen}{Holz brennt und wird zu Licht und Wärme.}
   {Lass deinen Plan zünden. Was du vorbereitet hast, kann jetzt andere begeistern; zeig es und teile es. Dass der Plan dabei aufgebraucht wird, ist kein Verlust: Dafür war er da.}
   {Wer seine Vorhaben zu schnell verfeuert, hat bald nichts mehr, woran er sich wärmen kann. Wer sie nie aus der Hand gibt, entzündet niemanden.}
@@ -1283,16 +1295,16 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~17}} & \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Holz}{Erde}~45}} & \mbox{\hyperlink{spruch:50}{\mycombination[0.5em]{Wasser}{Holz}{Erde}~50}}
    \end{tabular*}\par}
 \newpage
-\paar{Holz}{Metall}{Die Säge}{Grünes Holz klemmt die Säge.}
+\paar{Holz}{Metall}{Das Hartholz}{Hartes Holz macht die Klinge stumpf.}
   {Gib nicht jedem Anspruch nach. Man will dich kleiner, bequemer, gefälliger: mit Regeln, Kritik, Erwartungen. Halte dagegen, nicht mit Gewalt, sondern mit deiner eigenen Spannung, mit dem, was in dir gewachsen ist.}
-  {Wer jedem Anspruch widersteht, wird am Ende mit Gewalt gebrochen. Wer jedem nachgibt, wird nach fremdem Maß zurechtgesägt.}
+  {Wer jedem Anspruch widersteht, wird am Ende mit Gewalt gebrochen. Wer jedem nachgibt, wird nach fremdem Maß zurechtgestutzt.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~10}} & \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Metall}{Erde}~11}} & \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~12}} \\[0.3ex]
    \mbox{\hyperlink{spruch:18}{\mycombination[0.5em]{Feuer}{Holz}{Metall}~18}} & \mbox{\hyperlink{spruch:36}{\mycombination[0.5em]{Erde}{Holz}{Metall}~36}} & \mbox{\hyperlink{spruch:51}{\mycombination[0.5em]{Wasser}{Holz}{Metall}~51}}
    \end{tabular*}\par}
 \newpage
-\markright{\element{Feuer}}
+\markright{\element{Feuer}}\verzgr{Feuer}
 \paar{Feuer}{Erde}{Die Asche}{Das Feuer erlischt, und seine Asche düngt den Boden.}
   {Lass die Begeisterung zur Ruhe kommen. Die Flammen sind kleiner geworden, aber nichts ist verloren: Was du mit Leidenschaft begonnen hast, wird jetzt fruchtbar. Auf diesem Boden können andere säen.}
   {Wer nur noch von vergangener Begeisterung lebt, sät nichts Neues. Wer immer nur lodert, hinterlässt keinen Boden, auf dem etwas wachsen kann.}
@@ -1329,7 +1341,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \mbox{\hyperlink{spruch:3}{\mycombination[0.5em]{Holz}{Feuer}{Wasser}~3}} & \mbox{\hyperlink{spruch:30}{\mycombination[0.5em]{Erde}{Feuer}{Wasser}~30}} & \mbox{\hyperlink{spruch:48}{\mycombination[0.5em]{Metall}{Feuer}{Wasser}~48}}
    \end{tabular*}\par}
 \newpage
-\markright{\element{Erde}}
+\markright{\element{Erde}}\verzgr{Erde}
 \paar{Erde}{Metall}{Das Erz}{Im Gestein reift das Erz.}
   {Vertrau der langen Geduld. Du hast gepflegt, gehütet, durchgetragen, oft ohne zu sehen, wozu. Jetzt zeigt sich, was darin herangereift ist: etwas Klares und Wertvolles. Lass es ans Licht.}
   {Wer das Gereifte zu schnell verbraucht, steht bald mit leeren Händen da. Wer es nie herausgibt, behält seinen Schatz für sich.}
@@ -1366,7 +1378,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \mbox{\hyperlink{spruch:15}{\mycombination[0.5em]{Feuer}{Erde}{Holz}~15}} & \mbox{\hyperlink{spruch:42}{\mycombination[0.5em]{Metall}{Erde}{Holz}~42}} & \mbox{\hyperlink{spruch:60}{\mycombination[0.5em]{Wasser}{Erde}{Holz}~60}}
    \end{tabular*}\par}
 \newpage
-\markright{\element{Metall}}
+\markright{\element{Metall}}\verzgr{Metall}
 \paar{Metall}{Wasser}{Der Tau}{Auf kaltem Metall schlägt sich Wasser nieder.}
   {Lass das Geklärte sich setzen. Du hast entschieden, getrennt, aufgeräumt. Nun stellt sich eine Ruhe ein, still und klar. Was du geklärt hast, beginnt zu fließen.}
   {Wer nie zur Ruhe kommt, bei dem setzt sich nichts. Wer zu kühl wird, erstarrt.}
@@ -1403,7 +1415,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~12}} & \mbox{\hyperlink{spruch:27}{\mycombination[0.5em]{Erde}{Metall}{Feuer}~27}} & \mbox{\hyperlink{spruch:54}{\mycombination[0.5em]{Wasser}{Metall}{Feuer}~54}}
    \end{tabular*}\par}
 \newpage
-\markright{\element{Wasser}}
+\markright{\element{Wasser}}\verzgr{Wasser}
 \paar{Wasser}{Holz}{Der Regen}{Der Regen tränkt die Wurzeln.}
   {Gib weiter, was du gesammelt hast. Du hast lange still gelegen, nachgedacht, gelernt. Jetzt fängt durch dich etwas an zu wachsen: ein Plan, ein Mensch, ein Vorhaben. Du musst nicht daran ziehen; es wächst, wenn es genug zu trinken hat.}
   {Wer zu viel gibt, erstickt, was er fördern will. Wer zu wenig gibt, lässt es verdorren.}
@@ -1442,7 +1454,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
 
 \newpage
 
-\addchap{Die zwölf Wendungen}\markboth{Die zwölf Wendungen}{\mbox{}}\label{kap:muster}
+\addchap{Die zwölf Wendungen}\markboth{Die zwölf Wendungen}{\mbox{}}\label{kap:muster}\verzkap{Die zwölf Wendungen}
 
 \begin{einleitung}
 Eine Bewegung führt in einer der vier Richtungen von einem Element zu einem anderen. Folgen zwei Bewegungen aufeinander, entsteht ein Doppelschritt: vom ersten Element über ein zweites zu einem dritten. Die beiden Richtungen eines solchen Doppelschritts bilden eine Wendung. Mit ihm ist zugleich eine dritte Richtung gegeben, die vom Anfang unmittelbar zum Ende führt. Nach zweimal Nähren (+1, +1) etwa steht man zwei Schritte weiter im Kreis, und dorthin führt vom Anfang aus das Bändigen (+2).
@@ -1465,7 +1477,7 @@ Das Bild über jeder Wendung zeigt ihre zwei Richtungen als Pfeile im Pentagame,
 \end{center}
 
 \begin{einleitung}
-Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das stumpfe Dreieck, geprägt von Nähren und Empfangen, von Mutter und Kind, ist ein Yin-Dreieck; das spitze, geprägt von Grenze, Form und Spannung, ein Yang-Dreieck. Die Tradition ordnet Yin und Yang den Elementen zu, nicht den beiden Zyklen; diese Zuordnung ist eine Deutung dieses Buches. Mit Licht und Schatten ist sie nicht zu verwechseln: Jede Wendung hat beide Seiten, und das Dreieck sagt nur, ob in ihr mehr Yin oder mehr Yang liegt. Sechs Wendungen sind Yin, sechs Yang; welches Dreieck eine Wendung bildet, steht auf ihrer Seite.
+Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das stumpfe Dreieck, geprägt von Nähren und Empfangen, von Mutter und Kind, ist ein Yin-Dreieck; das spitze, geprägt von Grenze, Form und Spannung, ein Yang-Dreieck. Die Tradition ordnet Yin und Yang den Elementen zu, nicht den beiden Zyklen; diese Zuordnung ist eine Deutung dieses Buches. Mit Licht und Schatten ist sie nicht zu verwechseln: Jede Wendung hat beide Seiten, und das Dreieck sagt nur, ob in ihr mehr Yin oder mehr Yang liegt. Sechs Wendungen sind Yin, sechs Yang; welches Dreieck eine Wendung bildet, steht auf ihrer Seite. Nach dem Dreieck richten sich auch die Gestalten der Sprüche, denn Yin gilt in der Überlieferung als das Weibliche, Yang als das Männliche: Bei einem Yin-Dreieck handelt eine Frau, bei einem Yang-Dreieck ein Mann. Treten zwei Menschen auf, ist das Gegenüber vom anderen Geschlecht. Das gilt für die Wendungen wie für ihre Tripel.
 \end{einleitung}
 
 
@@ -1615,18 +1627,18 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \end{orakelblock}
 \newpage
 
-\addchap{Die 60 Tripel}\markboth{Die 60 Tripel}{\mbox{}}\label{kap:tripel}
+\addchap{Die 60 Tripel}\markboth{Die 60 Tripel}{\mbox{}}\label{kap:tripel}\verzkap{Die 60 Tripel}
 
 \begin{einleitung}
 Schließt an ein Paar ein zweites an, das mit dessen zweitem Element beginnt, entsteht ein Tripel: drei verschiedene Elemente in fester Reihenfolge. In ihm kommt alles zusammen, was die vorigen Kapitel beschreiben: Das erste und das zweite Element bilden ein Paar, das zweite und das dritte ein zweites. Die Richtungen dieser beiden Paare ergeben zusammen eine der zwölf Wendungen, und die Wendung verbindet auch Anfang und Ende durch eine Richtung. So steht zum Beispiel im Tripel Holz, Feuer, Erde zweimal das Nähren (\textit{Holz nährt Feuer}, \textit{Feuer nährt Erde}), und vom Holz zur Erde führt das Bändigen: Wendung I, Der Strom.
 
 Fünf Elemente für den Anfang und zwölf Wendungen für den Weg ergeben die 60 Tripel. Zusammen bilden sie ein vollständiges Weltsystem: Jedes Element, jede Richtung, jedes Paar und jede Wendung kommt darin vor, und alle greifen ineinander wie im Wandlungskreis selbst. Jeder Spruch zeigt dieses eine System von einer anderen Seite, im Licht und im Schatten.
 
-Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ein Tripel fügt die Vorgänge seiner beiden Paare zu einer Szene zusammen, und die Wendung gibt ihr den Sinn. Im Urteil handelt meist eine Gestalt: eine Frau, wenn die Wendung ein Yin-Dreieck bildet, ein Mann beim Yang-Dreieck. Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe folgen sie den Wendungen I bis XII.
+Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ein Tripel fügt die Vorgänge seiner beiden Paare zu einer Szene zusammen, und die Wendung gibt ihr den Sinn. Im Urteil handelt meist eine Gestalt, wie bei den \hyperref[kap:muster]{Wendungen} eine Frau, wenn die Wendung ein Yin-Dreieck bildet, und ein Mann beim Yang-Dreieck. Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe folgen sie den Wendungen I bis XII.
 \end{einleitung}
 
 \newpage
-\markright{\element{Holz}}
+\markright{\element{Holz}}\verzgr{Holz}
 \spruch{1}{Holz}{Feuer}{Erde}{I Strom}{Das Haus}{Die Zieglerin heizt mit Buchenholz den Ofen und brennt Lehm zu Backstein. Eichenbalken fassen die Ziegel: Ein Haus entsteht.}
   {Gib dem Ganzen einen Rahmen. Was du angestoßen hast, haben andere aufgenommen und weitergetragen, und nun wird ein gemeinsamer Ort daraus. Du musst nicht jeden Stein selbst setzen. Aber deine ursprüngliche Absicht hält das Ganze zusammen, und man wird dich fragen, wie es gemeint war.}
   {Wer alles allein tragen will, lässt anderen keinen Platz im eigenen Haus. Wer sich zurückzieht, sobald andere mitbauen, sieht sein Vorhaben in fremde Formen zerfallen.}
@@ -1671,12 +1683,12 @@ Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ei
   {Kämpfe nicht, wachse. Gegen eine harte Vorschrift oder einen starken Gegner richtest du mit Gewalt nichts aus. Nimm ihn in dein Leben auf, ohne dich ihm zu unterwerfen, und wachse weiter. Mit der Zeit verliert er seine Macht, und der Raum, um den gestritten wurde, gehört dir. Geduld ist hier die klügste List.}
   {Wer jedes Hindernis in sich aufnimmt, trägt am Ende viel Fremdes mit sich herum. Wer sich dagegen sperrt, statt es zu umfassen, schnürt sich selbst die Luft ab.}
 \newpage
-\spruch{12}{Holz}{Metall}{Feuer}{XII Aufstand}{Die heiße Säge}{Der Zimmermann sägt einen Eichenstamm, und das Holz klemmt das Blatt. Säge und Stamm halten gegeneinander, bis es raucht: Aus Widerstand wird Feuer.}
+\spruch{12}{Holz}{Metall}{Feuer}{XII Aufstand}{Der heiße Bohrer}{Der Zimmermann bohrt in einen Eichenbalken. Das harte Holz hält den Bohrer fest, bis er heiß läuft und die Späne glimmen.}
   {Lass dich nicht passend machen. Wenn du dich wehrst und die Gegenseite ebenfalls nicht nachgibt, entsteht Reibung, und sie springt auf andere über. Aus deinem Widerstand kann eine Bewegung werden. Wichtig ist, wofür sie brennt, nicht nur wogegen.}
-  {Wo Menschen sich nur noch aneinander reiben, bleiben Brandspuren und stumpfe Klingen. Wer jeder Reibung ausweicht, bleibt kalt.}
+  {Wo Menschen sich nur noch aneinander reiben, bleiben Brandspuren und stumpfes Werkzeug. Wer jeder Reibung ausweicht, bleibt kalt.}
 
 \newpage
-\markright{\element{Feuer}}
+\markright{\element{Feuer}}\verzgr{Feuer}
 \spruch{13}{Feuer}{Erde}{Metall}{I Strom}{Der Glockenguss}{Die Glockengießerin brennt die Lehmform und macht die Bronze flüssig. Wird die Form zerschlagen, steht eine Glocke da, die Jahrhunderte überdauert.}
   {Lass dein Werk eine feste Gestalt annehmen. Was du mit Leidenschaft begonnen hast, ist durch andere Hände gegangen und wird nun zu etwas Bleibendem. Das gelingt nicht nebenbei; ein Fehler zeigt sich oft erst am Schluss. Doch du stehst am Anfang und am Ende, und von dir hängt ab, ob es gelingt.}
   {Wer zu hastig vollenden will, bekommt ein Werk mit Sprung. Wer die Form nicht loslassen kann, bekommt sein Werk nie zu sehen.}
@@ -1726,7 +1738,7 @@ Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ei
   {Ein Aufruhr ohne Ende begräbt alles unter sich, auch die eigenen Leute. Wer seine Glut immer zurückhält, verhärtet sich.}
 
 \newpage
-\markright{\element{Erde}}
+\markright{\element{Erde}}\verzgr{Erde}
 \spruch{25}{Erde}{Metall}{Wasser}{I Strom}{Der Brunnen}{Die Brunnenbauerin mauert einen Schacht bis hinab ins Gestein. Dort sammelt sich klares Wasser, reich an Mineralien, und das ganze Dorf schöpft daraus.}
   {Gib dem, was aus dir hervorgeht, eine Fassung. Was du mit Geduld gepflegt hast, ist klar geworden, und nun fließt daraus etwas Eigenes: Gedanken, Menschen, die eigene Wege gehen. Du musst es nicht festhalten. Aber du kannst ihm einen Rahmen geben, damit andere davon zehren können.}
   {Wer alles offen lässt, lässt auch jeden Schmutz hinein. Wer alles verschließt, nützt niemandem.}
@@ -1751,9 +1763,9 @@ Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ei
   {Lass dich stärken, damit du Halt geben kannst. Es gibt Menschen, die an dich glauben, und ihre Zuversicht hält der Ernüchterung stand, die dich sonst aufweichen würde. So gestützt, kannst du Grenzen ziehen und anderen Richtung geben.}
   {Wer sich nie bestärken lässt, weicht beim ersten Gegenwind auf. Wer sich zu sehr verhärtet, passt in keine gemeinsame Mauer mehr.}
 \newpage
-\spruch{31}{Erde}{Wasser}{Holz}{VII Damm}{Der Baum auf dem Deich}{Der Deichgraf sieht Erlen auf seinem Deich wachsen, genährt vom Wasser, das der Deich zurückhält. Ihre Wurzeln dringen tief in den Wall.}
-  {Prüfe, was in deinem Schutz gewachsen ist. Du hast eine Grenze gezogen, und in ihrem Schutz ist Leben entstanden. Nun wächst es weiter, in deine Ordnung hinein, und stellt sie infrage. Halte stand, aber unterscheide, was dich festigt und was dich sprengt.}
-  {Wer alles wachsen lässt, was er geschützt hat, wird von innen gesprengt. Wer nichts wachsen lässt, hat nichts mehr, was ihn hält.}
+\spruch{31}{Erde}{Wasser}{Holz}{VII Damm}{Die junge Erle}{Im Sickerwasser am Deich keimt eine Erle. Der Deichgraf reißt sie sofort aus, bevor ihre Wurzeln den Wall sprengen.}
+  {Achte auf das Kleine, solange es klein ist. In deinem Schutz wächst manches heran, das deine Ordnung eines Tages infrage stellt. Entscheide früh, was bleiben darf; dann brauchst du später keine Gewalt.}
+  {Wer zu spät eingreift, muss gegen fest Verwurzeltes kämpfen. Wer alles Neue sofort ausreißt, hütet eine Ordnung, in der nichts mehr wächst.}
 \newpage
 \spruch{32}{Erde}{Wasser}{Metall}{VIII Abkürzung}{Die Goldwäsche}{Die Goldwäscherin schwenkt Sand und Wasser in ihrer Pfanne, bis der leichte Sand fortgespült ist. Am Boden bleiben die schweren Goldkörner.}
   {Greif ein und lass dann los. Du bremst das Fließende und lässt es arbeiten: Es trägt fort, was leicht ist, und lässt liegen, was Gewicht hat. Was übrig bleibt, ist das Wertvolle, das immer schon in dir lag. Der kürzeste Weg dorthin führt mitten durch das Unbeständige.}
@@ -1776,7 +1788,7 @@ Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ei
   {Wer jede Sense zur Waffe schmiedet, hat am Ende nichts mehr, womit er ernten kann. Wer sich nie widersetzt, wird gemäht wie Gras.}
 
 \newpage
-\markright{\element{Metall}}
+\markright{\element{Metall}}\verzgr{Metall}
 \spruch{37}{Metall}{Wasser}{Holz}{I Strom}{Die Baumschule}{Die Gärtnerin gießt die jungen Linden aus ihrer Zinkkanne. Wenn sie gewachsen sind, stutzt sie sie mit der Schere in Form.}
   {Gib Maß, wo du den Anfang gemacht hast. Aus deiner Klarheit ist Ruhe geworden, und aus der Ruhe wächst Neues, das nicht mehr dir gehört. Es folgt eigenen Plänen. Doch weil du am Anfang standest, hast du das Recht und die Aufgabe, ihm Form zu geben.}
   {Wer alles zurechtstutzt, was er hat wachsen lassen, erstickt das Eigene darin. Wer nie eingreift, erkennt sein Werk bald nicht wieder.}
@@ -1826,7 +1838,7 @@ Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ei
   {Wer allen Druck in sich einschließt, zerbirst. Wer nie unter Druck gerät, bewegt nichts.}
 
 \newpage
-\markright{\element{Wasser}}
+\markright{\element{Wasser}}\verzgr{Wasser}
 \spruch{49}{Wasser}{Holz}{Feuer}{I Strom}{Die Holztrift}{Die Flößerin lässt die Stämme den Strom hinab zur Stadt treiben, wo sie in vielen Herden brennen. Bricht dort ein Brand aus, holt man das Löschwasser aus demselben Strom.}
   {Bleib in der Nähe dessen, was du angestoßen hast. Aus deiner Ruhe ist etwas gewachsen, das andere begeistert. Das Feuer, das jetzt brennt, gehört nicht mehr dir. Aber deine Besonnenheit wird gebraucht, wenn es zu heiß wird.}
   {Wer jede Begeisterung gleich dämpft, verbietet anderen die Freude. Wer sich ganz zurückzieht, sieht zu, wie sie außer Kontrolle gerät.}
@@ -1986,5 +1998,13 @@ Klassische chinesische Texte werden nach Titel und Kapitel zitiert, etwa \textit
   \item \href{https://russellcottrell.com/VirtualYarrowStalks/LingQiJing.htm}{The Mathematics of the Ling Qi Jing (Russell Cottrell)}
   \item \href{https://muse.jhu.edu/article/397150/summary}{Rezension von Sawyer/Sawyer, \textit{Ling Ch’i Ching}, China Review International 1997}
 \end{itemize}
+
+\addchap{Verzeichnis der Sprüche}\markboth{Verzeichnis der Sprüche}{\mbox{}}
+
+{\footnotesize\setlength{\columnsep}{1.5em}
+\begin{multicols}{2}
+\raggedcolumns
+\spruchverzeichnis
+\end{multicols}}
 
 \end{document}

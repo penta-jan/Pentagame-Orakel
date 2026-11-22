@@ -1,10 +1,11 @@
-% Pentagame-Orakel: Das Buch der Trümpfe
+% Pentagame-Orakel: Das Buch der 60 Wandlungen
 % Mit XeLaTeX kompilieren:  xelatex pentagame-orakel.tex
 \documentclass[12pt,paper=a5,DIV=13,headings=small,twoside=false]{scrbook}
 
 \usepackage{fontspec}
 \usepackage[headsepline]{scrlayer-scrpage}
 \pagestyle{scrheadings}
+\RedeclareSectionCommand[beforeskip=0.5\baselineskip,afterskip=1.5\baselineskip]{chapter}
 \manualmark   % Marken von Hand: \markboth{Kapitel}{} nach \addchap, \markright{...} für Abschnitte
 \clearpairofpagestyles
 % Auf allen Seiten: Kapitel links, Abschnitt (letzte rechte Marke der Seite) rechts
@@ -434,6 +435,64 @@
 %   [ke]:     dazu innen das Pentagramm des Bändigens (ke)
 %   [gegen]:  die Gegenrichtungen: außen xie, innen wu
 \newcommand{\wkscale}{0.82}% Größe des Wandlungskreises (Radius 3 cm mal \wkscale), überall gleich
+
+\tikzset{bzl/.style={auto}, bzr/.style={auto,swap}, bzs/.style={sloped,above}}
+% \elementbezug{Holz}: Wandlungskreis mit den vier Richtungen, die von einem Element ausgehen.
+% Schwarz: Bögen auf dem Kreis (±1); rot: Pentagrammdiagonalen (±2). Das Element selbst ist größer und umrandet.
+\newcommand{\elementbezug}[1]{{%
+  \pgfmathtruncatemacro{\ek}{\csname elnum#1\endcsname}%
+  \pgfmathsetmacro{\R}{2.2}\pgfmathsetmacro{\rk}{0.42}\pgfmathsetmacro{\rz}{0.56}%
+  \pgfmathsetmacro{\wk}{90-72*\ek}%
+  \pgfmathsetmacro{\da}{deg((\rz+0.2)/\R)}\pgfmathsetmacro{\db}{deg((\rk+0.08)/\R)}%
+  \begin{tikzpicture}
+    \path[use as bounding box] (-3.7,-2.9) rectangle (3.7,3.1);% symmetrisch: Mitte des Pentagramms = Mitte der Zeile
+    \foreach \i in {0,...,4}{\pgfmathsetmacro{\w}{90-72*\i}\coordinate (b\i) at (\w:\R);}
+    % Bögen +1 (im Uhrzeigersinn) und -1 (gegen den Uhrzeigersinn)
+    \draw[-{Stealth[scale=1]}, thick] ({\wk-\da}:\R) arc[start angle={\wk-\da}, end angle={\wk-72+\db}, radius=\R];
+    \draw[-{Stealth[scale=1]}, thick] ({\wk+\da}:\R) arc[start angle={\wk+\da}, end angle={\wk+72-\db}, radius=\R];
+    \pgfmathsetmacro{\wa}{\wk-36}\pgfmathsetmacro{\wb}{\wk+36}%
+    \node[font=\scriptsize, inner sep=2pt, anchor=\wa+180] at (\wa:\R+0.2) {\csname bzverb1\endcsname};
+    \node[font=\scriptsize, inner sep=2pt, anchor=\wb+180] at (\wb:\R+0.2) {\csname bzverb4\endcsname};
+    % Diagonalen +2 und -2
+    \foreach \s in {2,3}{%
+      \pgfmathtruncatemacro{\t}{mod(\ek+\s,5)}%
+      \draw[-{Stealth[scale=1]}, thick, pfeilinnen, shorten <=\rz cm+0.12cm, shorten >=\rk cm+0.08cm]
+        (b\ek) -- node[pos=0.5, font=\scriptsize, inner sep=1.5pt, text=pfeilinnen, sloped, above]{\csname bzverb\s\endcsname} (b\t);}
+    % Elemente
+    \foreach \e [count=\i from 0] in {Holz,Feuer,Erde,Metall,Wasser}{%
+      \ifnum\i=\ek\relax
+        \draw[black!70, line width=0.6pt] (b\i) circle (\rz+0.09);
+        \filldraw[fill=\e, draw=black!60, line width=0.5pt] (b\i) circle (\rz);
+        \node[text=\e Zeichen, scale=1.7, inner sep=0pt] at (b\i) {\cjk\csname zeichen\e\endcsname};
+      \else
+        \filldraw[fill=\e, draw=black!60, line width=0.5pt] (b\i) circle (\rk);
+        \node[text=\e Zeichen, scale=1.3, inner sep=0pt] at (b\i) {\cjk\csname zeichen\e\endcsname};
+      \fi}
+  \end{tikzpicture}}}
+
+\newcommand{\diagbox}[1]{\resizebox{0.4\textwidth}{!}{#1}}
+% \richtungskreis{1..4}: Wandlungskreis mit allen fünf Pfeilen einer Richtung (s = 1 nährt, 2 bändigt, 3 stellt sich, 4 nimmt an)
+\newcommand{\richtungskreis}[1]{{%
+  \pgfmathsetmacro{\R}{2.0}\pgfmathsetmacro{\rk}{0.40}%
+  \pgfmathsetmacro{\db}{deg((\rk+0.1)/\R)}%
+  \begin{tikzpicture}
+    \path[use as bounding box] (-\R-\rk-0.05,-\R-\rk-0.05) rectangle (\R+\rk+0.05,\R+\rk+0.05);
+    \foreach \i in {0,...,4}{\pgfmathsetmacro{\w}{90-72*\i}\coordinate (r\i) at (\w:\R);}
+    \foreach \i in {0,...,4}{%
+      \pgfmathsetmacro{\w}{90-72*\i}%
+      \ifcase#1\or
+        \draw[-{Stealth[scale=1]}, thick] ({\w-\db}:\R) arc[start angle={\w-\db}, end angle={\w-72+\db}, radius=\R];
+      \or
+        \pgfmathtruncatemacro{\t}{mod(\i+2,5)}\draw[-{Stealth[scale=1]}, thick, pfeilinnen, shorten <=\rk cm+0.08cm, shorten >=\rk cm+0.08cm] (r\i) -- (r\t);
+      \or
+        \pgfmathtruncatemacro{\t}{mod(\i+3,5)}\draw[-{Stealth[scale=1]}, thick, pfeilinnen, shorten <=\rk cm+0.08cm, shorten >=\rk cm+0.08cm] (r\i) -- (r\t);
+      \or
+        \draw[-{Stealth[scale=1]}, thick] ({\w+\db}:\R) arc[start angle={\w+\db}, end angle={\w+72-\db}, radius=\R];
+      \fi}
+    \foreach \e [count=\i from 0] in {Holz,Feuer,Erde,Metall,Wasser}{%
+      \filldraw[fill=\e, draw=black!60, line width=0.5pt] (r\i) circle (\rk);
+      \node[text=\e Zeichen, scale=1.25, inner sep=0pt] at (r\i) {\cjk\csname zeichen\e\endcsname};}
+  \end{tikzpicture}}}
 \newcommand{\wandlungskreis}[1][]{%
   \begin{tikzpicture}[>=latex]
     \pgfmathsetmacro{\R}{3*\wkscale}\pgfmathsetmacro{\RN}{\R+1.25}\pgfmathsetmacro{\RL}{\R+0.55}%
@@ -465,7 +524,7 @@
     \fi
   \end{tikzpicture}}
 
-\title{Pentagame-Orakel\\[0.3em]\large Das Buch der Trümpfe}
+\title{Pentagame-Orakel\\[0.3em]\large Das Buch der 60 Wandlungen}
 \author{Jan Suchanek}
 \date{2026}
 
@@ -475,16 +534,72 @@
 % der grünen Kreuzung (rot) die vier Beziehungen; Punkt am Anfang, Pfeil bis in die Mitte des Ziels
 \tikzset{bezlabel/.style={font=\scriptsize, align=center, inner sep=1pt, text=black, fill=white, fill opacity=0.85, text opacity=1},
   bezinnen/.style={font=\scriptsize, inner sep=1pt, text=pfeilinnen, fill=white, fill opacity=0.85, text opacity=1},
-  bezpfeil/.style={{Circle[length=3.2pt]}-{Stealth[scale=0.9]}, color=\pfeilfarbe},
-  bezpfeilrueck/.style={{Stealth[scale=0.9]}-{Circle[length=3.2pt]}, color=\pfeilfarbe}}
+  bezpfeil/.style={{Circle[length=3.2pt]}-{Stealth[scale=1.25]}, color=\pfeilfarbe, preaction={draw=white, line width=3.4pt, opacity=0.9, arrows=-}},
+  bezpfeilrueck/.style={{Stealth[scale=1.25]}-{Circle[length=3.2pt]}, color=\pfeilfarbe, preaction={draw=white, line width=3.4pt, opacity=0.9, arrows=-}}}
 \newcommand{\bezabstand}{6.5pt}% Abstand der Pfeilanfänge vom Mittelpunkt
 \makeatletter
+% \brettbild: das farbige Brett ohne Pfeile, Holz oben; Ecken und Kreuzungen verweisen auf die Elemente
+\newcommand{\brettbild}{{%
+  \boardcoloured
+  \pentcolours[50]{green,red,yellow,white,blue}% Holz oben
+  \begin{pentdiag}[stops=50, radius=0.18\textwidth, background=white]
+    \foreach \pos/\el in {0/Holz,1/Wasser,2/Metall,3/Erde,4/Feuer}{
+      \node[inner sep=0pt] at (\pos) {\hyperlink{element:\el}{\XeTeXLinkBox{\hbox to 2\cvar{\vrule height\cvar depth\cvar width0pt\hfil}}}};
+      \node[inner sep=0pt] at (\pos a) {\hyperlink{element:\el}{\XeTeXLinkBox{\hbox to 2\jvar{\vrule height\jvar depth\jvar width0pt\hfil}}}};}
+    % Drehsinn: innen (Pentagon) und außen (Ring) derselbe, im Uhrzeigersinn
+    \draw[-{Stealth[scale=1.1]}, line width=0.9pt, black!75] (60:0.2*\kvar) arc[start angle=60, end angle=-60, radius=0.2*\kvar];
+    \draw[-{Stealth[scale=1.2]}, line width=1pt, black!75] (60:0.69*\kvar) arc[start angle=60, end angle=-60, radius=0.69*\kvar];
+    % Wörter
+    \node[overlay, font=\scriptsize\itshape, anchor=east] at ($(1)+(-0.38,0)$) {Ecke};
+    \node[font=\scriptsize\itshape, anchor=north] at (270:1.06*\kvar) {Ring};
+    \node[overlay, font=\scriptsize\itshape, anchor=east] (kreuzwort) at (205:1.2*\kvar) {Kreuzung};
+    \draw[overlay, -{Stealth[scale=0.7]}, black!60, thin, shorten >=0.3cm] (kreuzwort.east) -- (4a);
+    % jede Farbe liegt sich gegenüber: von der grünen Ecke zur grünen Kreuzung
+    \draw[-{Stealth[scale=1.1]}, line width=1pt, dashed, green!45!black] ($(0)!0.13!(0a)$) -- ($(0)!0.9!(0a)$);
+  \end{pentdiag}}}
+
+% \richtungspaar{plus} bzw. {minus}: zwei kleine Bretter nebeneinander; plus = +1 und +2, minus = -1 und -2,
+% jeweils von der grünen Ecke (schwarz) und der grünen Kreuzung (rot)
+\newcommand{\rpfont}{\footnotesize}
+\tikzset{rplabel/.style={font=\rpfont, inner sep=1pt, fill=white, fill opacity=0.85, text opacity=1}}
+\newcommand{\richtungspaar}[2][0.19\textwidth]{{%
+  \boardcoloured
+  \pentcolours[50]{green,red,yellow,white,blue}%
+  \def\pp@lw{1.3pt}%
+  \def\rpart{#2}\def\rplus{plus}%
+  \begin{pentdiag}[stops=50, radius=#1, background=white]
+    \pgfmathsetmacro{\rj}{0.381966*\kvar}%
+    \renewcommand{\pfeilfarbe}{pfeilaussen}%
+    \ifx\rpart\rplus
+      \pbogen{4}{bezpfeilrueck, shorten >=\bezabstand}
+        node[rplabel, pos=0.45, above right=1pt, text=black] {\hyperlink{beziehung:1}{\XeTeXLinkBox{+1 {\cjk 生}}}};
+      \plinie{0}{3a}{bezpfeil, shorten <=\bezabstand}
+        node[rplabel, pos=0.55, left=2pt, text=black] {\hyperlink{beziehung:2}{\XeTeXLinkBox{+2 {\cjk 克}}}};
+    \else
+      \pbogen{0}{bezpfeil, shorten <=\bezabstand}
+        node[rplabel, pos=0.55, above left=1pt, text=black] {\hyperlink{beziehung:4}{\XeTeXLinkBox{−1 {\cjk 泄}}}};
+      \plinie{0}{2a}{bezpfeil, shorten <=\bezabstand}
+        node[rplabel, pos=0.55, right=2pt, text=black] {\hyperlink{beziehung:3}{\XeTeXLinkBox{−2 {\cjk 侮}}}};
+    \fi
+    \renewcommand{\pfeilfarbe}{pfeilinnen!75!black}%
+    \ifx\rpart\rplus
+      \draw[bezpfeil, shorten <=\bezabstand] (270:\rj pt) arc[start angle=270, end angle=198, radius=\rj pt]
+        node[rplabel, pos=0.5, below left=1pt, text=pfeilinnen] {\hyperlink{beziehung:1}{\XeTeXLinkBox{+1}}};
+      \plinie{0a}{3}{bezpfeil, shorten <=\bezabstand}
+        node[rplabel, pos=0.62, below left=2pt, text=pfeilinnen] {\hyperlink{beziehung:2}{\XeTeXLinkBox{+2}}};
+    \else
+      \draw[bezpfeil, shorten <=\bezabstand] (270:\rj pt) arc[start angle=270, end angle=342, radius=\rj pt]
+        node[rplabel, pos=0.5, below right=1pt, text=pfeilinnen] {\hyperlink{beziehung:4}{\XeTeXLinkBox{−1}}};
+      \plinie{0a}{2}{bezpfeil, shorten <=\bezabstand}
+        node[rplabel, pos=0.62, below right=2pt, text=pfeilinnen] {\hyperlink{beziehung:3}{\XeTeXLinkBox{−2}}};
+    \fi
+  \end{pentdiag}}}
 \newcommand{\beziehungsuebersicht}{{%
   \boardcoloured
   \pentcolours[50]{green,red,yellow,white,blue}% Holz oben
   \def\pp@lw{1.4pt}%
   \renewcommand{\pfeilfarbe}{pfeilaussen}%
-  \begin{pentdiag}[stops=50, radius=0.31\textwidth, background=white]
+  \begin{pentdiag}[stops=50, radius=0.37\textwidth, background=white]
     \pbogen{4}{bezpfeilrueck, shorten >=\bezabstand}
       node[bezlabel, pos=0.4, above right=1pt] {\hyperlink{beziehung:1}{\XeTeXLinkBox{\begin{tabular}{@{}c@{}}+1 Nähren\\{\cjk 生} shēng\end{tabular}}}};
     \pbogen{0}{bezpfeil, shorten <=\bezabstand}
@@ -493,7 +608,7 @@
       node[bezlabel, pos=0.7, above left=0pt] {\hyperlink{beziehung:2}{\XeTeXLinkBox{\begin{tabular}{@{}c@{}}+2 Bändigen\\{\cjk 克} kè\end{tabular}}}};
     \plinie{0}{2a}{bezpfeil, shorten <=\bezabstand}
       node[bezlabel, pos=0.7, above right=0pt] {\hyperlink{beziehung:3}{\XeTeXLinkBox{\begin{tabular}{@{}c@{}}−2 Sich stellen\\{\cjk 侮} wǔ\end{tabular}}}};
-    \renewcommand{\pfeilfarbe}{pfeilinnen}%
+    \renewcommand{\pfeilfarbe}{pfeilinnen!75!black}%
     \plinie{0a}{4a}{bezpfeil, shorten <=\bezabstand}
       node[bezinnen, pos=0.42, below left=4pt] {\hyperlink{beziehung:1}{\XeTeXLinkBox{+1 {\cjk 生}}}};
     \plinie{0a}{1a}{bezpfeil, shorten <=\bezabstand}
@@ -539,8 +654,8 @@ Wer Pentagame spielt, kennt diesen Moment: Die dritte Figur erreicht ihr Ziel un
 
 \begin{description}[leftmargin=0pt, itemsep=0.5ex]
   \item[Die fünf Elemente.] Im Wu Xing folgen sie in fester Reihenfolge aufeinander, und jedes geht aus dem vorigen hervor. Zu jedem gehört ein Thema mit einem hellen und einem dunklen Aspekt.
-  \item[Die vier Richtungen.] Von einem Element zu einem anderen führt immer genau eine von vier Richtungen: \emph{Nähren} (+1), \emph{Annehmen} (−1), \emph{Bändigen} (+2) oder \emph{Sich stellen} (−2). Welche es ist, hängt nur davon ab, ob man in der Reihenfolge der Elemente einen oder zwei Schritte vor- oder zurückgeht.
-  \item[Die 20 Paare.] Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfolge, zum Beispiel \element*{Holz}\verbpfeil{Holz}{Feuer}\element*{Feuer}. Zu jedem der fünf Elemente gibt es vier Paare: $5 \times 4 = 20$.
+  \item[Die vier Richtungen.] Jede Bewegung von einem Element zu einem anderen geht in eine von vier Richtungen: \emph{Nähren} (+1), \emph{Annehmen} (−1), \emph{Bändigen} (+2) oder \emph{Sich stellen} (−2). Welche es ist, hängt nur davon ab, ob man in der Reihenfolge der Elemente einen oder zwei Schritte vor- oder zurückgeht.
+  \item[Die 20 Paare.] Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfolge und die Bewegung zwischen ihnen, zum Beispiel \element*{Holz}\verbpfeil{Holz}{Feuer}\element*{Feuer}. Zu jedem der fünf Elemente gibt es vier Paare: $5 \times 4 = 20$.
   \item[Die zwölf Wendungen.] Zwei Richtungen hintereinander ergeben eine Wendung. Für die erste Richtung gibt es vier Möglichkeiten, für die zweite drei, denn sie darf die erste nicht aufheben: Auf +1 folgt nie −1, auf +2 nie −2. Das ergibt $4 \times 3 = 12$.
   \item[Die 60 Tripel.] Ein Element und eine Wendung ergeben ein Tripel, eine Folge aus drei verschiedenen Elementen, etwa \element*{Holz}\verbpfeil{Holz}{Feuer}\element*{Feuer}\verbpfeil{Feuer}{Erde}\element*{Erde}. Das sind $5 \times 12 = 60$, genau die Folgen, mit denen man beim Pentagame traditionell gewinnt. Jedes Tripel besteht aus zwei Paaren, hier \textit{Holz nährt Feuer} und \textit{Feuer nährt Erde}.
 \end{description}
@@ -562,13 +677,12 @@ Wer Pentagame spielt, kennt diesen Moment: Die dritte Figur erreicht ihr Ziel un
 
 Zu jeder Erscheinung gibt es einen Spruch: zu jedem Element, jeder Richtung, jedem Paar, jeder Wendung und jedem Tripel. Ein Spruch besteht aus einem knappen Urteil, fett gesetzt, und einer Deutung darunter. Die Deutung zeigt immer beide Seiten: das Licht und den Schatten.
 
-Die Bilder der Sprüche bauen aufeinander auf. Jedes Paar hat einen eigenen Vorgang aus Natur und Handwerk, wie er tatsächlich geschieht: Holz brennt, der Deich hält das Wasser, die Axt fällt den Baum. Jede Wendung beschreibt eine Lage, wie Menschen sie erleben, etwa die Prüfung oder den Aufstand. Ein Tripel fügt die Vorgänge seiner beiden Paare zu einer Szene zusammen, und seine Wendung gibt ihr den Sinn. Wer die Paare kennt, erkennt sie in den Tripeln wieder.
+Die Bilder der Sprüche bauen aufeinander auf. Jedes Paar hat einen eigenen Vorgang aus Natur und Handwerk, wie er tatsächlich geschieht: Holz brennt, der Wall hält das Wasser, die Axt fällt den Baum. Jede Wendung beschreibt eine Lage, wie Menschen sie erleben, etwa die Prüfung oder den Aufstand. Ein Tripel fügt die Vorgänge seiner beiden Paare zu einer Szene zusammen, und seine Wendung gibt ihr den Sinn. Wer die Paare kennt, erkennt sie in den Tripeln wieder.
 
 Das Vorbild ist das \href{https://en.wikipedia.org/wiki/Lingqijing}{Lingqijing} ({\cjk 靈棋經}, „Klassiker der göttlichen Spielsteine“), ein chinesisches Orakel, das wohl in der frühen Wei-Jin-Zeit entstanden ist. Dort ergeben drei Positionen (Himmel, Mensch, Erde) mit je fünf Zuständen 125 Sprüche. Beim Pentagame-Orakel kommt keine Farbe doppelt vor, deshalb sind es 60 Tripel.
 
-Die Sprüche sind keine Übersetzung eines alten Textes, sondern eine moderne Deutung entlang der Wu-Xing-Zyklen. Überliefert sind die fünf Elemente und ihre Reihenfolge, die beiden Zyklen des Hervorbringens ({\cjk 生} shēng) und des Bändigens ({\cjk 克} kè) mit ihren Gegenrichtungen xiè und wǔ sowie die Zuordnungen von Jahreszeit, Himmelsrichtung, Tugend und Gemütsbewegung, Organ, Geschmack und Planet. Nähren und Bändigen sind auch im Deutschen gebräuchliche Namen; Annehmen und Sich stellen sind für dieses Buch gewählt. Die Zählung +1, −1, +2, −2 stammt aus der Notation des \textit{Pentagame Compendium}. Neu sind die zwölf Wendungen mit ihren Namen, die Positionen Wurzel, Weg und Frucht, die Übertragung auf das Pentagame-Brett und alle Sprüche.
+Die Sprüche sind keine Übersetzung eines alten Textes, sondern eine moderne Deutung entlang der Wu-Xing-Zyklen. Überliefert sind die fünf Elemente und ihre Reihenfolge, die beiden Zyklen des Hervorbringens ({\cjk 生} shēng) und des Bändigens ({\cjk 克} kè) mit ihren Gegenrichtungen xiè und wǔ sowie die Zuordnungen von Jahreszeit, Himmelsrichtung, Tugend und Gemütsbewegung, Organ, Geschmack und Planet. Nähren und Bändigen sind auch im Deutschen gebräuchliche Namen; Annehmen und Sich stellen sind für dieses Buch gewählt. Die Zählung +1, −1, +2, −2 stammt aus der Notation des \textit{Pentagame Compendium}. Neu sind die zwölf Wendungen mit ihren Namen, die Positionen Wurzel, Weg und Frucht, die Übertragung auf das Pentagame und alle Sprüche.
 
-Das Wort Trumpf kommt von Triumph: So hießen auch die Bildkarten des ersten Tarots im Italien des 15.~Jahrhunderts, die \textit{trionfi}. Jede gewonnene Partie Pentagame ist ein solcher Triumph, und jeder Spruch dieses Buches ein Trumpf, den man in der Hand hält.
 
 \addsec{Befragung}\markright{Befragung}
 
@@ -598,9 +712,9 @@ Beim Paar fallen Weg und Frucht zusammen: Die zweite Farbe zeigt, wohin die Wurz
 Der Beutel ist aber nur der kürzeste Weg. Brett und Buch beruhen auf denselben fünf Farben und denselben Linien. Deshalb lässt sich fast alles, was in einer Partie Pentagame geschieht, hier nachschlagen und deuten:
 
 \begin{itemize}[leftmargin=*]
-  \item \textbf{Richtungen:} Jeder Zug, der auf einem farbigen Feld beginnt, einer Ecke oder einer Kreuzung, und auf einem andersfarbigen endet, entspricht einer der vier \hyperref[kap:beziehungen]{Richtungen}. Welche es ist, hängt nur von den beiden Farben ab.
+  \item \textbf{Richtungen:} Jeder Zug, der auf einem farbigen Feld beginnt, einer Ecke oder einer Kreuzung, und auf einem andersfarbigen endet, ist eine Bewegung in eine der vier \hyperref[kap:beziehungen]{Richtungen}. Welche es ist, hängt nur von den beiden Farben ab.
   \item \textbf{Paare:} Ein solcher Zug verbindet zwei Farben in fester Reihenfolge, von wo nach wohin, und ist damit schon ein \hyperref[kap:paare]{Paar}. Ebenso bilden zwei Figuren verschiedener Farbe ein Paar, etwa wenn sie beim Schlagen ihre Plätze tauschen.
-  \item \textbf{Wendungen:} Ein Doppelzug mit derselben Figur besteht aus zwei Richtungen und ergibt so eine der zwölf \hyperref[kap:muster]{Wendungen}.
+  \item \textbf{Wendungen:} Ein Doppelzug mit derselben Figur besteht aus zwei Bewegungen; ihre Richtungen ergeben eine der zwölf \hyperref[kap:muster]{Wendungen}.
   \item \textbf{Tripel:} Die drei Figuren, mit denen eine Partie gewonnen wird, ergeben in der Reihenfolge, in der sie herausgezogen wurden, ein \hyperref[kap:tripel]{Tripel}. So wird jede Partie zu einem Spruch. Ebenso lassen sich die ersten drei geschlagenen Blöcke lesen, nach der Farbe der Felder, auf denen sie standen: Sie zeigen, unter welchem Zeichen das Spiel beginnt.
 \end{itemize}
 
@@ -680,10 +794,23 @@ Organ, Geschmack & Leber, sauer \\
 Planet & Jupiter
 \end{tabular}\par}
 \medskip
+\medskip
+\begin{minipage}{\textwidth}\small\setlength{\parindent}{0pt}\setlength{\parskip}{0.5ex}
+Im ältesten Text, der die fünf Elemente nennt, dem Kapitel „Großer Plan“ ({\cjk 洪範} Hóngfàn) des \textit{Shujing}, heißt es: „Holz heißt: gebogen und gerade“ ({\cjk 木曰曲直} mù yuē qū zhí). Holz gibt nach und richtet sich wieder auf; es wächst krumm und doch dem Licht entgegen. Das Schriftzeichen {\cjk 木} zeigt einen Baum mit Ästen und Wurzeln.
+
+Im Kreis des Hervorbringens ist das Holz das Kind des Wassers und die Mutter des Feuers. Es bändigt die Erde, wie Wurzeln den Boden durchdringen, und wird vom Metall gebändigt, wie die Klinge den Baum fällt. Ihm gehören der Osten, wo die Sonne aufgeht, und der Morgen.
+
+Die Gelehrten der Han-Zeit nannten das Holz das junge Yang ({\cjk 少陽} shàoyáng; \textit{Hanshu}, Abhandlung über die fünf Elemente): Die Wärme nimmt zu, ist aber noch nicht voll entfaltet. Die Medizin ordnet ihm Leber, Sehnen und Augen zu, den sauren Geschmack und den Zorn (\textit{Suwen} 5); die konfuzianische Ethik die Güte, die andere wachsen lässt.
+\end{minipage}
+\end{orakelblock}
+\newpage
+\begin{orakelblock}
+\elementbezug{Holz}\par
+\medskip
 \textbf{Das Holz ist der Aufbruch. Was keimt, drängt ans Licht.}\par
 \smallskip
 \lichtschatten{Holz ist die Kraft des Anfangs: der Plan, der Wille, das Wachsen. Im Frühling bricht der Keim durch die Erde, biegsam und doch beharrlich. Wer im Zeichen des Holzes steht, hat Visionen und den Mut, sie anzugehen, und die Güte, die Liebe zu den Menschen, die auch andere wachsen lässt.}
-  {Wo das Wachsen keinen Raum findet, wird es zu Ungeduld und Zorn. Darin steckt nur Kraft, die einen Weg sucht. Gib ihr ein Ziel und etwas Zeit, dann wird aus dem Zorn wieder Wachstum.}
+  {Wo das Wachsen keinen Raum findet, wird es zu Ungeduld und Zorn. Ein Trieb, der nicht ans Licht kann, wächst krumm; einer, der zu schnell in die Höhe schießt, knickt im ersten Wind.}
 \linkteil
 {\small Die vier Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Holz-Feuer}{\mypair{Holz}{Feuer}}} \hfill \mbox{\hyperlink{paar:Holz-Wasser}{\mypair{Holz}{Wasser}}} \hfill \mbox{\hyperlink{paar:Holz-Erde}{\mypair{Holz}{Erde}}} \hfill \mbox{\hyperlink{paar:Holz-Metall}{\mypair{Holz}{Metall}}}\par
 \end{orakelblock}
@@ -708,10 +835,22 @@ Organ, Geschmack & Herz, bitter \\
 Planet & Mars
 \end{tabular}\par}
 \medskip
+\begin{minipage}{\textwidth}\small\setlength{\parindent}{0pt}\setlength{\parskip}{0.5ex}
+Das Kapitel „Großer Plan“ des \textit{Shujing} sagt: „Feuer heißt: flammend und aufsteigend“ ({\cjk 火曰炎上} huǒ yuē yán shàng). Feuer strebt nach oben und nach außen; es wärmt, leuchtet und verzehrt. Das Schriftzeichen {\cjk 火} zeigt züngelnde Flammen.
+
+Im Kreis des Hervorbringens ist das Feuer das Kind des Holzes und die Mutter der Erde. Es bändigt das Metall, wie die Hitze es geschmeidig macht, und wird vom Wasser gebändigt, das es löscht. Ihm gehören der Süden und der Mittag.
+
+In derselben Ordnung, die das Holz das junge Yang nennt, ist das Feuer das große Yang ({\cjk 太陽} tàiyáng): Die Wärme hat ihren Höhepunkt erreicht. Die Medizin ordnet ihm Herz, Blut und Zunge zu, den bitteren Geschmack und die Freude (\textit{Suwen} 5); die konfuzianische Ethik den Anstand, der die Flamme in Form hält.
+\end{minipage}
+\end{orakelblock}
+\newpage
+\begin{orakelblock}
+\elementbezug{Feuer}\par
+\medskip
 \textbf{Das Feuer ist die Fülle. Was gewachsen ist, zeigt sich.}\par
 \smallskip
 \lichtschatten{Feuer ist Ausdruck, Begeisterung und Begegnung. Im Sommer steht alles in voller Blüte. Wer im Zeichen des Feuers steht, wärmt andere, steckt sie an und bringt Menschen zusammen. Der Anstand gibt der Flamme ihre Form, damit sie leuchtet, ohne zu verbrennen.}
-  {Feuer kann sich verausgaben oder in Übermut umschlagen. Das ist die Kehrseite großer Freude. Gönn dir die Glut, und sorge für Holz zum Nachlegen.}
+  {Feuer kann sich verausgaben oder in Übermut umschlagen. Ein Feuer, das zu hoch lodert, ist schnell heruntergebrannt; eines, das nie auflodert, wärmt niemanden.}
 \linkteil
 {\small Die vier Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Feuer-Erde}{\mypair{Feuer}{Erde}}} \hfill \mbox{\hyperlink{paar:Feuer-Holz}{\mypair{Feuer}{Holz}}} \hfill \mbox{\hyperlink{paar:Feuer-Metall}{\mypair{Feuer}{Metall}}} \hfill \mbox{\hyperlink{paar:Feuer-Wasser}{\mypair{Feuer}{Wasser}}}\par
 \end{orakelblock}
@@ -736,10 +875,22 @@ Organ, Geschmack & Milz, süß \\
 Planet & Saturn
 \end{tabular}\par}
 \medskip
+\begin{minipage}{\textwidth}\small\setlength{\parindent}{0pt}\setlength{\parskip}{0.5ex}
+Das Kapitel „Großer Plan“ sagt von der Erde: „Säen und Ernten“ ({\cjk 土爰稼穡} tǔ yuán jià sè). Erde nimmt auf, trägt und gibt zurück; sie ist der Boden, auf dem alles Wachsen geschieht. Das Schriftzeichen {\cjk 土} zeigt einen Erdklumpen über dem Boden.
+
+Im Kreis des Hervorbringens ist die Erde das Kind des Feuers und die Mutter des Metalls. Sie bändigt das Wasser, wie der Wall es hält, und wird vom Holz gebändigt, dessen Keim sie durchbricht. Ihr gehört die Mitte.
+
+Die Erde ist weder Yin noch Yang, sondern ihr Ausgleich. Darum hat sie keine eigene Jahreszeit: Ihr gehören der Spätsommer und die letzten Tage jeder Jahreszeit, in denen eine in die andere übergeht. Die Medizin ordnet ihr Milz, Fleisch und Mund zu, den süßen Geschmack und das Nachdenken (\textit{Suwen} 5); die konfuzianische Ethik das Vertrauen.
+\end{minipage}
+\end{orakelblock}
+\newpage
+\begin{orakelblock}
+\elementbezug{Erde}\par
+\medskip
 \textbf{Die Erde ist die Mitte. Sie trägt alles und verbindet die Zeiten.}\par
 \smallskip
 \lichtschatten{Erde ist Sammlung, Fürsorge und Halt. Sie hat keine eigene Jahreszeit, sondern gehört zu jedem Übergang, und sie steht in der Mitte der vier Himmelsrichtungen. Wer im Zeichen der Erde steht, gibt anderen Boden unter den Füßen und ist verlässlich.}
-  {Wer immer trägt, kann ins Grübeln geraten oder schwer werden. Auch die Erde braucht Lockerung. Lass dich bewegen; fruchtbarer Boden ist nie ganz fest.}
+  {Wer immer trägt, kann ins Grübeln geraten und schwer werden. Boden, der nie gelockert wird, verdichtet sich, bis keine Wurzel mehr eindringt; Boden ohne Halt trägt der Regen fort.}
 \linkteil
 {\small Die vier Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Erde-Metall}{\mypair{Erde}{Metall}}} \hfill \mbox{\hyperlink{paar:Erde-Feuer}{\mypair{Erde}{Feuer}}} \hfill \mbox{\hyperlink{paar:Erde-Wasser}{\mypair{Erde}{Wasser}}} \hfill \mbox{\hyperlink{paar:Erde-Holz}{\mypair{Erde}{Holz}}}\par
 \end{orakelblock}
@@ -764,10 +915,22 @@ Organ, Geschmack & Lunge, scharf \\
 Planet & Venus
 \end{tabular}\par}
 \medskip
+\begin{minipage}{\textwidth}\small\setlength{\parindent}{0pt}\setlength{\parskip}{0.5ex}
+Das Kapitel „Großer Plan“ sagt: „Metall heißt: folgend und sich wandelnd“ ({\cjk 金曰從革} jīn yuē cóng gé). Metall fügt sich der Form, in die es gegossen wird, und lässt sich umschmelzen; einmal erstarrt, ist es hart und klar. Das Schriftzeichen {\cjk 金} steht ursprünglich für Bronze und für Metall überhaupt.
+
+Im Kreis des Hervorbringens ist das Metall das Kind der Erde und die Mutter des Wassers. Es bändigt das Holz, wie die Klinge es schneidet, und wird vom Feuer gebändigt, das es schmilzt. Ihm gehören der Westen, wo die Sonne untergeht, und der Abend.
+
+In der Ordnung von Yin und Yang ist das Metall das junge Yin ({\cjk 少陰} shàoyīn): Die Kühle kehrt zurück, die Tage werden kürzer. Die Medizin ordnet ihm Lunge, Haut und Nase zu, den scharfen Geschmack und den Kummer (\textit{Suwen} 5); die konfuzianische Ethik die Gerechtigkeit.
+\end{minipage}
+\end{orakelblock}
+\newpage
+\begin{orakelblock}
+\elementbezug{Metall}\par
+\medskip
 \textbf{Das Metall ist die Ernte. Was reif ist, wird geschieden und bewahrt.}\par
 \smallskip
 \lichtschatten{Metall ist Klarheit, Maß und Abschied. Im Herbst wird geerntet und getrennt: das Korn von der Spreu, das Wichtige vom Überflüssigen. Wer im Zeichen des Metalls steht, urteilt gerecht und schafft Ordnung.}
-  {Klarheit kann streng werden, und jeder Abschied bringt Trauer. Beides gehört zur Ernte. Lass die Trauer zu; sie macht Platz für das, was wertvoll bleibt.}
+  {Klarheit kann zur Strenge werden, und jeder Abschied bringt Trauer. Wer zu scharf trennt, wirft mit der Spreu auch Korn fort; wer nie trennt, mahlt die Spreu mit ins Mehl.}
 \linkteil
 {\small Die vier Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Metall-Wasser}{\mypair{Metall}{Wasser}}} \hfill \mbox{\hyperlink{paar:Metall-Erde}{\mypair{Metall}{Erde}}} \hfill \mbox{\hyperlink{paar:Metall-Holz}{\mypair{Metall}{Holz}}} \hfill \mbox{\hyperlink{paar:Metall-Feuer}{\mypair{Metall}{Feuer}}}\par
 \end{orakelblock}
@@ -792,28 +955,76 @@ Organ, Geschmack & Niere, salzig \\
 Planet & Merkur
 \end{tabular}\par}
 \medskip
+\begin{minipage}{\textwidth}\small\setlength{\parindent}{0pt}\setlength{\parskip}{0.5ex}
+Das Kapitel „Großer Plan“ sagt: „Wasser heißt: befeuchtend und abwärts fließend“ ({\cjk 水曰潤下} shuǐ yuē rùn xià). Wasser sucht immer den tiefsten Ort, nimmt jede Form an und höhlt mit der Zeit selbst den Stein. Das Schriftzeichen {\cjk 水} zeigt einen fließenden Strom.
+
+Im Kreis des Hervorbringens ist das Wasser das Kind des Metalls und die Mutter des Holzes. Es bändigt das Feuer, das es löscht, und wird von der Erde gebändigt, die es eindämmt. Ihm gehören der Norden und die Nacht.
+
+In der Ordnung von Yin und Yang ist das Wasser das große Yin ({\cjk 太陰} tàiyīn): die tiefste Ruhe, aus der ein neuer Kreis beginnt. Die Medizin ordnet ihm Niere, Knochen und Ohren zu, den salzigen Geschmack und die Furcht (\textit{Suwen} 5); die konfuzianische Ethik die Weisheit.
+\end{minipage}
+\end{orakelblock}
+\newpage
+\begin{orakelblock}
+\elementbezug{Wasser}\par
+\medskip
 \textbf{Das Wasser ist der Ursprung. In der Stille sammelt sich die Kraft für den nächsten Kreis.}\par
 \smallskip
-\lichtschatten{Wasser ist Ruhe, Tiefe und Ausdauer. Im Winter zieht sich alles zurück, und unter dem Eis liegt die Quelle des Frühlings. Wer im Zeichen des Wassers steht, ist weise und geduldig und findet immer einen Weg.}
-  {In der Tiefe kann Furcht wohnen, und Rückzug kann einsam machen. Das ist die Stille vor dem Neubeginn. Vertrau ihr; aus jedem Winter wird ein Frühling.}
+\lichtschatten{Wasser ist Ruhe, Tiefe und Ausdauer. Im Winter zieht sich alles zurück, und unter dem Eis sammelt sich, was im Frühling fließen wird. Wer im Zeichen des Wassers steht, ist weise und geduldig und findet immer einen Weg.}
+  {In der Tiefe kann Furcht wohnen, und Rückzug kann einsam machen. Wasser, das zu lange steht, wird faulig; Wasser, das nie zur Ruhe kommt, klärt sich nie.}
 \linkteil
 {\small Die vier Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Wasser-Holz}{\mypair{Wasser}{Holz}}} \hfill \mbox{\hyperlink{paar:Wasser-Metall}{\mypair{Wasser}{Metall}}} \hfill \mbox{\hyperlink{paar:Wasser-Feuer}{\mypair{Wasser}{Feuer}}} \hfill \mbox{\hyperlink{paar:Wasser-Erde}{\mypair{Wasser}{Erde}}}\par
 \end{orakelblock}
 
 \newpage
+\addchap{Das Pentagame}\markboth{Das Pentagame}{\mbox{}}\label{kap:brett}
+
+\begin{einleitung}
+Das Pentagame ist eine geometrische Figur, auf der gespielt wird. Außen liegt ein Kreis, der Ring, mit fünf Ecken. Durch die Ecken laufen die fünf Linien eines Sterns, des Pentagramms; wo sie einander schneiden, liegen innen fünf Kreuzungen. Sie bilden ein kleines Fünfeck, das Pentagon.
+
+Zwischen diesen Punkten gibt es zwei Arten von Strecken. Kurze Strecken führen auf dem Ring von Ecke zu Ecke oder auf dem Pentagon von Kreuzung zu Kreuzung. Lange Strecken verbinden eine Ecke mit einer Kreuzung; weil man auf ihnen zwischen außen und innen wechselt, heißen sie auch Wechselstrecken.
+\end{einleitung}
+
+\begin{center}\begin{minipage}{\linewidth}\centering
+\brettbild\par
+\smallskip
+{\small\itshape Außen die Ecken auf dem Ring, innen die Kreuzungen auf dem Pentagon: beide im Uhrzeigersinn, jede Kreuzung ihrer Ecke gegenüber.\par}
+\end{minipage}\end{center}
+
+\begin{einleitung}
+Die Ecken tragen die fünf Farben in der Reihenfolge des Wandlungskreises: im Uhrzeigersinn Holz (grün), Feuer (rot), Erde (gelb), Metall (weiß) und Wasser (blau). Die Kreuzungen tragen dieselben Farben, jeweils gegenüber ihrer Ecke. So erscheint der Wandlungskreis zweimal, außen groß und innen klein, und beide laufen im selben Drehsinn.
+
+Man kann das Pentagame auch räumlich sehen: als Blick von oben auf ein fünfseitiges Antiprisma, zwei gegeneinander verdrehte Fünfecke übereinander, verbunden durch Dreiecke. Das nähere Fünfeck erscheint groß als Ring, das fernere klein als Pentagon, und die Wechselstrecken sind die Kanten dazwischen. Der Fünferkreis des Wu Xing wird so in eine weitere Dimension gehoben. Dieses Buch folgt dem Pentagame: Es nimmt das überlieferte Schema, verdoppelt es und gelangt so von den fünf Elementen und vier Richtungen zu den reicheren Erscheinungen der Paare, Wendungen und Tripel.
+\end{einleitung}
+
+\begin{center}\begin{minipage}{\linewidth}\centering
+\input{work/antiprisma}\par
+\smallskip
+{\small\itshape Das fünfseitige Antiprisma. Von oben gesehen erscheint das nähere Fünfeck groß als Ring, das fernere klein als Pentagon.\par}
+\end{minipage}\end{center}
+
+\newpage
 \addchap{Die vier Richtungen}\markboth{Die vier Richtungen}{\mbox{}}\label{kap:beziehungen}
 
 \begin{einleitung}
-Verbindet man die fünf Elemente im Wandlungskreis miteinander, dann führt von jedem Element eine Richtung zu jedem der vier anderen. Ein Schritt im Sonnenlauf vorwärts (+1) ist, wie schon beschrieben, das Hervorbringen oder Nähren ({\cjk 生} shēng). Zwei Schritte vorwärts (+2), also über ein Element hinweg, führt eine Diagonale durch den Kreis: Das ist das Bändigen ({\cjk 克} kè). Zusammen bilden die Diagonalen ein Pentagramm. Diese beiden Richtungen ergeben bereits das vollständige Bild des Wu Xing.
+Von jedem Element führt eine Bewegung zu jedem der vier anderen. Diese vier Bewegungen gehen in vier Richtungen: einen oder zwei Schritte im Wandlungskreis, vorwärts oder zurück. Geht man eine Richtung von allen fünf Elementen aus, schließt sich der Kreis; die Tradition spricht deshalb von Zyklen. Hier heißen sie Richtungen.
+\end{einleitung}
+
+\addsec*{Nähren und Bändigen}\markright{Nähren und Bändigen}
+
+\begin{einleitung}
+Ein Schritt im Sonnenlauf vorwärts (+1) ist, wie schon beschrieben, das Hervorbringen oder Nähren ({\cjk 生} shēng). Zwei Schritte vorwärts (+2), also über ein Element hinweg, führt eine Diagonale durch den Kreis: Das ist das Bändigen ({\cjk 克} kè). Zusammen bilden die Diagonalen ein Pentagramm. Diese beiden Richtungen ergeben bereits das vollständige Bild des Wu Xing.
 \end{einleitung}
 
 \begin{center}
 \begin{minipage}{\linewidth}\centering
-\wandlungskreis[ke]\par
+\scalebox{0.75}{\wandlungskreis[ke]}\par
 \smallskip
-{\small\itshape Außen der Kreis des Hervorbringens ({\cjk 生} shēng), innen das Pentagramm des Bändigens ({\cjk 克} kè).\par}
+{\small\itshape Nähren ({\cjk 生} shēng) und Bändigen ({\cjk 克} kè): außen der Kreis, innen das Pentagramm.\par}
 \end{minipage}
 \end{center}
+
+\newpage
+\addsec*{Annehmen und Sich stellen}\markright{Annehmen und Sich stellen}
 
 \begin{einleitung}
 Zu shēng und kè gibt es jeweils ein Gegenstück in der Gegenrichtung. Einen Schritt zurück (−1) liegt das Annehmen ({\cjk 泄} xiè), bei dem das Kind an der Mutter zehrt. Zwei Schritte zurück (−2) liegt das Sich stellen ({\cjk 侮} wǔ), die Auflehnung des Gebändigten gegen seinen Bändiger.
@@ -821,30 +1032,62 @@ Zu shēng und kè gibt es jeweils ein Gegenstück in der Gegenrichtung. Einen Sc
 
 \begin{center}
 \begin{minipage}{\linewidth}\centering
-\wandlungskreis[gegen]\par
+\scalebox{0.75}{\wandlungskreis[gegen]}\par
 \smallskip
-{\small\itshape Die Gegenrichtungen: außen das Annehmen ({\cjk 泄} xiè), innen das Sich stellen ({\cjk 侮} wǔ).\par}
+{\small\itshape Annehmen ({\cjk 泄} xiè) und Sich stellen ({\cjk 侮} wǔ): außen der Kreis, innen das Pentagramm.\par}
 \end{minipage}
 \end{center}
 
 \begin{einleitung}
-So ergeben sich vier Richtungen, in diesem Buch kurz +1, −1, +2 und −2: Die Zahl sagt, wie weit, das Vorzeichen, ob vor oder zurück. Dieselbe Zählung verwendet die Notation der Pentagame-Züge im \textit{Pentagame Compendium}: ±1 für Züge auf Ring oder Pentagon, ±2 für Züge entlang des Sterns.
+Die vier Richtungen heißen in diesem Buch kurz +1, −1, +2 und −2: Die Zahl sagt, wie weit, das Vorzeichen, ob vor oder zurück.
+\end{einleitung}
 
-\textbf{Vom Wandlungskreis zum Brett.} Im Pentagame-Brett erscheint der Wandlungskreis zweimal: außen auf den Ecken des Rings und innen auf den Kreuzungen des Pentagons, dort am Mittelpunkt gespiegelt. Damit kommt etwas Neues ins Spiel: Die langen Linien des Pentagramms, die Wege von kè und wǔ, verbinden nicht mehr eine Ecke mit einer Ecke, sondern führen von außen nach innen oder von innen nach außen. Wer auf einer solchen Linie zieht, geht im Wandlungskreis zwei Schritte vor oder zurück.
+\newpage
+\addsec*{Die Bewegungen im Pentagame}\markright{Die Bewegungen im Pentagame}
+
+\begin{einleitung}
+Im Pentagame erscheint der Wandlungskreis zweimal, außen auf dem Ring und innen auf dem Pentagon (siehe \hyperref[kap:brett]{„Das Pentagame“}). Jeder Zug von einem farbigen Feld zu einem andersfarbigen ist eine Bewegung in eine der vier Richtungen. Die Bewegungen der einfachen Richtungen, Nähren und Annehmen, bleiben auf ihrem Kreis. Die der doppelten, Bändigen und Sich stellen, wechseln die Ebene: Sie führen über eine Wechselstrecke von der Ecke zur Kreuzung oder von der Kreuzung zur Ecke. Die Diagonale des Wandlungskreises wird so zum Übergang zwischen außen und innen.
+\end{einleitung}
+
+\begin{einleitung}
+\textbf{Nähren und Bändigen.} Nähren (+1, {\cjk 生} shēng) ist ein kurzer Schritt im Uhrzeigersinn, von Holz zu Feuer: außen von Ecke zu Ecke, innen von Kreuzung zu Kreuzung. Bändigen (+2, {\cjk 克} kè) erreicht die Erde. Auf dem Ring läge sie zwei Schritte im Uhrzeigersinn, also rechts herum. Ihre Kreuzung aber liegt auf der anderen Seite der Mitte, von der Holz-Ecke aus gesehen links. Die Wechselstrecke führt deshalb gegen den Uhrzeigersinn: von der Holz-Ecke zur Erde-Kreuzung und ebenso von der Holz-Kreuzung zur Erde-Ecke.
+\end{einleitung}
 
 \begin{center}
 \begin{minipage}{\linewidth}\centering
-\beziehungsuebersicht\par
-{\small\itshape Die vier Richtungen von Holz aus: schwarz von der grünen Ecke, rot von der grünen Kreuzung.\par}
+{\renewcommand{\rpfont}{\small}\richtungspaar[0.17\textwidth]{plus}}\par
+\smallskip
+{\small\itshape Nähren ({\cjk 生} shēng) und Bändigen ({\cjk 克} kè) von Holz aus: schwarz von der Ecke, rot von der Kreuzung.\par}
 \end{minipage}
 \end{center}
 
-\needspace{4\baselineskip}\noindent So ordnen sich die vier Richtungen:
+\newpage
+\begin{einleitung}
+\textbf{Annehmen und Sich stellen.} Annehmen (−1, {\cjk 泄} xiè) ist ein kurzer Schritt gegen den Uhrzeigersinn, von Holz zu Wasser: außen von Ecke zu Ecke, innen von Kreuzung zu Kreuzung. Sich stellen (−2, {\cjk 侮} wǔ) erreicht das Metall. Auf dem Ring läge es zwei Schritte gegen den Uhrzeigersinn, also links herum. Seine Kreuzung aber liegt auf der anderen Seite der Mitte, von der Holz-Ecke aus gesehen rechts. Die Wechselstrecke führt deshalb im Uhrzeigersinn: von der Holz-Ecke zur Metall-Kreuzung und ebenso von der Holz-Kreuzung zur Metall-Ecke.
+\end{einleitung}
 
-\begin{itemize}[leftmargin=*]
-  \item \textbf{Nähren und Annehmen} (+1 und −1, {\cjk 生} shēng und {\cjk 泄} xiè) sind Bewegungen \emph{auf} einem der beiden Kreise, entweder auf dem Ring oder auf dem Pentagon: im Uhrzeigersinn vor, gegen den Uhrzeigersinn zurück.
-  \item \textbf{Bändigen und Sich stellen} (+2 und −2, {\cjk 克} kè und {\cjk 侮} wǔ) sind Bewegungen \emph{zwischen} den Kreisen, auf einer langen Linie vom Ring zum Pentagon oder umgekehrt: Bändigen gegen den Uhrzeigersinn, Sich stellen im Uhrzeigersinn. Das Vorzeichen bezieht sich also auf den Wandlungskreis, nicht auf die Drehrichtung auf dem Brett.
-\end{itemize}
+\begin{center}
+\begin{minipage}{\linewidth}\centering
+{\renewcommand{\rpfont}{\small}\richtungspaar[0.17\textwidth]{minus}}\par
+\smallskip
+{\small\itshape Annehmen ({\cjk 泄} xiè) und Sich stellen ({\cjk 侮} wǔ) von Holz aus: schwarz von der Ecke, rot von der Kreuzung.\par}
+\end{minipage}
+\end{center}
+
+\begin{einleitung}
+Bändigen führt also gegen den Uhrzeigersinn, Sich stellen im Uhrzeigersinn: Das Vorzeichen bezieht sich auf den Wandlungskreis, nicht auf den Drehsinn im Pentagame. Die Wechselstrecke ist dabei nur der direkte Weg. Wer auf dem Ring zwei Schritte vorwärts geht, kommt ebenfalls beim übernächsten Element an, und auch das ist Bändigen; diese beiden Schritte bilden die Wendung \hyperlink{muster:I}{I, Der Strom}.
+
+Dieselbe Zählung verwendet das \textit{Pentagame Compendium} für die Züge: ±1 auf Ring oder Pentagon, ±2 entlang des Sterns.
+\end{einleitung}
+
+
+\newpage
+\addsec*{Die vier Einträge}\markright{Die vier Einträge}
+
+\begin{einleitung}
+Jede der vier Richtungen hat zwei Seiten: Die erste zeigt sie im Wandlungskreis, die zweite ihre Bewegungen im Pentagame.
+
+Das Bild auf der zweiten Seite zeigt die Richtung zweimal: schwarz von außen, von der Ecke oben, und rot von innen, von der Kreuzung unten in der Mitte. Die Bilder sind bewusst grau: Die Ecke oben kann jedes der fünf Elemente sein, und die Richtung sieht für alle gleich aus.
 \end{einleitung}
 
 \begin{center}
@@ -861,32 +1104,37 @@ So ergeben sich vier Richtungen, in diesem Buch kurz +1, −1, +2 und −2: Die 
 \end{tabularx}
 \end{center}
 
-\begin{einleitung}
-Deshalb zeigen die Bilder auf den folgenden Seiten Bändigen und Sich stellen nicht als Diagonalen in einem Kreis, sondern als Übergänge zwischen außen und innen. Das heißt nicht, dass nur diese Züge dazugehören. Wer auf dem Ring zwei Schritte vorwärts geht, kommt ebenfalls beim übernächsten Element an, und auch das ist Bändigen; diese beiden Schritte bilden die Wendung \hyperlink{muster:I}{I, Der Strom}. Die lange Linie ist nur der direkte Weg.
-
-Jedes Bild zeigt seine Richtung zweimal: schwarz von außen, von der Ecke oben, und rot von innen, von der Kreuzung unten in der Mitte. Die Bilder sind bewusst grau: Die Ecke oben kann jedes der fünf Elemente sein, und die Richtung sieht für alle gleich aus.
-\end{einleitung}
-
 
 \newpage
 \markright{+1 \quad Nähren}
 \begin{orakelblock}
 \hypertarget{beziehung:1}{{\Large\bfseries +1}}\par
 \smallskip
-\beziehungsbrett{1}\par
+\diagbox{\richtungskreis{1}}\par
 \smallskip
 {\large\bfseries\color{ueberschriftfarbe} Nähren}\par
 {\cjk 生}~shēng\par
 \smallskip
 
 \textit{Im Wandlungskreis: ein Schritt vorwärts, der Sheng-Zyklus.}\\
-\textit{Auf dem Brett: im Uhrzeigersinn außen auf dem Ring oder innen auf dem Pentagon voran.}\par
-\smallskip
+\textit{Im Pentagame: im Uhrzeigersinn außen auf dem Ring oder innen auf dem Pentagon voran.}\par
+\medskip
+\begin{minipage}{\textwidth}\small\setlength{\parindent}{0pt}\setlength{\parskip}{0.5ex}
+Das Zeichen {\cjk 生} zeigt einen Spross, der aus der Erde treibt; es bedeutet wachsen, hervorbringen, leben. Die Reihe des Hervorbringens folgt dem Lauf der Jahreszeiten: Holz nährt das Feuer, Feuer die Erde, Erde das Metall, Metall das Wasser und Wasser das Holz. Dong Zhongshu, der einflussreichste Gelehrte der Han-Zeit, nennt dieses Verhältnis das von Vater und Sohn (\textit{Chunqiu fanlu}, „Die Bedeutung der fünf Elemente“).
 
-\textbf{Du gibst Kraft an dein „Kind“ weiter. Was du nährst, wächst durch dich.}\par
+Die Medizin spricht von Mutter und Kind ({\cjk 母子} mǔ zǐ): Das nährende Element ist die Mutter, das genährte das Kind. Daraus folgt einer ihrer bekanntesten Grundsätze: „Bei Leere stärke die Mutter“ ({\cjk 虛者補其母} xū zhě bǔ qí mǔ; \textit{Nanjing} 69). Was schwach ist, wird nicht unmittelbar gestärkt, sondern über das, was es nährt.
+
+Hervorbringen allein wäre maßloses Wachstum. Erst zusammen mit dem Bändigen ergibt es einen Kreislauf, der sich selbst im Gleichgewicht hält.
+\end{minipage}
+\end{orakelblock}
+\newpage
+\begin{orakelblock}
+\diagbox{\beziehungsbrett{1}}\par
+\medskip
+\textbf{Die Mutter nährt das Kind. Was genährt wird, wächst.}\par
 \smallskip
-\lichtschatten{Nähren ist die einfachste und schönste Bewegung: Du gibst weiter, was du hast, und etwas wächst daran. Wie die Mutter das Kind, wie das Holz das Feuer, wie der Regen den Baum. Wer nährt, verliert nichts. Er wird Teil von etwas, das größer ist als er selbst.}
-  {Nähren wird zum Erschöpfen: Du gibst und gibst, bis nichts mehr da ist. Oder es wird zum Verwöhnen, das dem anderen das eigene Wachsen abnimmt. Manchmal steckt hinter dem Geben auch der Wunsch, gebraucht zu werden. Nähre, aber vergiss nicht, selbst zu trinken.}
+\lichtschatten{Nähren ist die einfachste und schönste Bewegung: Was man hat, gibt man weiter, und etwas wächst daran. Wie die Mutter das Kind, wie das Holz das Feuer, wie der Regen den Baum. Wer nährt, verliert nichts. Er wird Teil von etwas, das größer ist als er selbst.}
+  {Nähren kann zum Erschöpfen werden: Wer gibt und gibt, hat bald nichts mehr. Oder es wird zum Verwöhnen, das dem anderen das eigene Wachsen abnimmt. Manchmal steckt hinter dem Geben auch der Wunsch, gebraucht zu werden. Wer nährt und selbst nie trinkt, vertrocknet.}
 \linkteil
 {\small Alle fünf Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Holz-Feuer}{\mypair{Holz}{Feuer}}} \hfill \mbox{\hyperlink{paar:Feuer-Erde}{\mypair{Feuer}{Erde}}} \hfill \mbox{\hyperlink{paar:Erde-Metall}{\mypair{Erde}{Metall}}} \hfill \mbox{\hyperlink{paar:Metall-Wasser}{\mypair{Metall}{Wasser}}} \hfill \mbox{\hyperlink{paar:Wasser-Holz}{\mypair{Wasser}{Holz}}}\par
 \end{orakelblock}
@@ -896,20 +1144,31 @@ Jedes Bild zeigt seine Richtung zweimal: schwarz von außen, von der Ecke oben, 
 \begin{orakelblock}
 \hypertarget{beziehung:4}{{\Large\bfseries −1}}\par
 \smallskip
-\beziehungsbrett{4}\par
+\diagbox{\richtungskreis{4}}\par
 \smallskip
 {\large\bfseries\color{ueberschriftfarbe} Annehmen}\par
 {\cjk 泄}~xiè\par
 \smallskip
 
 \textit{Im Wandlungskreis: ein Schritt zurück, gegen den Sheng-Zyklus.}\\
-\textit{Auf dem Brett: gegen den Uhrzeigersinn außen auf dem Ring oder innen auf dem Pentagon zurück.}\par
-\smallskip
+\textit{Im Pentagame: gegen den Uhrzeigersinn außen auf dem Ring oder innen auf dem Pentagon zurück.}\par
+\medskip
+\begin{minipage}{\textwidth}\small\setlength{\parindent}{0pt}\setlength{\parskip}{0.5ex}
+{\cjk 泄} xiè bedeutet ablassen, abfließen lassen. Die Richtung kehrt das Hervorbringen um: Das Kind wendet sich der Mutter zu und zehrt von ihr. Die Tradition sieht darin zweierlei.
 
-\textbf{Du nimmst an, was deine „Mutter“ dir gibt, die Quelle, die dich nährt.}\par
+Im Gleichgewicht ist es der sanfteste Weg, ein Übermaß abzubauen. Die Medizin sagt: „Bei Fülle leite über das Kind ab“ ({\cjk 實者瀉其子} shí zhě xiè qí zǐ; \textit{Nanjing} 69). Was zu viel hat, gibt an das ab, was ihm folgt, und findet so sein Maß.
+
+Ist das Kind aber selbst geschwächt, nimmt es der Mutter mehr, als sie geben kann. Dann heißt es, das Kind stehle der Mutter die Kraft ({\cjk 子盜母氣} zǐ dào mǔ qì). Annehmen braucht deshalb Maß: Es nährt nur, solange die Quelle nicht erschöpft wird.
+\end{minipage}
+\end{orakelblock}
+\newpage
+\begin{orakelblock}
+\diagbox{\beziehungsbrett{4}}\par
+\medskip
+\textbf{Das Kind nimmt von der Mutter. Wer annimmt, wird genährt.}\par
 \smallskip
-\lichtschatten{Annehmen heißt, sich nähren zu lassen: von dem, was dich hervorgebracht hat, von Menschen, Orten, Erinnerungen, von der Stille. Zugleich nimmst du der Mutter etwas von ihrer Fülle ab: In der Tradition ist das der sanfteste Weg, ein Übermaß auszugleichen.}
-  {Das Kind zehrt an der Mutter: Wer immer nur nimmt, erschöpft die Quelle. Manchmal fällt es auch schwer, überhaupt etwas anzunehmen. Nimm an, was dir gegeben wird, und danke dafür; dann bleibt die Quelle lebendig.}
+\lichtschatten{Annehmen heißt, sich nähren zu lassen: von der eigenen Herkunft, von Menschen, Orten, Erinnerungen, von der Stille. Zugleich nimmt das Kind der Mutter etwas von ihrer Fülle ab: In der Tradition ist das der sanfteste Weg, ein Übermaß auszugleichen.}
+  {Das Kind zehrt an der Mutter: Wer immer nur nimmt, erschöpft die Quelle. Wer gar nichts annehmen kann, verdurstet neben ihr.}
 \linkteil
 {\small Alle fünf Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Holz-Wasser}{\mypair{Holz}{Wasser}}} \hfill \mbox{\hyperlink{paar:Feuer-Holz}{\mypair{Feuer}{Holz}}} \hfill \mbox{\hyperlink{paar:Erde-Feuer}{\mypair{Erde}{Feuer}}} \hfill \mbox{\hyperlink{paar:Metall-Erde}{\mypair{Metall}{Erde}}} \hfill \mbox{\hyperlink{paar:Wasser-Metall}{\mypair{Wasser}{Metall}}}\par
 \end{orakelblock}
@@ -919,20 +1178,31 @@ Jedes Bild zeigt seine Richtung zweimal: schwarz von außen, von der Ecke oben, 
 \begin{orakelblock}
 \hypertarget{beziehung:2}{{\Large\bfseries +2}}\par
 \smallskip
-\beziehungsbrett{2}\par
+\diagbox{\richtungskreis{2}}\par
 \smallskip
 {\large\bfseries\color{ueberschriftfarbe} Bändigen}\par
 {\cjk 克}~kè\par
 \smallskip
 
 \textit{Im Wandlungskreis: zwei Schritte vorwärts, der Ke-Zyklus.}\\
-\textit{Auf dem Brett: gegen den Uhrzeigersinn vom Ring nach innen oder von innen zum Ring.}\par
-\smallskip
+\textit{Im Pentagame: gegen den Uhrzeigersinn vom Ring nach innen oder von innen zum Ring.}\par
+\medskip
+\begin{minipage}{\textwidth}\small\setlength{\parindent}{0pt}\setlength{\parskip}{0.5ex}
+{\cjk 克} kè bedeutet bezwingen, überwinden; ältere Texte sagen auch {\cjk 勝} shèng, siegen. Die Reihe – Holz bändigt Erde, Erde Wasser, Wasser Feuer, Feuer Metall, Metall Holz – bildet das Pentagramm im Inneren des Kreises. Gemeint ist nicht Zerstörung, sondern Kontrolle: Jedes Element hält das übernächste in Schranken und schützt es so vor seinem eigenen Übermaß.
 
-\textbf{Du setzt Grenzen und gibst Form. Was du bändigst, braucht deine Ordnung.}\par
+Erst Hervorbringen und Bändigen zusammen halten das Ganze lebendig. Zhang Jiebin, ein Arzt der Ming-Zeit, schreibt sinngemäß: Ohne Hervorbringen gäbe es kein Wachsen, ohne Bändigen würde das Übermaß zum Schaden (\textit{Leijing tuyi}).
+
+Wird das Bändigen selbst maßlos, spricht die Tradition von {\cjk 乘} chéng, Überwältigen: Ein Element im Übermaß drückt nieder, was es nur ordnen sollte (\textit{Suwen} 67).
+\end{minipage}
+\end{orakelblock}
+\newpage
+\begin{orakelblock}
+\diagbox{\beziehungsbrett{2}}\par
+\medskip
+\textbf{Grenzen geben Form. Was gebändigt wird, findet seine Ordnung.}\par
 \smallskip
 \lichtschatten{Bändigen heißt Form geben. Das Wasser braucht ein Ufer, das Feuer einen Herd, das Wachstum einen Schnitt. Wer bändigt, schützt das Lebendige davor, sich selbst zu zerstören. Gute Grenzen sind ein Ausdruck von Fürsorge.}
-  {Aus Bändigen wird Beherrschen, in der Tradition {\cjk 乘} chéng, das Überwältigen. Wer nur noch kontrolliert, erstickt, was er schützen wollte. Auch das Gegenteil gilt: Wer gar keine Grenzen setzt, lässt das Gegenüber allein. Frag dich ehrlich, ob deine Ordnung dient oder ob sie nur dich beruhigt.}
+  {Aus Bändigen wird Beherrschen, in der Tradition {\cjk 乘} chéng, das Überwältigen. Wer nur noch kontrolliert, erstickt, was er schützen wollte. Wer gar keine Grenzen setzt, lässt das Gegenüber allein.}
 \linkteil
 {\small Alle fünf Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Holz-Erde}{\mypair{Holz}{Erde}}} \hfill \mbox{\hyperlink{paar:Feuer-Metall}{\mypair{Feuer}{Metall}}} \hfill \mbox{\hyperlink{paar:Erde-Wasser}{\mypair{Erde}{Wasser}}} \hfill \mbox{\hyperlink{paar:Metall-Holz}{\mypair{Metall}{Holz}}} \hfill \mbox{\hyperlink{paar:Wasser-Feuer}{\mypair{Wasser}{Feuer}}}\par
 \end{orakelblock}
@@ -942,20 +1212,29 @@ Jedes Bild zeigt seine Richtung zweimal: schwarz von außen, von der Ecke oben, 
 \begin{orakelblock}
 \hypertarget{beziehung:3}{{\Large\bfseries −2}}\par
 \smallskip
-\beziehungsbrett{3}\par
+\diagbox{\richtungskreis{3}}\par
 \smallskip
 {\large\bfseries\color{ueberschriftfarbe} Sich stellen}\par
 {\cjk 侮}~wǔ\par
 \smallskip
 
 \textit{Im Wandlungskreis: zwei Schritte zurück, gegen den Ke-Zyklus.}\\
-\textit{Auf dem Brett: im Uhrzeigersinn vom Ring nach innen oder von innen zum Ring.}\par
-\smallskip
+\textit{Im Pentagame: im Uhrzeigersinn vom Ring nach innen oder von innen zum Ring.}\par
+\medskip
+\begin{minipage}{\textwidth}\small\setlength{\parindent}{0pt}\setlength{\parskip}{0.5ex}
+{\cjk 侮} wǔ bedeutet verhöhnen, missachten. Die Richtung kehrt das Bändigen um: Das gebändigte Element wendet sich gegen das, was es bändigt. Kapitel 67 des \textit{Suwen} beschreibt beides zusammen: Ist ein Element im Übermaß, so beherrscht es, was es bändigt, und verhöhnt, wovon es gebändigt wird ({\cjk 氣有餘則制己所勝而侮所不勝}). Ein klassisches Beispiel: Wird das Feuer übermächtig, trocknet es das Wasser aus, das es sonst löscht.
 
-\textbf{Du gehst auf das zu, was dich bändigt. Dort wirst du geprüft.}\par
+Die Tradition sieht in dieser Richtung vor allem eine Störung der Ordnung. Dieses Buch liest sie auch als Mut: sich dem zu stellen, was einen begrenzt, und daran geprüft zu werden. Ob daraus Auflehnung oder Bewährung wird, hängt vom Maß ab.
+\end{minipage}
+\end{orakelblock}
+\newpage
+\begin{orakelblock}
+\diagbox{\beziehungsbrett{3}}\par
+\medskip
+\textbf{Wer auf das zugeht, was ihn bändigt, wird geprüft.}\par
 \smallskip
-\lichtschatten{Sich stellen heißt, der eigenen Prüfung nicht auszuweichen. Du gehst auf das zu, was dich begrenzt, und schaust ihm in die Augen. Oft verliert das, was uns bändigt, seine Macht, sobald wir es ansehen. Die Tradition sieht in dieser Richtung vor allem eine Störung; hier ist sie auch Mut zur eigenen Prüfung.}
-  {Aus dem Sich-Stellen wird Auflehnung um jeden Preis, wie die Tradition sie beschreibt: Das Gebändigte verhöhnt seinen Bändiger und fordert jede Grenze heraus, auch die schützende. Oder du stellst dich nie und lässt dich ein Leben lang bändigen. Wähle deine Prüfungen mit Bedacht.}
+\lichtschatten{Sich stellen heißt, der eigenen Prüfung nicht auszuweichen. Wer sich stellt, geht auf das zu, was ihn begrenzt, und schaut ihm in die Augen. Oft verliert das, was uns bändigt, seine Macht, sobald wir es ansehen.}
+  {Aus dem Sich-Stellen wird Auflehnung um jeden Preis, wie die Tradition sie beschreibt: Das Gebändigte verhöhnt seinen Bändiger und fordert jede Grenze heraus, auch die schützende. Wer sich dagegen nie stellt, lässt sich ein Leben lang bändigen.}
 \linkteil
 {\small Alle fünf Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Holz-Metall}{\mypair{Holz}{Metall}}} \hfill \mbox{\hyperlink{paar:Feuer-Wasser}{\mypair{Feuer}{Wasser}}} \hfill \mbox{\hyperlink{paar:Erde-Holz}{\mypair{Erde}{Holz}}} \hfill \mbox{\hyperlink{paar:Metall-Feuer}{\mypair{Metall}{Feuer}}} \hfill \mbox{\hyperlink{paar:Wasser-Erde}{\mypair{Wasser}{Erde}}}\par
 \end{orakelblock}
@@ -964,7 +1243,7 @@ Jedes Bild zeigt seine Richtung zweimal: schwarz von außen, von der Ecke oben, 
 \addchap{Die 20 Paare}\markboth{Die 20 Paare}{\mbox{}}\label{kap:paare}
 
 \begin{einleitung}
-Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfolge. Zu jedem der fünf Elemente gibt es vier Paare, eines für jede Richtung, zusammen also 20. Zwei Paare, die aneinander anschließen, ergeben später ein Tripel: Holz, Feuer, Erde etwa besteht aus \textit{Holz nährt Feuer} und \textit{Feuer nährt Erde}.
+Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfolge und die Bewegung zwischen ihnen. Zu jedem der fünf Elemente gibt es vier Paare, eines für jede Richtung, zusammen also 20. Zwei Paare, die aneinander anschließen, ergeben später ein Tripel: Holz, Feuer, Erde etwa besteht aus \textit{Holz nährt Feuer} und \textit{Feuer nährt Erde}.
 
 \textbf{Zehn Verbindungen, zwanzig Paare.} Im Wandlungskreis gibt es zehn Verbindungen: fünf Bögen des Hervorbringens und fünf Linien des Bändigens. Jede lässt sich von beiden Enden aus lesen, und so werden daraus 20 Paare. \textit{Holz nährt Feuer} (+1) und \textit{Feuer nimmt Holz an} (−1) sind dieselbe Verbindung, einmal von der Mutter und einmal vom Kind aus gesehen. So hat jedes Paar sein Gegenstück. Ein Gegensatz wie Hell und Dunkel ist ein Paar trotzdem nicht, sondern eine gerichtete Beziehung zwischen zwei verschiedenen Kräften.
 
@@ -972,41 +1251,41 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
 
 \textbf{Gleichgewicht.} Hervorbringen und Bändigen brauchen einander. Dong Zhongshu fasst das Schema in einen Satz: „Benachbarte bringen einander hervor, übernächste besiegen einander“ ({\cjk 比相生而間相勝}; \textit{Chunqiu fanlu} 58). Der \textit{Neijing} ergänzt: „Übermaß schadet; was folgt, setzt ihm eine Grenze; durch die Grenze entstehen Wachsen und Wandlung“ ({\cjk 亢則害，承乃制，制則生化}; \textit{Suwen} 68). Auch das Nähren kann zu viel sein: Zu viel Wasser lässt das Holz faulen. Und das Bändigen ist nicht nur Zwang: Erst im Feuer wird das Eisen formbar, erst unter der Axt der Baum zum Balken. Darum zeigt sich in jedem Paar beides, das Gelingen und die Gefahr.
 
-\textbf{Bilder.} Jedes Paar hat ein eigenes Bild: einen Vorgang aus Natur oder Handwerk, wie er tatsächlich geschieht. Holz brennt, der Keim bricht durch die Erde, das Holz klemmt die Säge. Das Urteil nennt zuerst diesen Vorgang und dann, was er für dich bedeutet. Dieselben Bilder kehren in den Tripeln wieder.
+\textbf{Bilder.} Jedes Paar hat ein eigenes Bild: einen Vorgang aus Natur oder Handwerk, wie er tatsächlich geschieht. Holz brennt, der Keim bricht durch die Erde, das Holz klemmt die Säge. Das Urteil nennt nur diesen Vorgang; was er für dich bedeutet, sagen Licht und Schatten. Dieselben Bilder kehren in den Tripeln wieder.
 \end{einleitung}
 
 \newpage
 \markright{\element{Holz}}
-\paar{Holz}{Feuer}{Das Scheit}{Holz brennt und wird zu Licht und Wärme. Was du dir vorgenommen hast, entfacht Begeisterung.}
-  {Was du geplant hast, fängt Feuer, bei dir und bei anderen. Jetzt ist die Zeit, es zu zeigen und zu teilen. Der Plan wird dabei verbraucht, und das ist gut so: Dafür war er da.}
-  {Ein Feuer, das zu schnell brennt, frisst das Holz, bevor es Wärme gibt. Ein Scheit, das nie ins Feuer kommt, bleibt nur Holz.}
+\paar{Holz}{Feuer}{Das Brennen}{Holz brennt und wird zu Licht und Wärme.}
+  {Lass deinen Plan zünden. Was du vorbereitet hast, kann jetzt andere begeistern; zeig es und teile es. Dass der Plan dabei aufgebraucht wird, ist kein Verlust: Dafür war er da.}
+  {Wer seine Vorhaben zu schnell verfeuert, hat bald nichts mehr, woran er sich wärmen kann. Wer sie nie aus der Hand gibt, entzündet niemanden.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:1}{\mycombination[0.5em]{Holz}{Feuer}{Erde}~1}} & \mbox{\hyperlink{spruch:2}{\mycombination[0.5em]{Holz}{Feuer}{Metall}~2}} & \mbox{\hyperlink{spruch:3}{\mycombination[0.5em]{Holz}{Feuer}{Wasser}~3}} \\[0.3ex]
    \mbox{\hyperlink{spruch:34}{\mycombination[0.5em]{Erde}{Holz}{Feuer}~34}} & \mbox{\hyperlink{spruch:43}{\mycombination[0.5em]{Metall}{Holz}{Feuer}~43}} & \mbox{\hyperlink{spruch:49}{\mycombination[0.5em]{Wasser}{Holz}{Feuer}~49}}
    \end{tabular*}\par}
 \newpage
-\paar{Holz}{Wasser}{Die Wurzel}{Die Wurzel zieht Wasser aus der Tiefe. Bevor du weiterwächst, trinkst du.}
-  {Du wendest dich dem zu, was dich nährt: der Stille, dem Wissen, deiner Herkunft. Das ist kein Stillstand. Die Wurzel arbeitet, auch wenn oben nichts zu sehen ist.}
-  {Ein Baum, der nur nach oben wächst, vertrocknet im ersten heißen Sommer. Einer, der nur in die Tiefe treibt, kommt nie ans Licht.}
+\paar{Holz}{Wasser}{Die Wurzel}{Die Wurzel zieht Wasser aus der Tiefe.}
+  {Trink, bevor du weiterwächst. Wende dich dem zu, was dich nährt: der Stille, dem Wissen, deiner Herkunft. Das ist kein Stillstand; in dieser Zeit sammelt sich die Kraft, die später nach oben drängt.}
+  {Wer nur nach außen wächst, hat in der ersten Dürre nichts, woraus er schöpfen kann. Wer sich nur in die Tiefe zurückzieht, kommt nie ans Licht.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~4}} & \mbox{\hyperlink{spruch:5}{\mycombination[0.5em]{Holz}{Wasser}{Feuer}~5}} & \mbox{\hyperlink{spruch:6}{\mycombination[0.5em]{Holz}{Wasser}{Erde}~6}} \\[0.3ex]
    \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~16}} & \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~35}} & \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~44}}
    \end{tabular*}\par}
 \newpage
-\paar{Holz}{Erde}{Der Keim}{Der Keim bricht durch die verkrustete Erde. Dein Wille lockert, was festgefahren war.}
-  {Was lange fest lag, kommt in Bewegung, weil etwas in dir wachsen will: Gewohnheiten, Abläufe, ein Boden, auf dem nichts mehr geschah. Ein Keim ist zart und bricht doch die Kruste. Wo er durch ist, dringen Luft und Regen in den Boden.}
-  {Ein Keim, der zu tief liegt, verbraucht seine Kraft, bevor er das Licht erreicht. Einer, der die Kruste nicht durchbricht, erstickt darunter.}
+\paar{Holz}{Erde}{Der Keim}{Der Keim durchbricht die Erde.}
+  {Brich auf, was festgefahren ist. Gewohnheiten, Abläufe, eingefahrene Beziehungen: Etwas in dir will wachsen und braucht Raum. Dein Wille ist zart und doch stärker als die Kruste. Wo du durchbrichst, kommt auch für andere wieder Bewegung hinein.}
+  {Wer sein Vorhaben zu tief vergräbt, verbraucht seine Kraft, bevor es ans Licht kommt. Wer vor jeder Kruste zurückweicht, erstickt darunter.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:7}{\mycombination[0.5em]{Holz}{Erde}{Metall}~7}} & \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~8}} & \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~9}} \\[0.3ex]
    \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~17}} & \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Holz}{Erde}~45}} & \mbox{\hyperlink{spruch:50}{\mycombination[0.5em]{Wasser}{Holz}{Erde}~50}}
    \end{tabular*}\par}
 \newpage
-\paar{Holz}{Metall}{Die Säge}{Das Holz klemmt die Säge. Du gibst nicht nach, wo man dich zurechtschneiden will.}
-  {Man will dich kürzen, stutzen, passend machen: mit Regeln, Kritik, Erwartungen. Du hältst dagegen, nicht mit Gewalt, sondern mit deiner eigenen Spannung. Was gewachsen ist, lässt sich nicht beliebig zerteilen.}
-  {Ein Stamm, der jede Säge klemmt, wird am Ende mit der Axt gefällt. Wer jedem Schnitt nachgibt, wird zu Brettern nach fremdem Maß.}
+\paar{Holz}{Metall}{Die Säge}{Grünes Holz klemmt die Säge.}
+  {Gib nicht jedem Anspruch nach. Man will dich kleiner, bequemer, gefälliger: mit Regeln, Kritik, Erwartungen. Halte dagegen, nicht mit Gewalt, sondern mit deiner eigenen Spannung, mit dem, was in dir gewachsen ist.}
+  {Wer jedem Anspruch widersteht, wird am Ende mit Gewalt gebrochen. Wer jedem nachgibt, wird nach fremdem Maß zurechtgesägt.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~10}} & \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Metall}{Erde}~11}} & \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~12}} \\[0.3ex]
@@ -1014,36 +1293,36 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \end{tabular*}\par}
 \newpage
 \markright{\element{Feuer}}
-\paar{Feuer}{Erde}{Die Asche}{Das Feuer brennt herunter, und seine Asche düngt den Boden. Aus deiner Begeisterung wird etwas, das trägt.}
-  {Was du mit Leidenschaft begonnen hast, kommt zur Ruhe und wird fruchtbar. Die Flammen sind kleiner geworden, aber nichts ist verloren. Auf diesem Boden können andere säen.}
-  {Wer nur noch von der Asche lebt, sät nichts mehr. Wer immer nur lodert, düngt keinen Boden.}
+\paar{Feuer}{Erde}{Die Asche}{Das Feuer erlischt, und seine Asche düngt den Boden.}
+  {Lass die Begeisterung zur Ruhe kommen. Die Flammen sind kleiner geworden, aber nichts ist verloren: Was du mit Leidenschaft begonnen hast, wird jetzt fruchtbar. Auf diesem Boden können andere säen.}
+  {Wer nur noch von vergangener Begeisterung lebt, sät nichts Neues. Wer immer nur lodert, hinterlässt keinen Boden, auf dem etwas wachsen kann.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:13}{\mycombination[0.5em]{Feuer}{Erde}{Metall}~13}} & \mbox{\hyperlink{spruch:14}{\mycombination[0.5em]{Feuer}{Erde}{Wasser}~14}} & \mbox{\hyperlink{spruch:15}{\mycombination[0.5em]{Feuer}{Erde}{Holz}~15}} \\[0.3ex]
    \mbox{\hyperlink{spruch:1}{\mycombination[0.5em]{Holz}{Feuer}{Erde}~1}} & \mbox{\hyperlink{spruch:46}{\mycombination[0.5em]{Metall}{Feuer}{Erde}~46}} & \mbox{\hyperlink{spruch:55}{\mycombination[0.5em]{Wasser}{Feuer}{Erde}~55}}
    \end{tabular*}\par}
 \newpage
-\paar{Feuer}{Holz}{Die Flamme}{Die Flamme greift nach dem Scheit. Du holst dir neue Nahrung für dein Feuer.}
-  {Deine Begeisterung braucht Stoff, und du weißt, wo du ihn findest: in Plänen und Ideen, in den Menschen und Vorhaben, die dich einmal entzündet haben. Greif zu. Was dich nährt, darf dich nähren.}
-  {Ein Feuer, das alles Holz in Reichweite verschlingt, steht bald im Leeren. Eines, das nicht zugreift, geht aus, obwohl das Holz daneben liegt.}
+\paar{Feuer}{Holz}{Die Flamme}{Die Flamme greift nach dem Holz.}
+  {Nimm, was dich nährt. Deine Leidenschaft braucht Stoff: Pläne, Ideen, Menschen und Vorhaben, die dich einmal entzündet haben. Greif zu, ohne dich zu schämen.}
+  {Wer alles verschlingt, was ihm begegnet, steht bald im Leeren. Wer nicht zugreift, erlischt, obwohl ihm genug angeboten wird.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~16}} & \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~17}} & \mbox{\hyperlink{spruch:18}{\mycombination[0.5em]{Feuer}{Holz}{Metall}~18}} \\[0.3ex]
    \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~28}} & \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~47}} & \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~56}}
    \end{tabular*}\par}
 \newpage
-\paar{Feuer}{Metall}{Die Esse}{Das Feuer macht das Eisen weich. In deiner Glut wird formbar, was starr war.}
-  {Vor dir liegt etwas Hartes: eine Regel, eine verhärtete Haltung, eine festgefahrene Lage. Mit Gewalt richtest du nichts aus, mit Wärme schon. Halte es in deine Glut, bis es nachgibt, und dann gib ihm Form.}
-  {Zu viel Hitze verbrennt das Eisen. Bei zu wenig schmiedet man kaltes Eisen, und kaltes Eisen bricht.}
+\paar{Feuer}{Metall}{Die Hitze}{Hitze macht Metall geschmeidig.}
+  {Bring in Bewegung, was erstarrt ist. Eine Regel, eine verhärtete Haltung, eine festgefahrene Lage: Mit kalter Gewalt richtest du nichts aus. Bleib beharrlich dran, bis es nachgibt, und gib ihm dann Form.}
+  {Wer zu hitzig drängt, verdirbt, was er formen wollte. Wer zu kühl bleibt, zerbricht es beim ersten Versuch.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:19}{\mycombination[0.5em]{Feuer}{Metall}{Wasser}~19}} & \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~20}} & \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~21}} \\[0.3ex]
    \mbox{\hyperlink{spruch:2}{\mycombination[0.5em]{Holz}{Feuer}{Metall}~2}} & \mbox{\hyperlink{spruch:29}{\mycombination[0.5em]{Erde}{Feuer}{Metall}~29}} & \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~57}}
    \end{tabular*}\par}
 \newpage
-\paar{Feuer}{Wasser}{Der Schauer}{Das Feuer zischt im Regen und brennt weiter. Du hältst deine Begeisterung gegen die Ernüchterung.}
-  {Von außen kommt Kühle: Zweifel, nüchterne Einwände, ein kaltes Wort. Du weichst nicht aus und lässt dich nicht löschen. Was nach dem Regen noch brennt, ist echt.}
-  {Ein Feuer, das gegen jeden Schauer anlodert, verbraucht sein Holz im Dampf. Eines, das beim ersten Tropfen ausgeht, war nur Zunder.}
+\paar{Feuer}{Wasser}{Der Schauer}{Das Feuer zischt im Regen und brennt dennoch weiter.}
+  {Erlaube der Ernüchterung nicht, deine Leidenschaft zu löschen. Zweifel, nüchterne Einwände, ein kaltes Wort: Weich ihnen nicht aus. Was danach noch brennt, ist echt.}
+  {Wer gegen jeden Einwand anlodert, verbraucht sich im Streit. Wer beim ersten Zweifel erlischt, hat nie wirklich gebrannt.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~22}} & \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~23}} & \mbox{\hyperlink{spruch:24}{\mycombination[0.5em]{Feuer}{Wasser}{Erde}~24}} \\[0.3ex]
@@ -1051,36 +1330,36 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \end{tabular*}\par}
 \newpage
 \markright{\element{Erde}}
-\paar{Erde}{Metall}{Das Erz}{Im Gestein wächst über lange Zeit das Erz. Aus deiner Geduld und Sorgfalt entsteht etwas Kostbares.}
-  {Du hast gepflegt, gehütet, durchgetragen, oft ohne zu sehen, wozu. Jetzt zeigt sich, was darin herangereift ist: etwas Klares, Wertvolles, das bleibt. Lass es ans Licht.}
-  {Ein Berg, der zu schnell ausgebeutet wird, ist bald leer. Einer, in dem nie gegraben wird, behält seinen Schatz für sich.}
+\paar{Erde}{Metall}{Das Erz}{Im Gestein reift das Erz.}
+  {Vertrau der langen Geduld. Du hast gepflegt, gehütet, durchgetragen, oft ohne zu sehen, wozu. Jetzt zeigt sich, was darin herangereift ist: etwas Klares und Wertvolles. Lass es ans Licht.}
+  {Wer das Gereifte zu schnell verbraucht, steht bald mit leeren Händen da. Wer es nie herausgibt, behält seinen Schatz für sich.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:25}{\mycombination[0.5em]{Erde}{Metall}{Wasser}~25}} & \mbox{\hyperlink{spruch:26}{\mycombination[0.5em]{Erde}{Metall}{Holz}~26}} & \mbox{\hyperlink{spruch:27}{\mycombination[0.5em]{Erde}{Metall}{Feuer}~27}} \\[0.3ex]
    \mbox{\hyperlink{spruch:7}{\mycombination[0.5em]{Holz}{Erde}{Metall}~7}} & \mbox{\hyperlink{spruch:13}{\mycombination[0.5em]{Feuer}{Erde}{Metall}~13}} & \mbox{\hyperlink{spruch:58}{\mycombination[0.5em]{Wasser}{Erde}{Metall}~58}}
    \end{tabular*}\par}
 \newpage
-\paar{Erde}{Feuer}{Das Gefäß}{Im Feuer wird der Ton zum Gefäß. Du nimmst die Wärme an, und dein Halt bekommt Gestalt.}
-  {Du bist verlässlich, tragfähig, geduldig. Jetzt lässt du dich erwärmen: von Freude, von Nähe, von einer Begeisterung, die nicht deine eigene sein muss. Erst diese Hitze macht aus weichem Ton ein Gefäß, das hält.}
-  {Ton, der zu schnell ins Feuer kommt, springt. Ton, der nie gebrannt wird, zerfällt im ersten Regen.}
+\paar{Erde}{Feuer}{Das Gefäß}{Im Feuer wird weicher Ton fest.}
+  {Lass dich von der Glut verwandeln. Du bist verlässlich, tragfähig, geduldig. Jetzt darfst du dich erwärmen lassen: von Freude, von Nähe, von einer Begeisterung, die nicht deine eigene sein muss. Erst sie gibt deiner Verlässlichkeit Gestalt.}
+  {Wer sich zu schnell mitreißen lässt, bekommt Risse. Wer sich nie berühren lässt, bleibt formlos.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~28}} & \mbox{\hyperlink{spruch:29}{\mycombination[0.5em]{Erde}{Feuer}{Metall}~29}} & \mbox{\hyperlink{spruch:30}{\mycombination[0.5em]{Erde}{Feuer}{Wasser}~30}} \\[0.3ex]
    \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~8}} & \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~40}} & \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~59}}
    \end{tabular*}\par}
 \newpage
-\paar{Erde}{Wasser}{Der Deich}{Der Deich hält das Wasser. Du gibst dem Fließenden Halt und Richtung.}
-  {Um dich herum ist viel in Bewegung: Gefühle, Ideen, Menschen, die nicht wissen, wohin. Bei dir finden sie eine Grenze, an der sie sich sammeln können. Das ist keine Enge, sondern Schutz.}
-  {Ein Deich ohne Auslass bricht irgendwann unter dem Druck des Wassers. Ohne Deich läuft das Land voll.}
+\paar{Erde}{Wasser}{Der Wall}{Der Wall hält das Wasser.}
+  {Gib dem Fließenden Halt. Um dich herum ist viel in Bewegung: Gefühle, Ideen, Menschen, die nicht wissen, wohin. Bei dir finden sie eine Grenze, an der sie sich sammeln können. Das ist keine Enge, sondern Schutz.}
+  {Wer seine Grenzen nie überprüft, wird von dem überrascht, was sie unterspült. Wer keine zieht, lässt alles über die Ufer treten.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:31}{\mycombination[0.5em]{Erde}{Wasser}{Holz}~31}} & \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~32}} & \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~33}} \\[0.3ex]
    \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~9}} & \mbox{\hyperlink{spruch:14}{\mycombination[0.5em]{Feuer}{Erde}{Wasser}~14}} & \mbox{\hyperlink{spruch:41}{\mycombination[0.5em]{Metall}{Erde}{Wasser}~41}}
    \end{tabular*}\par}
 \newpage
-\paar{Erde}{Holz}{Der feste Grund}{Der Boden hält die Wurzel fest. Du lässt dich nicht von allem umgraben, was in dich hineinwachsen will.}
-  {Etwas Neues drängt zu dir herein: ein Plan, ein Mensch, eine Veränderung. Du gibst nicht einfach nach. Aber gerade indem du festhältst, gibst du dem Neuen den Halt, den es zum Stehen braucht.}
-  {Boden, der zu fest ist, lässt keine Wurzel ein, und nichts wächst darauf. Boden, der überall nachgibt, hält keinen Baum im Sturm.}
+\paar{Erde}{Holz}{Der feste Grund}{Fester Boden hält die Wurzel.}
+  {Lass dich nicht umgraben. Etwas Neues drängt zu dir herein: ein Plan, ein Mensch, eine Veränderung. Gib nicht einfach nach. Gerade indem du festhältst, gibst du dem Neuen den Halt, den es zum Stehen braucht.}
+  {Wer zu fest ist, lässt nichts Neues ein. Wer überall nachgibt, kann nichts halten, wenn der Sturm kommt.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:34}{\mycombination[0.5em]{Erde}{Holz}{Feuer}~34}} & \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~35}} & \mbox{\hyperlink{spruch:36}{\mycombination[0.5em]{Erde}{Holz}{Metall}~36}} \\[0.3ex]
@@ -1088,36 +1367,36 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \end{tabular*}\par}
 \newpage
 \markright{\element{Metall}}
-\paar{Metall}{Wasser}{Der Tau}{Auf kaltem Metall sammelt sich Tau. Aus deiner Klarheit werden Ruhe und Tiefe.}
-  {Du hast entschieden, getrennt, aufgeräumt. Nun setzt sich etwas ab, still und klar wie Tropfen am Morgen. Was du geklärt hast, beginnt zu fließen.}
-  {Metall, das nie abkühlt, sammelt keinen Tau. Ist es zu kalt, setzt sich statt Tau nur Reif an.}
+\paar{Metall}{Wasser}{Der Tau}{Auf kaltem Metall schlägt sich Wasser nieder.}
+  {Lass das Geklärte sich setzen. Du hast entschieden, getrennt, aufgeräumt. Nun stellt sich eine Ruhe ein, still und klar. Was du geklärt hast, beginnt zu fließen.}
+  {Wer nie zur Ruhe kommt, bei dem setzt sich nichts. Wer zu kühl wird, erstarrt.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:37}{\mycombination[0.5em]{Metall}{Wasser}{Holz}~37}} & \mbox{\hyperlink{spruch:38}{\mycombination[0.5em]{Metall}{Wasser}{Feuer}~38}} & \mbox{\hyperlink{spruch:39}{\mycombination[0.5em]{Metall}{Wasser}{Erde}~39}} \\[0.3ex]
    \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~10}} & \mbox{\hyperlink{spruch:19}{\mycombination[0.5em]{Feuer}{Metall}{Wasser}~19}} & \mbox{\hyperlink{spruch:25}{\mycombination[0.5em]{Erde}{Metall}{Wasser}~25}}
    \end{tabular*}\par}
 \newpage
-\paar{Metall}{Erde}{Der Berg}{Das Erz kommt aus dem Berg. Du wendest dich dem zu, was dich hervorgebracht hat.}
-  {Hinter deiner Klarheit und Strenge liegt ein Grund, der dich getragen hat: Menschen, die für dich gesorgt haben, ein Ort, eine lange Geduld. Kehr dorthin zurück und nimm an, was er dir gibt. Deine Härte bekommt dadurch Wärme.}
-  {Wer im Berg bleibt, wird nie zu Metall. Wer den Berg vergisst, weiß nicht mehr, woraus er gemacht ist.}
+\paar{Metall}{Erde}{Der Berg}{Das Erz kommt aus dem Berg.}
+  {Kehr zurück zu dem, was dich hervorgebracht hat. Hinter deiner Klarheit und Strenge liegt ein Grund, der dich getragen hat: Menschen, die für dich gesorgt haben, ein Ort, eine lange Geduld. Nimm an, was er dir gibt; deine Härte bekommt dadurch Wärme.}
+  {Wer nie von seiner Herkunft loskommt, wird nie er selbst. Wer sie vergisst, weiß nicht mehr, woraus er gemacht ist.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~40}} & \mbox{\hyperlink{spruch:41}{\mycombination[0.5em]{Metall}{Erde}{Wasser}~41}} & \mbox{\hyperlink{spruch:42}{\mycombination[0.5em]{Metall}{Erde}{Holz}~42}} \\[0.3ex]
    \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Metall}{Erde}~11}} & \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~20}} & \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~52}}
    \end{tabular*}\par}
 \newpage
-\paar{Metall}{Holz}{Die Axt}{Die Axt fällt den Baum. Du triffst eine klare Entscheidung und schneidest ab, was zu viel ist.}
-  {Etwas ist zu groß geworden, zu wild, zu verzweigt. Du siehst es und handelst: ein Schnitt, ein Nein, ein Ende. Das ist nicht kalt. Wo ein Baum fällt, kommt Licht auf den Boden, und Neues kann wachsen.}
-  {Wer jeden Baum fällt, steht im Kahlschlag. Wer nie schlägt, dem wächst der Wald zu.}
+\paar{Metall}{Holz}{Die Klinge}{Die Klinge schneidet das Holz.}
+  {Entscheide klar. Etwas ist zu groß geworden, zu wild, zu verzweigt. Sieh es und handle: ein Nein, ein Ende, ein Abschied. Das ist nicht kalt. Wo etwas Altes fällt, kann Neues wachsen.}
+  {Wer alles beendet, steht am Ende allein. Wer nie etwas beendet, dem wächst das Leben zu.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:43}{\mycombination[0.5em]{Metall}{Holz}{Feuer}~43}} & \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~44}} & \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Holz}{Erde}~45}} \\[0.3ex]
    \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~21}} & \mbox{\hyperlink{spruch:26}{\mycombination[0.5em]{Erde}{Metall}{Holz}~26}} & \mbox{\hyperlink{spruch:53}{\mycombination[0.5em]{Wasser}{Metall}{Holz}~53}}
    \end{tabular*}\par}
 \newpage
-\paar{Metall}{Feuer}{Das Eisen}{Das Eisen hält der Glut stand. Du setzt dich der Hitze aus und behältst deine Form.}
-  {Um dich herum wird es heiß: Leidenschaft, Druck, Gefühle, die dich verformen könnten. Du weichst nicht aus. Du bleibst, was du bist, und wirst dabei nicht spröde, sondern lebendiger.}
-  {Wer jeder Hitze standhalten will, wird spröde wie zu hart gehärteter Stahl. Wer jeder Hitze nachgibt, verliert seine Form.}
+\paar{Metall}{Feuer}{Die Tür}{Die eiserne Tür hält der Glut stand.}
+  {Bleib dir treu, wenn es heiß wird. Leidenschaft, Druck, Gefühle, die dich verformen könnten: Setz dich ihnen aus, ohne dich zu verlieren. Du darfst die Hitze spüren und behältst doch deine Form.}
+  {Wer jeder Hitze standhalten will, wird spröde. Wer jeder nachgibt, verliert seine Form.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:46}{\mycombination[0.5em]{Metall}{Feuer}{Erde}~46}} & \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~47}} & \mbox{\hyperlink{spruch:48}{\mycombination[0.5em]{Metall}{Feuer}{Wasser}~48}} \\[0.3ex]
@@ -1125,36 +1404,36 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \end{tabular*}\par}
 \newpage
 \markright{\element{Wasser}}
-\paar{Wasser}{Holz}{Der Regen}{Der Regen tränkt die Wurzeln. Aus deiner Ruhe und deinem Wissen wächst etwas Neues.}
-  {Du hast lange still gelegen, gesammelt, nachgedacht. Jetzt gibst du davon ab, und etwas fängt an zu wachsen: ein Plan, ein Mensch, ein Vorhaben. Du musst nicht daran ziehen. Es wächst von selbst, wenn es genug zu trinken hat.}
-  {Zu viel Regen lässt die Wurzeln faulen. Bei zu wenig verdorrt der Trieb, bevor er stark ist.}
+\paar{Wasser}{Holz}{Der Regen}{Der Regen tränkt die Wurzeln.}
+  {Gib weiter, was du gesammelt hast. Du hast lange still gelegen, nachgedacht, gelernt. Jetzt fängt durch dich etwas an zu wachsen: ein Plan, ein Mensch, ein Vorhaben. Du musst nicht daran ziehen; es wächst, wenn es genug zu trinken hat.}
+  {Wer zu viel gibt, erstickt, was er fördern will. Wer zu wenig gibt, lässt es verdorren.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:49}{\mycombination[0.5em]{Wasser}{Holz}{Feuer}~49}} & \mbox{\hyperlink{spruch:50}{\mycombination[0.5em]{Wasser}{Holz}{Erde}~50}} & \mbox{\hyperlink{spruch:51}{\mycombination[0.5em]{Wasser}{Holz}{Metall}~51}} \\[0.3ex]
    \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~22}} & \mbox{\hyperlink{spruch:31}{\mycombination[0.5em]{Erde}{Wasser}{Holz}~31}} & \mbox{\hyperlink{spruch:37}{\mycombination[0.5em]{Metall}{Wasser}{Holz}~37}}
    \end{tabular*}\par}
 \newpage
-\paar{Wasser}{Metall}{Die Quelle}{Die Quelle entspringt dem Fels. Du kehrst zu dem zurück, was du klar weißt.}
-  {In der Unruhe suchst du etwas Festes, und du findest es in dir: Grundsätze, Gewissheiten, ein klares Ja und ein klares Nein. Daraus fließt dein Handeln, frisch wie Wasser aus dem Stein.}
-  {Wasser, das zu lange im Fels steht, wird hart. Wasser, das keinen Fels findet, versickert.}
+\paar{Wasser}{Metall}{Die Quelle}{Die Quelle entspringt dem Fels.}
+  {Kehr zu dem zurück, was du klar weißt. In der Unruhe suchst du etwas Festes, und du findest es in dir: Grundsätze, Gewissheiten, ein klares Ja und ein klares Nein. Daraus kann dein Handeln frisch hervorgehen.}
+  {Wer zu lange an seinen Grundsätzen festhält, wird hart. Wer keine hat, versickert.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~52}} & \mbox{\hyperlink{spruch:53}{\mycombination[0.5em]{Wasser}{Metall}{Holz}~53}} & \mbox{\hyperlink{spruch:54}{\mycombination[0.5em]{Wasser}{Metall}{Feuer}~54}} \\[0.3ex]
    \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~4}} & \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~23}} & \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~32}}
    \end{tabular*}\par}
 \newpage
-\paar{Wasser}{Feuer}{Das Löschen}{Wasser löscht die Glut. Du bringst Ruhe in eine aufgeheizte Lage.}
-  {Um dich herum brennt es: Streit, Aufregung, Leidenschaften, die außer Kontrolle geraten. Du bleibst ruhig, und deine Ruhe breitet sich aus. Was eben noch loderte, kommt zur Besinnung.}
-  {Wer jedes Feuer löscht, sitzt bald im Kalten. Zu wenig Wasser zischt nur und verdampft.}
+\paar{Wasser}{Feuer}{Das Löschen}{Wasser löscht die Glut.}
+  {Bring Ruhe in die Aufregung. Um dich herum brennt es: Streit, Aufregung, Leidenschaften, die außer Kontrolle geraten. Bleib ruhig; deine Ruhe breitet sich aus, und was eben noch loderte, kommt zur Besinnung.}
+  {Wer jede Leidenschaft löscht, sitzt bald im Kalten. Wer zu zaghaft beschwichtigt, bewirkt nichts.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:55}{\mycombination[0.5em]{Wasser}{Feuer}{Erde}~55}} & \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~56}} & \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~57}} \\[0.3ex]
    \mbox{\hyperlink{spruch:5}{\mycombination[0.5em]{Holz}{Wasser}{Feuer}~5}} & \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~33}} & \mbox{\hyperlink{spruch:38}{\mycombination[0.5em]{Metall}{Wasser}{Feuer}~38}}
    \end{tabular*}\par}
 \newpage
-\paar{Wasser}{Erde}{Das Flussbett}{Der Fluss gräbt sich sein Bett. Du stellst dich deinen Grenzen und findest in ihnen deinen Weg.}
-  {Es gibt Grenzen, die du nicht einfach überspülen kannst. Du stellst dich ihnen, geduldig und beharrlich, Jahr um Jahr. Mit der Zeit formst du selbst das Ufer, das dich führt.}
-  {Ein Fluss, der sich zu tief eingräbt, findet aus seiner Schlucht nicht mehr heraus. Einer, der jedem Hindernis ausweicht, versandet in der Ebene.}
+\paar{Wasser}{Erde}{Die Rinne}{Wasser gräbt sich eine Rinne.}
+  {Stell dich deinen Grenzen. Manche kannst du nicht einfach überspülen. Arbeite dich an ihnen ab, geduldig und beharrlich, Jahr um Jahr. Mit der Zeit formst du selbst das Ufer, das dich führt.}
+  {Wer sich zu tief in einen Kampf eingräbt, findet nicht mehr heraus. Wer jedem Widerstand ausweicht, verliert sich in der Ebene.}
   {{\small Alle sechs Tripel:}\par\smallskip
    \begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}ll@{}}
    \mbox{\hyperlink{spruch:58}{\mycombination[0.5em]{Wasser}{Erde}{Metall}~58}} & \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~59}} & \mbox{\hyperlink{spruch:60}{\mycombination[0.5em]{Wasser}{Erde}{Holz}~60}} \\[0.3ex]
@@ -1166,13 +1445,13 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
 \addchap{Die zwölf Wendungen}\markboth{Die zwölf Wendungen}{\mbox{}}\label{kap:muster}
 
 \begin{einleitung}
-Eine Richtung führt von einem Element zu einem anderen. Folgen zwei Richtungen aufeinander, entsteht ein Doppelschritt: vom ersten Element über ein zweites zu einem dritten. Ein solcher Doppelschritt heißt hier Wendung. Mit ihm ist zugleich eine dritte Richtung gegeben, die vom Anfang unmittelbar zum Ende führt. Nach zweimal Nähren (+1, +1) etwa steht man zwei Schritte weiter im Kreis, und dorthin führt vom Anfang aus das Bändigen (+2).
+Eine Bewegung führt in einer der vier Richtungen von einem Element zu einem anderen. Folgen zwei Bewegungen aufeinander, entsteht ein Doppelschritt: vom ersten Element über ein zweites zu einem dritten. Die beiden Richtungen eines solchen Doppelschritts bilden eine Wendung. Mit ihm ist zugleich eine dritte Richtung gegeben, die vom Anfang unmittelbar zum Ende führt. Nach zweimal Nähren (+1, +1) etwa steht man zwei Schritte weiter im Kreis, und dorthin führt vom Anfang aus das Bändigen (+2).
 
 Für die erste Richtung gibt es vier Möglichkeiten, für die zweite nur drei, denn sie darf die erste nicht aufheben: Auf +1 folgt nie −1, auf +2 nie −2, sonst stünde man wieder am Anfang. So ergeben sich zwölf Wendungen.
 
 Eine Wendung ist an kein Element gebunden. Erst wenn sie bei einem bestimmten Element beginnt, wird aus ihr eines der 60 Tripel des folgenden Kapitels; unter jeder Wendung stehen deshalb die fünf Tripel, in denen sie vorkommt. Weil sie keinem Element gehört, sprechen ihre Sprüche nicht in Bildern aus der Natur, sondern von Lagen, wie Menschen sie erleben: von der Prüfung, der Unterweisung, dem Aufstand.
 
-Das Bild über jeder Wendung zeigt ihre zwei Richtungen als Pfeile auf dem Brett, wie bei den Richtungen schwarz von außen und rot von innen; die Ecke oben kann jedes Element sein. Spielzüge sind damit nicht gemeint. Das Brett macht nur sichtbar, wohin zwei Schritte im Wandlungskreis führen.
+Das Bild über jeder Wendung zeigt ihre zwei Richtungen als Pfeile im Pentagame, wie bei den Richtungen schwarz von außen und rot von innen; die Ecke oben kann jedes Element sein. Spielzüge sind damit nicht gemeint. Das Pentagame macht nur sichtbar, wohin zwei Schritte im Wandlungskreis führen.
 
 \textbf{Dreiecke.} Die drei Elemente einer Wendung bilden ein Dreieck. Liegen sie im Wandlungskreis nebeneinander, ist das Dreieck stumpf: Zwei Seiten verbinden benachbarte Elemente (±1), eine Seite übernächste (±2). Es ist vom Hervorbringen geprägt, ein Stück vom Kreis. Ist zwischen ihnen ein Element ausgelassen, ist das Dreieck spitz, mit zwei Seiten ±2 und einer Seite ±1. Es ist vom Bändigen geprägt, ein Stück vom Stern. Im Bild über jeder Wendung ist ihr Dreieck hellgelb hinterlegt.
 
@@ -1195,9 +1474,9 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{I \quad Der Strom}
 \begin{orakelblock}
 \musterkopf{I}{Der Strom}{1}{1}{Nähren}{Nähren}{Bändigen}
-\textbf{Was du gibst, wird weitergegeben und wächst über zwei Stufen. Am Ende bist du es, der ihm das Maß vorgibt, wie eine Großmutter dem Enkel.}\par
+\textbf{Eine Mutter nährt den Sohn, der Sohn sein Kind. Wenn es Maß braucht, hört man auf die Großmutter.}\par
 \smallskip
-\lichtschatten{Du setzt etwas in Gang, und es läuft weiter, von dir zu anderen und von ihnen weiter. Du musst nicht alles selbst tun. Aber du bleibst nicht außen vor: Gerade weil du am Anfang standest, hört man auf dich, wenn es Form braucht.}
+\lichtschatten{Gib weiter, und bleib in der Nähe. Was du in Gang gesetzt hast, läuft über andere weiter und wächst über dich hinaus. Du musst nicht alles selbst tun. Aber weil du am Anfang standest, hört man auf dich, wenn es Maß braucht.}
   {Wer alles weiterlaufen lässt, erkennt am Ende nicht wieder, was er angestoßen hat. Wer sich in jede Stufe einmischt, lässt den Strom nicht fließen.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:1}{\mycombination[0.5em]{Holz}{Feuer}{Erde}~1}} \hfill \mbox{\hyperlink{spruch:13}{\mycombination[0.5em]{Feuer}{Erde}{Metall}~13}} \hfill \mbox{\hyperlink{spruch:25}{\mycombination[0.5em]{Erde}{Metall}{Wasser}~25}} \hfill \mbox{\hyperlink{spruch:37}{\mycombination[0.5em]{Metall}{Wasser}{Holz}~37}} \hfill \mbox{\hyperlink{spruch:49}{\mycombination[0.5em]{Wasser}{Holz}{Feuer}~49}}\par
@@ -1207,9 +1486,9 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{II \quad Die Prüfung}
 \begin{orakelblock}
 \musterkopf{II}{Die Prüfung}{1}{2}{Nähren}{Bändigen}{Sich stellen}
-\textbf{Du stärkst, was das Strenge in Schach hält. Doch am Ende stehst du der Prüfung selbst gegenüber, und niemand kann sie für dich ablegen.}\par
+\textbf{Ein Lehrling dient seiner Meisterin. Dann steht er selbst vor der Prüfung.}\par
 \smallskip
-\lichtschatten{Du hast andere unterstützt, und mit ihrer Hilfe ist manches Harte weicher geworden. Das hat dich vorbereitet. Jetzt kommt die Prüfung, und du trittst selbst an. Du bist besser gerüstet, als du denkst.}
+\lichtschatten{Tritt selbst an. Du hast andere unterstützt, und mit ihrer Hilfe ist manches Harte weicher geworden. Das hat dich vorbereitet, aber die Prüfung kann dir niemand abnehmen. Du bist besser gerüstet, als du denkst.}
   {Wer sich nur auf seine Helfer verlässt, steht in der Prüfung mit leeren Händen da. Wer jede Prüfung meidet, erfährt nie, was er kann.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:2}{\mycombination[0.5em]{Holz}{Feuer}{Metall}~2}} \hfill \mbox{\hyperlink{spruch:14}{\mycombination[0.5em]{Feuer}{Erde}{Wasser}~14}} \hfill \mbox{\hyperlink{spruch:26}{\mycombination[0.5em]{Erde}{Metall}{Holz}~26}} \hfill \mbox{\hyperlink{spruch:38}{\mycombination[0.5em]{Metall}{Wasser}{Feuer}~38}} \hfill \mbox{\hyperlink{spruch:50}{\mycombination[0.5em]{Wasser}{Holz}{Erde}~50}}\par
@@ -1219,9 +1498,9 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{III \quad Die Unterweisung}
 \begin{orakelblock}
 \musterkopf{III}{Die Unterweisung}{1}{3}{Nähren}{Sich stellen}{Annehmen}
-\textbf{Du förderst, was sich bewähren muss. Während es sich stellt, erinnerst du dich, woher du selbst kommst.}\par
+\textbf{Eine Lehrerin begleitet ihren Schüler durch die Prüfung und lernt dabei selbst.}\par
 \smallskip
-\lichtschatten{Du gibst weiter, was du kannst, und siehst zu, wie es sich bewährt. Das ist mehr als Lehren. Wer erklärt, versteht selbst neu, und wer begleitet, erinnert sich an die eigenen Lehrer. Wer lehrt, lernt am meisten.}
+\lichtschatten{Lehre, und lerne dabei. Du gibst weiter, was du kannst, und siehst zu, wie es sich bewährt. Wer erklärt, versteht selbst neu, und wer begleitet, findet zu den eigenen Wurzeln zurück.}
   {Ein Lehrer, der nur gibt, wird belehrend. Einer, der seine Schüler nicht in die Prüfung lässt, lernt nichts von ihnen.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:3}{\mycombination[0.5em]{Holz}{Feuer}{Wasser}~3}} \hfill \mbox{\hyperlink{spruch:15}{\mycombination[0.5em]{Feuer}{Erde}{Holz}~15}} \hfill \mbox{\hyperlink{spruch:27}{\mycombination[0.5em]{Erde}{Metall}{Feuer}~27}} \hfill \mbox{\hyperlink{spruch:39}{\mycombination[0.5em]{Metall}{Wasser}{Erde}~39}} \hfill \mbox{\hyperlink{spruch:51}{\mycombination[0.5em]{Wasser}{Holz}{Metall}~51}}\par
@@ -1231,9 +1510,9 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{IV \quad Die Wurzelsuche}
 \begin{orakelblock}
 \musterkopf{IV}{Die Wurzelsuche}{4}{4}{Annehmen}{Annehmen}{Sich stellen}
-\textbf{Du gehst zurück zu deinen Ursprüngen und noch hinter sie. Dort findest du, was dich bis heute begrenzt, und stellst dich ihm.}\par
+\textbf{Eine fragt nach ihrem Vater und nach dessen Vater. Dort findet sie, was sie bis heute begrenzt.}\par
 \smallskip
-\lichtschatten{Es ist Zeit für einen Blick zurück, weiter als gewohnt. Hinter dem, was dich genährt hat, liegt etwas Älteres: ein Satz, eine Angst, eine Regel, die nie jemand ausgesprochen hat. Schau sie an. Was erkannt ist, verliert seine Macht.}
+\lichtschatten{Schau weiter zurück als gewohnt. Hinter dem, was dich genährt hat, liegt etwas Älteres: ein Satz, eine Angst, eine Regel, die nie jemand ausgesprochen hat. Sieh sie an. Was erkannt ist, verliert seine Macht.}
   {Wer immer tiefer gräbt, findet für alles eine Erklärung und für nichts einen Ausweg. Wer nie zurückschaut, wird von dem bestimmt, was er nicht kennt.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~4}} \hfill \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~16}} \hfill \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~28}} \hfill \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~40}} \hfill \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~52}}\par
@@ -1243,9 +1522,9 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{V \quad Die gesammelte Kraft}
 \begin{orakelblock}
 \musterkopf{V}{Die gesammelte Kraft}{4}{2}{Annehmen}{Bändigen}{Nähren}
-\textbf{Du schöpfst aus deiner Quelle, und sie bringt Ruhe in das, was zu heftig drängt. Dann nährst du es, diesmal aus der Fülle statt aus der Not.}\par
+\textbf{Eine Mutter kehrt zu ihrem Vater zurück, der das unruhige Kind beruhigt. Dann nährt sie es selbst.}\par
 \smallskip
-\lichtschatten{Du willst loslegen, aber etwas ist zu hitzig, zu eilig. Geh zuerst zurück zu dem, was dich trägt. Dort wird das Drängende still. Danach kannst du ihm geben, was es braucht, und es wächst stetig statt sprunghaft.}
+\lichtschatten{Sammle dich, bevor du gibst. Wenn etwas zu hitzig und zu eilig ist, geh zuerst zurück zu dem, was dich trägt. Dort wird das Drängende still. Danach kannst du geben, was gebraucht wird, und es kommt an.}
   {Wer immer nur sammelt, findet nie den Moment zu geben. Wer gibt, ohne gesammelt zu haben, nährt die Unruhe statt das Werk.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:5}{\mycombination[0.5em]{Holz}{Wasser}{Feuer}~5}} \hfill \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~17}} \hfill \mbox{\hyperlink{spruch:29}{\mycombination[0.5em]{Erde}{Feuer}{Metall}~29}} \hfill \mbox{\hyperlink{spruch:41}{\mycombination[0.5em]{Metall}{Erde}{Wasser}~41}} \hfill \mbox{\hyperlink{spruch:53}{\mycombination[0.5em]{Wasser}{Metall}{Holz}~53}}\par
@@ -1255,9 +1534,9 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{VI \quad Der Rückhalt}
 \begin{orakelblock}
 \musterkopf{VI}{Der Rückhalt}{4}{3}{Annehmen}{Sich stellen}{Bändigen}
-\textbf{Du lehnst dich an deine Herkunft, und sie hält dem stand, was sie bedrängt. Am Ende gibst du selbst der Lage ihre Form.}\par
+\textbf{Ein Sohn wird bedrängt, und die Mutter stellt sich vor ihn. So gestützt, nimmt der Sohn die Sache in die Hand.}\par
 \smallskip
-\lichtschatten{Du stehst nicht allein. Hinter dir stehen Menschen, Erfahrungen, eine Geschichte, und sie halten stand, wo du allein nachgeben würdest. Mit diesem Rückhalt wird aus Abwehr Gestaltung: Am Ende bestimmst du, wie es weitergeht.}
+\lichtschatten{Lass dich stützen. Hinter dir stehen Menschen, Erfahrungen, eine Geschichte, und sie halten stand, wo du allein nachgeben würdest. Mit diesem Rückhalt wird aus Abwehr Gestaltung: Am Ende bestimmst du, wie es weitergeht.}
   {Wer nur mit Rückendeckung handelt, wagt nie etwas Eigenes. Wer jeden Rückhalt ablehnt, kämpft allein und reibt sich auf.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:6}{\mycombination[0.5em]{Holz}{Wasser}{Erde}~6}} \hfill \mbox{\hyperlink{spruch:18}{\mycombination[0.5em]{Feuer}{Holz}{Metall}~18}} \hfill \mbox{\hyperlink{spruch:30}{\mycombination[0.5em]{Erde}{Feuer}{Wasser}~30}} \hfill \mbox{\hyperlink{spruch:42}{\mycombination[0.5em]{Metall}{Erde}{Holz}~42}} \hfill \mbox{\hyperlink{spruch:54}{\mycombination[0.5em]{Wasser}{Metall}{Feuer}~54}}\par
@@ -1267,9 +1546,9 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{VII \quad Der Damm}
 \begin{orakelblock}
 \musterkopf{VII}{Der Damm}{2}{1}{Bändigen}{Nähren}{Sich stellen}
-\textbf{Du setzt eine Grenze, und hinter ihr sammelt sich etwas Neues. Es wächst, bis es dich selbst herausfordert.}\par
+\textbf{Ein Meister setzt Regeln, und in ihrem Schutz wächst eine Schülerin heran. Eines Tages stellt sie die Regeln infrage.}\par
 \smallskip
-\lichtschatten{Wo du Grenzen setzt, entsteht Raum für Neues: Regeln schaffen Spielräume, Formen bringen Inhalte hervor. Was so entsteht, bleibt nicht klein. Irgendwann stellt es die Grenze infrage, die es hervorgebracht hat. Das ist kein Undank, sondern ein Zeichen, dass es lebt.}
+\lichtschatten{Setz Grenzen, und rechne mit dem, was in ihnen wächst. Regeln schaffen Spielräume, Formen bringen Inhalte hervor. Was so entsteht, bleibt nicht klein und stellt irgendwann die Grenze infrage, die es hervorgebracht hat. Das ist kein Undank, sondern ein Zeichen, dass es lebt.}
   {Wer seine Grenze gegen alles Neue verteidigt, hält am Ende nur Stillstand fest. Wer jede Grenze aufgibt, sobald sie infrage steht, bringt nichts hervor.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:7}{\mycombination[0.5em]{Holz}{Erde}{Metall}~7}} \hfill \mbox{\hyperlink{spruch:19}{\mycombination[0.5em]{Feuer}{Metall}{Wasser}~19}} \hfill \mbox{\hyperlink{spruch:31}{\mycombination[0.5em]{Erde}{Wasser}{Holz}~31}} \hfill \mbox{\hyperlink{spruch:43}{\mycombination[0.5em]{Metall}{Holz}{Feuer}~43}} \hfill \mbox{\hyperlink{spruch:55}{\mycombination[0.5em]{Wasser}{Feuer}{Erde}~55}}\par
@@ -1279,9 +1558,9 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{VIII \quad Die Abkürzung}
 \begin{orakelblock}
 \musterkopf{VIII}{Die Abkürzung}{2}{4}{Bändigen}{Annehmen}{Nähren}
-\textbf{Du greifst ein und räumst etwas aus dem Weg. Dahinter liegt, was du ohnehin nähren wolltest, und nun erreichst du es direkt.}\par
+\textbf{Eine räumt beiseite, was im Weg steht, und kommt ohne Umweg zu dem, was ihr am Herzen liegt.}\par
 \smallskip
-\lichtschatten{Manchmal steht etwas zwischen dir und dem, was dir am Herzen liegt. Du räumst es beherzt beiseite. Dahinter wartet keine neue Hürde, sondern genau das, wofür du dich einsetzen wolltest. Der kurze Weg ist frei.}
+\lichtschatten{Räum beiseite, was zwischen dir und dem steht, was dir am Herzen liegt. Dahinter wartet keine neue Hürde, sondern genau das, wofür du dich einsetzen wolltest. Der kurze Weg ist frei.}
   {Wer jeden Umweg abkürzt, räumt auch weg, was hätte bleiben dürfen. Wer nie eingreift, nimmt zu jedem Ziel den längsten Weg.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~8}} \hfill \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~20}} \hfill \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~32}} \hfill \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~44}} \hfill \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~56}}\par
@@ -1291,9 +1570,9 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{IX \quad Der strenge Weg}
 \begin{orakelblock}
 \musterkopf{IX}{Der strenge Weg}{2}{2}{Bändigen}{Bändigen}{Annehmen}
-\textbf{Ordnung folgt auf Ordnung, Regel auf Regel. Am Ende dieses strengen Weges wartet keine Härte. Dort liegt die Quelle, die dich nährt.}\par
+\textbf{Ein Mönch folgt Tag für Tag der Regel. Am Ende findet er in ihr die Stille.}\par
 \smallskip
-\lichtschatten{Es ist eine Zeit für Disziplin: Tag für Tag dasselbe, sorgfältig und ohne Abkürzung. Das fühlt sich vielleicht eng an. Aber wie bei jeder guten Übung zeigt sich am Ende etwas Weiches: Du findest zu dem zurück, was dich trägt.}
+\lichtschatten{Halte die Ordnung, auch wenn sie eng ist. Tag für Tag dasselbe, sorgfältig und ohne Abkürzung. Wie bei jeder guten Übung zeigt sich am Ende etwas Weiches: Du findest zu dem zurück, was dich trägt.}
   {Wer Regel auf Regel häuft, vergisst, wozu sie da waren. Wer jede Ordnung meidet, findet nie zu seinem Ursprung.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~9}} \hfill \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~21}} \hfill \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~33}} \hfill \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Holz}{Erde}~45}} \hfill \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~57}}\par
@@ -1303,9 +1582,9 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{X \quad Die Läuterung}
 \begin{orakelblock}
 \musterkopf{X}{Die Läuterung}{3}{1}{Sich stellen}{Nähren}{Annehmen}
-\textbf{Du stellst dich dem, was dich begrenzt, und gerade das bringt hervor, was dich nährt. Aus der Krise wird ein Neubeginn.}\par
+\textbf{Eine stellt sich dem, was sie verletzt hat. Daraus wächst, was sie künftig nährt.}\par
 \smallskip
-\lichtschatten{Etwas schränkt dich ein, verletzt dich vielleicht. Du weichst nicht aus. Und dann geschieht das Überraschende: Was dich begrenzt hat, führt dich zu neuer Kraft. Läuterung heißt nicht, dass es nicht wehtut. Es heißt, dass der Schmerz zu etwas wird.}
+\lichtschatten{Weich dem Schmerz nicht aus. Etwas schränkt dich ein, verletzt dich vielleicht. Stell dich ihm, und es kann geschehen, dass gerade das, was dich begrenzt hat, dich zu neuer Kraft führt. Läuterung heißt nicht, dass es nicht wehtut. Es heißt, dass der Schmerz zu etwas wird.}
   {Wer Leid sucht, weil es läutert, verwechselt Schmerz mit Wachstum. Wer jeder Krise ausweicht, bleibt, wie er ist.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~10}} \hfill \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~22}} \hfill \mbox{\hyperlink{spruch:34}{\mycombination[0.5em]{Erde}{Holz}{Feuer}~34}} \hfill \mbox{\hyperlink{spruch:46}{\mycombination[0.5em]{Metall}{Feuer}{Erde}~46}} \hfill \mbox{\hyperlink{spruch:58}{\mycombination[0.5em]{Wasser}{Erde}{Metall}~58}}\par
@@ -1315,9 +1594,9 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{XI \quad Die List}
 \begin{orakelblock}
 \musterkopf{XI}{Die List}{3}{4}{Sich stellen}{Annehmen}{Bändigen}
-\textbf{Du stellst dich dem Stärkeren, und er weicht zurück auf seinen eigenen Grund. Dort hast du die Oberhand.}\par
+\textbf{Einer hält der Stärkeren stand, bis die sich auf vertrauten Grund zurückzieht. Dort ist er ihr überlegen.}\par
 \smallskip
-\lichtschatten{Gegen diese Härte kommst du nicht mit Gewalt an. Du hältst stand, ohne anzugreifen, bis sich die Gegenseite auf ihr Vertrautes zurückzieht. Genau dort, auf ihrem eigenen Boden, kannst du ihr Form geben. Klugheit ist auch eine Form von Stärke.}
+\lichtschatten{Greif nicht an, halte stand. Gegen diese Härte kommst du mit Gewalt nicht an. Warte, bis sich die Gegenseite auf ihr Vertrautes zurückzieht. Genau dort, auf ihrem eigenen Boden, kannst du ihr Form geben. Klugheit ist auch eine Form von Stärke.}
   {Wer immer über Bande spielt, weiß am Ende selbst nicht mehr, wo er steht. Wer nur frontal angreift, rennt gegen die stärkste Stelle.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Metall}{Erde}~11}} \hfill \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~23}} \hfill \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~35}} \hfill \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~47}} \hfill \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~59}}\par
@@ -1327,9 +1606,9 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{XII \quad Der Aufstand}
 \begin{orakelblock}
 \musterkopf{XII}{Der Aufstand}{3}{3}{Sich stellen}{Sich stellen}{Nähren}
-\textbf{Du leistest Widerstand, und dein Beispiel ermutigt andere, ihrerseits Widerstand zu leisten. Am Ende nährst du eine Bewegung, die größer ist als du.}\par
+\textbf{Einer widersetzt sich, und die, der er widerspricht, widersetzt sich ihrerseits. Aus doppeltem Widerstand wächst eine Bewegung.}\par
 \smallskip
-\lichtschatten{Zweimal Widerstand: Das ist der wildeste aller Wege. Du stehst auf, und andere stehen mit dir auf, jeder gegen das, was ihn bedrängt. Daraus kann etwas Neues entstehen, und du hast es genährt. Frag dich, wofür, nicht nur wogegen.}
+\lichtschatten{Steh auf. Zweimal Widerstand ist der wildeste aller Wege: Andere stehen mit dir auf, jeder gegen das, was ihn bedrängt. Daraus kann etwas Neues entstehen, und du hast es genährt. Frag dich, wofür, nicht nur wogegen.}
   {Ein Aufstand, der nur gegen etwas ist, reißt nieder und baut nichts auf. Wer seinen Zorn immer nur herunterschluckt, wird bitter.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~12}} \hfill \mbox{\hyperlink{spruch:24}{\mycombination[0.5em]{Feuer}{Wasser}{Erde}~24}} \hfill \mbox{\hyperlink{spruch:36}{\mycombination[0.5em]{Erde}{Holz}{Metall}~36}} \hfill \mbox{\hyperlink{spruch:48}{\mycombination[0.5em]{Metall}{Feuer}{Wasser}~48}} \hfill \mbox{\hyperlink{spruch:60}{\mycombination[0.5em]{Wasser}{Erde}{Holz}~60}}\par
@@ -1341,262 +1620,260 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \begin{einleitung}
 Schließt an ein Paar ein zweites an, das mit dessen zweitem Element beginnt, entsteht ein Tripel: drei verschiedene Elemente in fester Reihenfolge. In ihm kommt alles zusammen, was die vorigen Kapitel beschreiben: Das erste und das zweite Element bilden ein Paar, das zweite und das dritte ein zweites. Die Richtungen dieser beiden Paare ergeben zusammen eine der zwölf Wendungen, und die Wendung verbindet auch Anfang und Ende durch eine Richtung. So steht zum Beispiel im Tripel Holz, Feuer, Erde zweimal das Nähren (\textit{Holz nährt Feuer}, \textit{Feuer nährt Erde}), und vom Holz zur Erde führt das Bändigen: Wendung I, Der Strom.
 
-Fünf Elemente für den Anfang und zwölf Wendungen für den Weg ergeben die 60 Tripel. Zusammen bilden sie ein vollständiges Weltsystem: Jedes Element, jede Richtung, jedes Paar und jede Wendung kommt darin vor, und alle greifen ineinander wie im Wandlungskreis selbst. Jeder Spruch dieses Buches ist eine Facette dieses einen Systems: Jeder zeigt es von einer anderen Seite, im Licht und im Schatten.
+Fünf Elemente für den Anfang und zwölf Wendungen für den Weg ergeben die 60 Tripel. Zusammen bilden sie ein vollständiges Weltsystem: Jedes Element, jede Richtung, jedes Paar und jede Wendung kommt darin vor, und alle greifen ineinander wie im Wandlungskreis selbst. Jeder Spruch zeigt dieses eine System von einer anderen Seite, im Licht und im Schatten.
 
-Auch die Bilder der Sprüche folgen diesem System. Jedes Paar hat einen eigenen Vorgang aus der Natur: Holz brennt, der Deich hält das Wasser, die Axt fällt den Baum. Jede Wendung beschreibt eine Lage, wie Menschen sie erleben: die Prüfung, die Unterweisung, den Aufstand. Ein Tripel fügt die Vorgänge seiner beiden Paare zu einer Szene zusammen, und die Wendung gibt ihr den Sinn. Wer die Paare kennt, erkennt sie in den Tripeln wieder.
-
-Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe folgen sie den Wendungen I bis XII.
+Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ein Tripel fügt die Vorgänge seiner beiden Paare zu einer Szene zusammen, und die Wendung gibt ihr den Sinn. Im Urteil handelt meist eine Gestalt: eine Frau, wenn die Wendung ein Yin-Dreieck bildet, ein Mann beim Yang-Dreieck. Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe folgen sie den Wendungen I bis XII.
 \end{einleitung}
 
 \newpage
 \markright{\element{Holz}}
-\spruch{1}{Holz}{Feuer}{Erde}{I Strom}{Das Haus}{Dein Holz heizt den Ziegelofen, und im Feuer wird aus Lehm ein Backstein. Das Gebälk fasst die Ziegel: So entsteht ein Haus.}
-  {Du hast etwas angestoßen, und es hat andere entzündet. Daraus ist etwas Festes geworden, ein Ort, an dem Menschen zusammenkommen und bleiben können. Du musst nicht mehr alles selbst tragen. Aber was hier entsteht, folgt deinem Plan, und du gibst ihm den Rahmen.}
-  {Ein Fachwerk ohne Gefache ist nur ein Gerippe. Gefache ohne Balken fallen in sich zusammen.}
+\spruch{1}{Holz}{Feuer}{Erde}{I Strom}{Das Haus}{Die Zieglerin heizt mit Buchenholz den Ofen und brennt Lehm zu Backstein. Eichenbalken fassen die Ziegel: Ein Haus entsteht.}
+  {Gib dem Ganzen einen Rahmen. Was du angestoßen hast, haben andere aufgenommen und weitergetragen, und nun wird ein gemeinsamer Ort daraus. Du musst nicht jeden Stein selbst setzen. Aber deine ursprüngliche Absicht hält das Ganze zusammen, und man wird dich fragen, wie es gemeint war.}
+  {Wer alles allein tragen will, lässt anderen keinen Platz im eigenen Haus. Wer sich zurückzieht, sobald andere mitbauen, sieht sein Vorhaben in fremde Formen zerfallen.}
 \newpage
-\spruch{2}{Holz}{Feuer}{Metall}{II Prüfung}{Das zweischneidige Schwert}{Als Holzkohle bringst du die Esse zum Glühen, und das Eisen wird weich. Was auf dem Amboss daraus geschmiedet wird, ist ein zweischneidiges Schwert, und am Ende spiegelst du dich in seiner Klinge.}
-  {Was du hervorgebracht hast, ist stark geworden, vielleicht stärker, als du wolltest. Es hat eine eigene Schärfe und schneidet nach beiden Seiten, auch zu dir hin. Das ist die Prüfung jedes Schöpfers: zu seinem Werk zu stehen, gerade wenn es ihm fremd wird. Wer es mit Achtung in die Hand nimmt, kann es führen.}
+\spruch{2}{Holz}{Feuer}{Metall}{II Prüfung}{Das zweischneidige Schwert}{Der Schmied facht mit Holzkohle die Esse an und schmiedet ein zweischneidiges Schwert. In der Klinge sieht er sein eigenes Gesicht.}
+  {Steh zu dem, was du geschaffen hast. Dein Werk ist stark geworden und hat eine eigene Schärfe; es kann für dich sprechen und sich gegen dich kehren. Das ist die Prüfung jedes Schöpfers. Wer sein Werk mit Achtung behandelt, kann es führen.}
   {Wer vor seinem Werk zurückschreckt und es verstößt, macht es erst zum Feind, wie Viktor Frankenstein sein Geschöpf. Wer sich in sein Werk verliebt wie Pygmalion in seine Statue, sieht nicht, wo es schneidet.}
 \newpage
-\spruch{3}{Holz}{Feuer}{Wasser}{III Unterweisung}{Das Feuer im Regen}{Du legst Holz nach, damit das Feuer im Regen weiterbrennt. Derselbe Regen tränkt am Ende deine eigenen Wurzeln.}
-  {Du hilfst jemandem, an etwas festzuhalten, das ihm Freude macht, auch gegen Zweifel und kalte Worte. Dabei gibst du von dir. Doch was der andere durchsteht, kommt auch dir zugute: Du lernst neu, was dich selbst trägt. Wer andere unterweist, wird selbst genährt.}
-  {Wer nur nachlegt, verbrennt sich für ein fremdes Feuer. Wer den Regen von allen fernhält, lässt auch die eigenen Wurzeln vertrocknen.}
+\spruch{3}{Holz}{Feuer}{Wasser}{III Unterweisung}{Das Feuer im Regen}{Die Hirtin schürt im Regen ihr Feuer. Derselbe Regen tränkt die Saat für die nächste Ernte.}
+  {Trotze der Widerrede, und hilf anderen, es auch zu tun. Wer jemanden begleitet, der an einer Sache festhält, gerät selbst in Zweifel und kalte Worte. Doch gerade dabei lernst du neu, was dich trägt. Die Einwände, die du mit aushältst, werden dir später zur Nahrung.}
+  {Wer sich für fremde Begeisterung verausgabt, hat für die eigene nichts mehr übrig. Wer jeden Einwand von seinen Schülern fernhält, nimmt ihnen, woran sie wachsen.}
 \newpage
-\spruch{4}{Holz}{Wasser}{Metall}{IV Wurzelsuche}{Die Wurzel am Fels}{Deine Wurzeln folgen dem Wasser in die Tiefe, bis zum Fels, aus dem es kommt. Dort stößt du auf das Harte, das dich begrenzt.}
-  {Du suchst nach dem, was dich nährt, und gehst dabei tiefer als gedacht. Unter deiner Herkunft liegt etwas Älteres und Härteres: eine Regel, ein Urteil, ein Verbot. Weich nicht zurück. Eine Wurzel, die den Fels erreicht, sprengt ihn nicht sofort, aber sie findet seine Spalten.}
-  {Wer zu tief gräbt, findet nur noch Stein. Wer an der Oberfläche bleibt, weiß nie, worauf er steht.}
+\spruch{4}{Holz}{Wasser}{Metall}{IV Wurzelsuche}{Die Wurzel am Fels}{Die Wurzeln der Kiefer folgen dem Wasser in die Tiefe. Am Fels finden sie ihre Grenze.}
+  {Geh deiner Herkunft auf den Grund. Hinter dem, was dich genährt hat, liegt etwas Älteres und Härteres: eine Regel, ein Verbot, ein Urteil, das nie jemand ausgesprochen hat. Weich nicht zurück, wenn du darauf stößt. Was du erkannt hast, bestimmt dich nicht mehr im Verborgenen.}
+  {Wer immer weiter in seiner Vergangenheit gräbt, findet Gründe für alles und einen Ausweg für nichts. Wer nie fragt, woher er kommt, stößt sich ein Leben lang an Grenzen, die er nicht sieht.}
 \newpage
-\spruch{5}{Holz}{Wasser}{Feuer}{V Gesammelte Kraft}{Der Wald nach dem Regen}{Ein Wald, der gut im Saft steht, fängt nicht beim ersten Funken Feuer. Erst wenn sein Holz geschlagen und getrocknet ist, gibt es Wärme, die lange hält.}
-  {Etwas in dir will lodern, sofort und mit aller Kraft. Doch du gehst zuerst zurück zu dem, was dich nährt, und dort kommt deine Ungeduld zur Ruhe. Das ist kein Verzicht. Was du danach gibst, brennt ruhiger und länger.}
-  {Holz, das nie geschlagen wird, wärmt niemanden. Wer sein Holz grün verfeuert, erntet Rauch statt Glut.}
+\spruch{5}{Holz}{Wasser}{Feuer}{V Gesammelte Kraft}{Das grüne Holz}{Grünes Buchenholz brennt nicht. Eine Försterin lässt es ein Jahr lang trocknen; dann wärmt es den ganzen Winter.}
+  {Lass dir Zeit, bevor du dich verschenkst. Deine Begeisterung drängt nach außen, aber sie ist noch nicht reif. Kehr zuerst zu dem zurück, was dich nährt, und lass die Ungeduld abklingen. Was du danach gibst, hält länger vor.}
+  {Wer immer nur reifen lässt, verpasst den Winter, in dem er gebraucht würde. Wer sich zu früh verschenkt, gibt Rauch statt Wärme.}
 \newpage
-\spruch{6}{Holz}{Wasser}{Erde}{VI Rückhalt}{Die Uferweide}{Die Weide trinkt aus dem Fluss, und der Fluss nagt am Ufer. Doch ihre Wurzeln halten das Ufer fest, und am Ende bestimmt sie, wo das Land bleibt.}
-  {Deine Herkunft nährt dich, und sie hat es selbst nicht leicht: An ihren Rändern bröckelt es, alte Gewissheiten werden fortgespült. Du hältst dagegen. Weil du so tief in ihr wurzelst, kannst du festhalten, was bleiben soll, und gibst dem Ufer seine Form.}
-  {Wo jede Weide gefällt wird, reißt das Hochwasser das Ufer mit. Wo zu viele stehen, verlandet der Fluss.}
+\spruch{6}{Holz}{Wasser}{Erde}{VI Rückhalt}{Die Uferweide}{Der Fischer pflanzt Weiden an das Ufer, an dem der Bach nagt. Sie trinken aus dem Bach, und ihre Wurzeln halten das Land.}
+  {Halte fest, was dich hält. Deine Herkunft nährt dich, und doch bröckelt es an ihren Rändern: Gewissheiten gehen verloren, alte Bindungen lösen sich. Gerade weil du so tief darin verwurzelt bist, kannst du bewahren, was bleiben soll, und bestimmen, was sich wandeln darf.}
+  {Wer jede Veränderung seiner Herkunft abwehrt, erstarrt mit ihr. Wer sich gar nicht für sie einsetzt, sieht sie Stück für Stück fortgespült.}
 \newpage
-\spruch{7}{Holz}{Erde}{Metall}{VII Damm}{Der Holzkeil}{Du treibst einen Keil aus Holz in den Fels und machst ihn nass. Das Holz quillt, der Stein springt, und im Spalt glänzt eine Erzader, härter als dein Keil.}
-  {Du hast geduldig gearbeitet und Festes aufgebrochen. Nun liegt vor dir, was darin verborgen war: klar, wertvoll, eigenwillig. Es fragt dich, wozu du das alles getan hast. Weich der Frage nicht aus. Du kannst sie beantworten, und dein Werk wird dadurch nur besser.}
-  {Wer jeden Fund wieder zuschüttet, weil er ihn stört, findet nur das Gewohnte. Wer sich von seinem Fund beherrschen lässt, vergisst, wofür er den Fels gespalten hat.}
+\spruch{7}{Holz}{Erde}{Metall}{VII Damm}{Der Holzkeil}{Der Steinbrecher treibt einen nassen Holzkeil in den Fels. Der Stein springt, und im Spalt glänzt Erz, härter als sein Keil.}
+  {Stell dich dem, was du freigelegt hast. Deine Arbeit hat etwas zutage gebracht, das klarer und härter ist, als du erwartet hast: eine Einsicht, eine Wahrheit, ein Anspruch. Es fragt dich, wozu du das alles getan hast. Beantworte die Frage, statt ihr auszuweichen.}
+  {Wer jede unbequeme Entdeckung wieder zudeckt, findet immer nur das Gewohnte. Wer sich von seiner Entdeckung beherrschen lässt, vergisst, wofür er gesucht hat.}
 \newpage
-\spruch{8}{Holz}{Erde}{Feuer}{VIII Abkürzung}{Die Tongrube}{Du gräbst den Boden auf und findest Ton. Dein Holz brennt ihn zum Gefäß, und so nährst du ohne Umweg, was dir am Herzen liegt.}
-  {Etwas Festgefahrenes stand zwischen dir und dem, was du wolltest. Du hast es beherzt aufgebrochen, und darunter lag genau der Stoff, den du brauchst. Jetzt kannst du deine Kraft direkt hineingeben: Deine Mühe schürt die Glut, und in ihr wird das Gefäß gebrannt.}
-  {Wer zu gierig gräbt, reißt auch fruchtbaren Boden mit heraus. Wer zu zaghaft gräbt, kommt nie bis zum Ton.}
+\spruch{8}{Holz}{Erde}{Feuer}{VIII Abkürzung}{Die Tongrube}{Die Töpferin stößt beim Graben auf Ton. Mit ihrem eigenen Holz brennt sie daraus einen Krug.}
+  {Räum beiseite, was dir im Weg steht. Hinter dem Hindernis liegt oft genau der Stoff, den du brauchst. Du musst keinen weiten Umweg gehen und niemanden um Erlaubnis bitten. Was du jetzt anpackst, nährt unmittelbar, was dir am Herzen liegt.}
+  {Wer jedes Hindernis wegräumt, zerstört auch, was hätte bleiben dürfen. Wer vor jedem zurückschreckt, kommt nie an das, was darunter liegt.}
 \newpage
-\spruch{9}{Holz}{Erde}{Wasser}{IX Strenger Weg}{Die Furchen}{Du ziehst Furche um Furche durch den Acker, gerade und mit gleichmäßigem Gefälle. In ihnen läuft das Wasser genau dorthin, wo es gebraucht wird, und am Ende trinken deine Wurzeln.}
-  {Es ist mühsame Arbeit, die keine Nachlässigkeit erlaubt: Ist eine Furche zu steil, reißt das Wasser den Boden mit; ist sie zu flach, bleibt es stehen. Doch die strenge Ordnung hat einen Sinn. Wenn alles bestellt ist, merkst du: Sie hat dich nicht eingeengt, sie hat dir das Wasser gebracht.}
-  {Wer jeden Tropfen in Kanäle zwingt, hat bald mehr Gräben als Pflanzen. Wer das Wasser laufen lässt, wie es will, sieht es versickern oder den Boden fortspülen.}
+\spruch{9}{Holz}{Erde}{Wasser}{IX Strenger Weg}{Die Furchen}{Der Bauer zieht Furche um Furche mit gleichmäßigem Gefälle. Das Wasser läuft genau zu den Wurzeln seiner Saat.}
+  {Bleib bei der Sache, Tag für Tag. Diese Arbeit verlangt Genauigkeit, und keine Nachlässigkeit bleibt ohne Folgen. Das fühlt sich vielleicht eng an. Aber die strenge Ordnung hat einen Sinn: Am Ende führt sie dir zu, was dich nährt.}
+  {Wer alles in Regeln zwingt, hat bald mehr Vorschriften als Leben. Wer alles laufen lässt, verliert, was er hätte nutzen können.}
 \newpage
-\spruch{10}{Holz}{Metall}{Wasser}{X Läuterung}{Die Schleuse}{Dein Boot liegt vor dem eisernen Tor der Schleuse, und es geht nicht weiter. Dann strömt durch die Schütze im Tor Wasser herein und hebt dich auf eine neue Höhe.}
-  {Vor dir steht eine Grenze, hart und unverrückbar, und du kannst nichts tun als warten und standhalten. Doch gerade diese Grenze gibt dir, was du brauchst: Das Wasser, das sie zurückgehalten hat, trägt dich nach oben. Wenn sich das Tor öffnet, fährst du auf einer neuen Höhe weiter. Was dich aufgehalten hat, hat dich gehoben.}
-  {Wer vor dem Tor ungeduldig dagegen anrudert, kommt keinen Meter weiter. Wer die Schleuse fürchtet, bleibt für immer im unteren Becken.}
+\spruch{10}{Holz}{Metall}{Wasser}{X Läuterung}{Die Schleuse}{Die Schifferin wartet vor dem eisernen Schleusentor. Wasser strömt ein und hebt ihr Boot auf eine neue Höhe.}
+  {Nimm die Grenze an, vor der du stehst. Sie ist hart, und du kannst nichts tun als warten. Doch was dich aufhält, hält auch etwas für dich bereit. Wenn sich die Lage öffnet, stehst du höher als zuvor: Was dich aufgehalten hat, hat dich gehoben.}
+  {Wer ungeduldig gegen jede Grenze anrennt, kommt keinen Schritt weiter. Wer jede Grenze fürchtet, bleibt für immer unten.}
 \newpage
-\spruch{11}{Holz}{Metall}{Erde}{XI List}{Der eingewachsene Zaun}{Ein Baum wächst an einem eisernen Zaun empor. Er kämpft nicht gegen den Draht, er umwächst ihn. Mit den Jahren zerfällt das Eisen im Boden zu Rost, und die Wurzeln halten den Grund, auf dem einmal die Grenze stand.}
-  {Gegen diese Härte kommst du mit Gewalt nicht an, und du musst es auch nicht. Du wächst weiter, langsam und beharrlich, um das Hindernis herum, bis es ein Teil von dir ist. Was dich einengen sollte, verliert mit der Zeit seine Macht. Am Ende gehört der Boden dir. Hier ist Geduld die klügste List.}
-  {Wer jedes Hindernis umwächst, trägt am Ende viel fremdes Eisen in sich. Wer gegen den Draht anwächst, statt ihn zu umfassen, schnürt sich selbst ab.}
+\spruch{11}{Holz}{Metall}{Erde}{XI List}{Der eingewachsene Zaun}{Der Ahorn umwächst den eisernen Zaun, statt gegen ihn anzukämpfen. Der Draht rostet; seine Wurzeln halten den Grund, wo die Grenze war.}
+  {Kämpfe nicht, wachse. Gegen eine harte Vorschrift oder einen starken Gegner richtest du mit Gewalt nichts aus. Nimm ihn in dein Leben auf, ohne dich ihm zu unterwerfen, und wachse weiter. Mit der Zeit verliert er seine Macht, und der Raum, um den gestritten wurde, gehört dir. Geduld ist hier die klügste List.}
+  {Wer jedes Hindernis in sich aufnimmt, trägt am Ende viel Fremdes mit sich herum. Wer sich dagegen sperrt, statt es zu umfassen, schnürt sich selbst die Luft ab.}
 \newpage
-\spruch{12}{Holz}{Metall}{Feuer}{XII Aufstand}{Die heiße Säge}{Das Holz hält gegen die Säge, und die Säge hält dagegen. Zwischen Blatt und Stamm wird es so heiß, dass das Holz zu rauchen beginnt. Aus Widerstand gegen Widerstand entsteht Hitze, und das Holz nährt ein Feuer.}
-  {Man will dich passend machen, und du leistest Widerstand. Die Gegenseite gibt ebenfalls nicht nach. Aus dieser Reibung entsteht Hitze, und sie greift über: Andere entzünden sich an deinem Widerstand. Frag dich, wofür dieses Feuer brennen soll, nicht nur wogegen.}
-  {Wer sich zu lange aneinander reibt, hinterlässt Brandspuren und verdirbt die Klinge. Wer jede Reibung meidet, bleibt kalt.}
+\spruch{12}{Holz}{Metall}{Feuer}{XII Aufstand}{Die heiße Säge}{Der Zimmermann sägt einen Eichenstamm, und das Holz klemmt das Blatt. Säge und Stamm halten gegeneinander, bis es raucht: Aus Widerstand wird Feuer.}
+  {Lass dich nicht passend machen. Wenn du dich wehrst und die Gegenseite ebenfalls nicht nachgibt, entsteht Reibung, und sie springt auf andere über. Aus deinem Widerstand kann eine Bewegung werden. Wichtig ist, wofür sie brennt, nicht nur wogegen.}
+  {Wo Menschen sich nur noch aneinander reiben, bleiben Brandspuren und stumpfe Klingen. Wer jeder Reibung ausweicht, bleibt kalt.}
 
 \newpage
 \markright{\element{Feuer}}
-\spruch{13}{Feuer}{Erde}{Metall}{I Strom}{Der Glockenguss}{Deine Glut brennt die Form aus Lehm und macht die Bronze flüssig. In der Form nimmt das Metall Gestalt an, und wenn man sie zerschlägt, steht eine Glocke da, die Jahrhunderte überdauert.}
-  {Was du mit Leidenschaft begonnen hast, hat eine feste Form gefunden, und in ihr wird etwas Bleibendes daraus. Das gelingt nicht nebenbei: Hitze, Form und Metall müssen genau zusammenpassen, und ein Fehler zeigt sich erst, wenn die Form zerbrochen ist. Doch was so entsteht, überdauert dich. Du stehst am Anfang und am Ende.}
-  {Wer zu hastig gießt, bekommt eine Glocke mit Sprung. Wer die Form nicht zerschlagen will, bekommt sein Werk nie zu sehen.}
+\spruch{13}{Feuer}{Erde}{Metall}{I Strom}{Der Glockenguss}{Die Glockengießerin brennt die Lehmform und macht die Bronze flüssig. Wird die Form zerschlagen, steht eine Glocke da, die Jahrhunderte überdauert.}
+  {Lass dein Werk eine feste Gestalt annehmen. Was du mit Leidenschaft begonnen hast, ist durch andere Hände gegangen und wird nun zu etwas Bleibendem. Das gelingt nicht nebenbei; ein Fehler zeigt sich oft erst am Schluss. Doch du stehst am Anfang und am Ende, und von dir hängt ab, ob es gelingt.}
+  {Wer zu hastig vollenden will, bekommt ein Werk mit Sprung. Wer die Form nicht loslassen kann, bekommt sein Werk nie zu sehen.}
 \newpage
-\spruch{14}{Feuer}{Erde}{Wasser}{II Prüfung}{Der Backofen}{Deine Glut härtet den Ofen aus Lehm. Im Teig hält das Mehl das Wasser in einem zähen Netz. Wird der Teig eingeschoben, muss deine Hitze bis in die feuchte Mitte dringen; erst wenn das Brot beim Klopfen hohl klingt, ist es durch.}
-  {Du hast viel Wärme gegeben und damit etwas Festes geschaffen, das anderen dient. Jetzt kommt es auf dich selbst an: Das Feuchte und Schwere, das in jeder Sache steckt, will durchgebacken werden, und das kostet Hitze und Geduld. Halte die Hitze im rechten Maß, nicht zu stark und nicht zu schwach. Ob es gelungen ist, zeigt erst die Probe.}
-  {Ist der Ofen zu heiß, verbrennt die Kruste, und innen bleibt das Brot klitschig. Ist er zu kühl, läuft der Teig breit und bleibt blass und zäh.}
+\spruch{14}{Feuer}{Erde}{Wasser}{II Prüfung}{Der Backofen}{Der Bäcker heizt den Lehmofen und schiebt den Teig ein. Erst wenn das Brot beim Klopfen hohl klingt, ist die Hitze bis in die feuchte Mitte gedrungen.}
+  {Halte durch, bis es gar ist. Du hast mit deiner Wärme etwas aufgebaut, das anderen dient. Jetzt kommt es auf dich selbst an: Das Schwere und Zähe einer Sache will durchdrungen werden, und das kostet Geduld. Ob es gelungen ist, zeigt erst die Probe.}
+  {Wer zu viel Druck macht, verbrennt die Oberfläche und lässt den Kern roh. Wer zu wenig gibt, bringt nie etwas zu Ende.}
 \newpage
-\spruch{15}{Feuer}{Erde}{Holz}{III Unterweisung}{Der Kohlenmeiler}{Unter einer Decke aus Erde glimmst du im gestapelten Holz. Die Erde hält es zusammen und lässt nur wenig Luft herein. So zehrst du langsam vom Holz, Tag um Tag, bis es zu Kohle geworden ist.}
-  {Diese Arbeit lernt man nicht aus Büchern, sondern am Meiler, Tag und Nacht neben einem, der es kann. Du gibst weiter, was du weißt: wie man die Decke schließt, wann man Luft gibt, woran man am Rauch erkennt, dass die Kohle gar ist. Und während du es erklärst, siehst du dein eigenes Handwerk neu. Wer unterweist, lernt mit.}
-  {Bekommt der Meiler zu viel Luft, brennt das Holz zu Asche. Ist die Decke zu dicht, erstickt die Glut, und das Holz bleibt roh.}
+\spruch{15}{Feuer}{Erde}{Holz}{III Unterweisung}{Der Kohlenmeiler}{Die Köhlerin deckt den Holzstoß mit Erde ab, damit er glimmt und nicht brennt. Tag und Nacht wacht sie, bis aus Holz Kohle geworden ist.}
+  {Gib weiter, was man nur im Tun lernt. Manches Wissen steht in keinem Buch; es wird von Hand zu Hand gereicht, über lange Wochen, Seite an Seite. Wer es weitergibt, sieht sein eigenes Handwerk neu. Wer unterweist, lernt mit.}
+  {Wer seine Schüler zu sehr einengt, erstickt ihre Glut. Wer ihnen zu viel Freiheit lässt, sieht ihre Kraft in einem Strohfeuer verpuffen.}
 \newpage
-\spruch{16}{Feuer}{Holz}{Wasser}{IV Wurzelsuche}{Die Jahresringe}{Du ergreifst ein Scheit und siehst seine Jahresringe: breite aus nassen Jahren, schmale aus trockenen. Ohne Regen wäre es nie gewachsen, und noch jetzt zischt das Wasser in ihm, wenn du es verzehrst.}
-  {Du fragst, woher deine Kraft kommt, und gehst ihr nach, weiter zurück als je zuvor. Hinter dem, was dich entzündet hat, findest du ausgerechnet dein Gegenteil: das Stille und Kühle, das dir fremd ist. Ohne es gäbe es dich nicht. Begegne ihm mit Respekt. Gegensätze sind oft enger verbunden, als sie wissen.}
-  {Wer sein Gegenteil verachtet, vergisst, wovon er lebt. Wer ihm zu nahe kommt, erlischt.}
+\spruch{16}{Feuer}{Holz}{Wasser}{IV Wurzelsuche}{Die Jahresringe}{Die alte Frau legt ein Scheit aufs Feuer und sieht seine Jahresringe: breite aus nassen Jahren, schmale aus trockenen. Es zischt; noch immer ist Wasser darin.}
+  {Ehre, was dir fremd ist. Wer seiner eigenen Kraft nachgeht, findet dahinter oft ausgerechnet ihr Gegenteil: das Stille und Kühle, das man selbst nicht ist. Ohne es gäbe es dich nicht. Begegne ihm mit Respekt; Gegensätze sind enger verbunden, als sie wissen.}
+  {Wer sein Gegenteil verachtet, vergisst, wovon er lebt. Wer ihm zu nahe kommt, verliert sich darin.}
 \newpage
-\spruch{17}{Feuer}{Holz}{Erde}{V Gesammelte Kraft}{Die Herdasche}{Den Winter über zehrst du vom Holz. Im Frühjahr bricht der Keim durch die verkrustete Erde, und deine Asche gibt ihm Kraft.}
-  {Bevor du Wärme verschenkst, sammelst du dich. Du nimmst auf, was dich nährt, und dieselbe Kraft bricht auf, was zu hart und fest geworden ist. Erst dann gibst du. Deine Wärme fällt jetzt auf vorbereiteten Boden und macht ihn fruchtbar.}
+\spruch{17}{Feuer}{Holz}{Erde}{V Gesammelte Kraft}{Die Herdasche}{Die Bäuerin heizt den Winter über mit Holz. Im Frühjahr bricht der Keim durch die Kruste, und sie streut ihre Herdasche aufs Beet.}
+  {Sammle dich, bevor du gibst. Nimm auf, was dich nährt, und lass zu, dass es lockert, was in dir hart und fest geworden ist. Erst dann gib weiter. Deine Wärme fällt jetzt auf vorbereiteten Boden und macht ihn fruchtbar.}
   {Wer seine Asche auf harten Grund streut, sieht sie vom Wind verweht. Wer sie im Herd lässt, düngt nichts.}
 \newpage
-\spruch{18}{Feuer}{Holz}{Metall}{VI Rückhalt}{Der Ambossstock}{Dein Feuer nährt sich vom Holz, und auf einem Holzklotz steht der Amboss, der jedem Schlag standhält. So getragen, machst du das Eisen weich und bestimmst seine Form.}
-  {Du kannst dich auf das stützen, was dich entzündet hat: Menschen, Ideen, eine Herkunft. Sie fangen die harten Schläge ab, die dich sonst treffen würden. Mit diesem Rückhalt kannst du dich dem Starren zuwenden, und in deiner Glut gibt es nach.}
-  {Wer alle Schläge auf andere abwälzt, schmiedet auf deren Kosten. Wer keinen Rückhalt annimmt, spürt jeden Hammerschlag am eigenen Leib.}
+\spruch{18}{Feuer}{Holz}{Metall}{VI Rückhalt}{Der Ambossstock}{Der Schmied stellt seinen Amboss auf einen Eichenklotz, der jeden Schlag abfängt. So getragen, kann er das glühende Eisen in Form schlagen.}
+  {Stütz dich auf die, die hinter dir stehen. Menschen, die dich einmal begeistert haben, fangen jetzt die harten Schläge ab. Mit diesem Rückhalt kannst du dich dem Starren zuwenden, statt vor ihm zu fliehen. Unter deiner Beharrlichkeit gibt es nach.}
+  {Wer alle Härten auf andere abwälzt, kommt auf ihre Kosten voran. Wer keine Unterstützung annimmt, spürt jeden Schlag am eigenen Leib.}
 \newpage
-\spruch{19}{Feuer}{Metall}{Wasser}{VII Damm}{Der Kessel}{Aus dem Eisen, das in deinem Feuer weich wurde, wird ein Kessel geschmiedet, und er füllt sich mit Wasser. Nun hängt er über deinem eigenen Feuer, und wenn er überkocht, zischt es in der Glut.}
-  {Du hast etwas Starres mit Leidenschaft in Form gebracht, und daraus ist ein Gefäß geworden, das etwas Neues aufnimmt. Dieses Neue ist kühler, ruhiger, eigensinnig. Es lebt von deiner Wärme und kann sie doch dämpfen. Gib ihm deine Wärme, aber lass dich nicht löschen.}
-  {Hängt der Kessel zu tief, kocht er über und löscht die Glut. Hängt er zu hoch, wird das Wasser nie warm.}
+\spruch{19}{Feuer}{Metall}{Wasser}{VII Damm}{Der Kessel}{Der Kesselschmied treibt einen Kessel aus Kupfer, das er im Feuer immer wieder weich glüht. Nun hängt der Kessel voll Wasser über dem Herd, und wenn er überkocht, zischt es in der Glut.}
+  {Bleib bei dem, was aus deinem Werk entstanden ist. Es hat ein Eigenleben bekommen, kühler und eigensinniger als du. Es lebt von deiner Wärme und kann sie doch dämpfen. Halte den richtigen Abstand: nah genug, um zu wärmen, fern genug, um nicht gelöscht zu werden.}
+  {Wer seinem Werk zu nahe ist, wird von ihm überwältigt. Wer sich zu weit entfernt, gibt ihm keine Wärme mehr.}
 \newpage
-\spruch{20}{Feuer}{Metall}{Erde}{VIII Abkürzung}{Die Pflugschar}{Du wirfst das Schwert ins Feuer und machst daraus eine Pflugschar. Der edle Stahl geht in die Erde: Was im Feuer neu entstanden ist, dient nun dem Acker.}
-  {Etwas Hartes stand zwischen dir und dem, was dir am Herzen liegt: ein Streit, eine Kränkung, eine Waffe in fremder oder eigener Hand. Du hast es eingeschmolzen und neu geformt. Dabei gibst du etwas auf, denn ein Schwert ist aus feinerem Stahl als jede Pflugschar. Doch nun dient es nicht mehr dem Kampf, sondern dem Wachsen.}
-  {Wer jede Klinge umschmiedet, steht schutzlos da, wenn er eine braucht. Wer keine umschmiedet, pflügt nie.}
+\spruch{20}{Feuer}{Metall}{Erde}{VIII Abkürzung}{Die Pflugschar}{Die Schmiedin wirft das Schwert ins Feuer und macht daraus eine Pflugschar. Der edle Stahl geht in die Erde und dient dem Acker.}
+  {Verwandle, was trennt. Zwischen dir und dem, was dir wichtig ist, steht etwas Hartes: ein Streit, eine Kränkung, ein scharfes Wort. Schmilz es ein. Dabei gibst du etwas auf, vielleicht dein Recht oder deinen Stolz. Doch der Weg zum Frieden ist kürzer, als du denkst.}
+  {Wer jede Wehr aufgibt, steht schutzlos da, wenn er sie braucht. Wer an jeder Waffe festhält, wird nie etwas säen.}
 \newpage
-\spruch{21}{Feuer}{Metall}{Holz}{IX Strenger Weg}{Der Holzstoß}{Das Eisen glüht in deinem Feuer, auf dem Amboss wird es zur Axt geschmiedet und gehärtet. Im Winter fällt die Axt die Bäume, die Stämme werden entastet, gespalten und gestapelt. Erst wenn das Holz lange genug getrocknet ist, nährt es dein Feuer.}
-  {Jetzt ist Arbeit gefragt, und sie verlangt einen langen Atem: erst das Werkzeug, dann Fällen, Entasten, Spalten, Stapeln, und dann das Warten. Nichts davon lässt sich abkürzen. Früher hing das Leben daran, ob der Vorrat für den Winter reichte. Wer so vorsorgt, hat am Ende genug, um lange zu brennen.}
-  {Wer nur stapelt und sich nie ans Feuer setzt, friert neben dem vollen Holzstoß. Wer seinen Vorrat zu früh verfeuert, friert, wenn der Winter am härtesten ist.}
+\spruch{21}{Feuer}{Metall}{Holz}{IX Strenger Weg}{Der Holzstoß}{Mit einer Axt, die im Feuer gehärtet wurde, fällt der Holzfäller im Winter Buchen. Er spaltet und stapelt sie; erst wenn das Holz getrocknet ist, nährt es das Feuer.}
+  {Sorge vor, auch wenn es mühsam ist. Erst das Werkzeug, dann die Arbeit, dann das Warten: Nichts davon lässt sich abkürzen. Für Begeisterung bleibt wenig Raum. Doch was du jetzt mit Ausdauer bereitest, wärmt dich, wenn andere frieren.}
+  {Wer nur vorsorgt und nie genießt, friert neben vollen Vorräten. Wer zu früh verbraucht, was er hat, steht im härtesten Moment mit leeren Händen da.}
 \newpage
-\spruch{22}{Feuer}{Wasser}{Holz}{X Läuterung}{Das Sommergewitter}{Der Regen fällt auf deine Flamme, und du brennst weiter. Derselbe Regen lässt die Bäume wachsen, die dich in späteren Jahren nähren.}
-  {Etwas Kaltes trifft dich: Ernüchterung, Kritik, ein Rückschlag. Du stellst dich ihm und erlischst nicht. Mit der Zeit zeigt sich, dass genau diese Kälte etwas Neues hat wachsen lassen, an dem du dich wieder entzünden kannst. Was dich dämpfen wollte, schenkt dir einen Neubeginn.}
-  {Wer jede Kälte als Verrat empfindet, sieht nicht, was in ihr wächst. Wer beim ersten Regen aufgibt, ist nicht mehr da, wenn die Bäume groß sind.}
+\spruch{22}{Feuer}{Wasser}{Holz}{X Läuterung}{Das Sommergewitter}{Ein Gewitterregen prasselt auf das Lagerfeuer der Wanderin, doch es brennt weiter. Derselbe Regen lässt die Fichten wachsen, die einmal Brennholz werden.}
+  {Lass dich nicht auslöschen. Ernüchterung, Kritik oder ein Rückschlag treffen dich, und du hältst stand. Mit der Zeit zeigt sich, dass gerade diese Kälte etwas hat wachsen lassen, an dem du dich neu entzünden kannst. Was dich dämpfen wollte, schenkt dir einen Neubeginn.}
+  {Wer jede Kritik als Verrat empfindet, sieht nicht, was aus ihr wächst. Wer beim ersten Widerspruch aufgibt, ist nicht mehr da, wenn sich das Blatt wendet.}
 \newpage
-\spruch{23}{Feuer}{Wasser}{Metall}{XI List}{Das Feuersetzen}{Vor dem Fels brennt ein Feuer, bis der Stein durch und durch heiß ist. Dann wird Wasser darauf gegossen: Der Fels springt, und das Erz liegt offen.}
-  {Gegen diese Härte kommst du mit Hitze allein nicht an. Doch du weichst der Kälte nicht aus, die dir entgegenschlägt: Du nutzt sie. Wo Hitze und Kälte aufeinandertreffen, bekommt selbst Fels Risse. So erreichst du, was dir verschlossen schien.}
-  {Wer immer nur heizt, bringt den Fels nicht zum Springen. Wer das Wasser zu früh gießt, löscht nur sein Feuer.}
+\spruch{23}{Feuer}{Wasser}{Metall}{XI List}{Das Feuersetzen}{Der Bergmann heizt den Fels mit Feuer, bis der Stein heiß ist, und gießt dann Wasser darauf. Der Fels springt, und das Erz liegt offen.}
+  {Nutze, was dir entgegenschlägt. Gegen eine verhärtete Lage kommst du mit Eifer allein nicht an. Doch wo Leidenschaft und Nüchternheit zusammenwirken, bekommt selbst das Starrste Risse. So erreichst du, was dir verschlossen schien, nicht gegen den Widerstand, sondern mit ihm.}
+  {Wer immer nur Druck macht, bringt nichts zum Aufbrechen. Wer zu früh nüchtern wird, erstickt den eigenen Eifer.}
 \newpage
-\spruch{24}{Feuer}{Wasser}{Erde}{XII Aufstand}{Der Vulkan}{Glut bricht aus dem Berg und stellt sich dem Meer, und das Wasser frisst sich in die junge Erde. Am Ende ist kein Boden fruchtbarer als die Asche des Vulkans.}
-  {Du lehnst dich auf, und was dir entgegensteht, lehnt sich ebenfalls auf. Es wird laut und heiß, und nichts bleibt, wie es war. Doch aus diesem Aufruhr entsteht neues Land. Wer nach dem Ausbruch Geduld hat, erntet auf diesem Boden reicher als je zuvor.}
-  {Ein Ausbruch ohne Ende begräbt alles unter sich. Wer seine Glut immer zurückhält, wird hart wie erkaltetes Gestein.}
+\spruch{24}{Feuer}{Wasser}{Erde}{XII Aufstand}{Der Vulkan}{Glut bricht aus dem Berg und stürzt ins Meer, und das Wasser frisst sich in die junge Erde. Kein Boden ist später fruchtbarer als die Asche des Vulkans.}
+  {Lass das Alte bersten, wenn es sein muss. Du lehnst dich auf, und was dir entgegensteht, lehnt sich ebenfalls auf. Es wird laut, und nichts bleibt, wie es war. Doch aus diesem Aufruhr kann neues Land entstehen. Wer danach Geduld hat, erntet reicher als zuvor.}
+  {Ein Aufruhr ohne Ende begräbt alles unter sich, auch die eigenen Leute. Wer seine Glut immer zurückhält, verhärtet sich.}
 
 \newpage
 \markright{\element{Erde}}
-\spruch{25}{Erde}{Metall}{Wasser}{I Strom}{Der Brunnen}{In deinem Boden liegt Gestein, und das Wasser, das hindurchsickert, wird darin klar und reich an Mineralien. In einem gemauerten Schacht fasst du es: So wird ein Brunnen daraus.}
-  {Was du mit Geduld gepflegt hast, ist zu etwas Klarem geworden, und daraus fließt nun etwas Eigenes: Ideen, Gedanken, vielleicht Menschen, die eigene Wege gehen. Du musst es nicht festhalten. Aber du kannst ihm eine Fassung geben, damit andere daraus schöpfen können.}
-  {Ein Brunnen, aus dem zu viel geschöpft wird, fällt trocken. Einer, den niemand benutzt, verschlammt.}
+\spruch{25}{Erde}{Metall}{Wasser}{I Strom}{Der Brunnen}{Die Brunnenbauerin mauert einen Schacht bis hinab ins Gestein. Dort sammelt sich klares Wasser, reich an Mineralien, und das ganze Dorf schöpft daraus.}
+  {Gib dem, was aus dir hervorgeht, eine Fassung. Was du mit Geduld gepflegt hast, ist klar geworden, und nun fließt daraus etwas Eigenes: Gedanken, Menschen, die eigene Wege gehen. Du musst es nicht festhalten. Aber du kannst ihm einen Rahmen geben, damit andere davon zehren können.}
+  {Wer alles offen lässt, lässt auch jeden Schmutz hinein. Wer alles verschließt, nützt niemandem.}
 \newpage
-\spruch{26}{Erde}{Metall}{Holz}{II Prüfung}{Die Quecke}{Aus deinem Erz wird eine Hacke, und sie räumt das Beet vom Unkraut. Doch die Quecke treibt ihre Wurzeln weiter durch deinen Boden, und mit ihr musst du selbst fertig werden.}
-  {Du hast unterstützt, was Ordnung schafft, und es hat aufgeräumt, wo zu viel wucherte. Nun bleibt der Rest bei dir: das Zähe, das sich nicht einfach weghacken lässt. Das ist deine Prüfung. Gründlichkeit und Geduld helfen hier mehr als Gewalt.}
-  {Wer die Quecke mit der Hacke zerkleinert, vermehrt sie, denn aus jedem Stück treibt eine neue. Wer sie gewähren lässt, hat bald nur noch Quecke im Beet.}
+\spruch{26}{Erde}{Metall}{Holz}{II Prüfung}{Die Quecke}{Der Gärtner hackt das Beet frei, doch die Quecke treibt ihre Wurzeln weiter durch den Boden. Mit ihr muss er selbst fertig werden.}
+  {Nimm dich des Zähen selbst an. Du hast unterstützt, was Ordnung schafft, und vieles ist aufgeräumt. Was bleibt, ist hartnäckig: alte Gewohnheiten, ungelöste Konflikte, Dinge, die immer wiederkommen. Daran wirst du gemessen. Gründlichkeit und Geduld helfen hier mehr als Gewalt.}
+  {Wer ein Problem mit Gewalt zerschlägt, vervielfacht es oft. Wer es gewähren lässt, hat bald nichts anderes mehr im Garten.}
 \newpage
-\spruch{27}{Erde}{Metall}{Feuer}{III Unterweisung}{Der Kachelofen}{Aus deinem Erz wird die eiserne Tür des Kachelofens, und sie hält der Glut stand. Die Kacheln aus gebranntem Ton nehmen die Hitze auf und geben sie noch Stunden später als Wärme ab.}
-  {Du hast einem anderen mitgegeben, was du hast, und er stellt sich nun einer harten Probe. Du bist dabei und hältst die Hitze mit aus. Was er dabei durchsteht, geht auch in dich über und bleibt in dir, lange nachdem die Probe vorbei ist. Wer unterweist, wird mitgeprüft.}
-  {Kacheln, die zu schnell aufgeheizt werden, springen. Ein Ofen, der nie angeheizt wird, bleibt ein kalter Klotz.}
+\spruch{27}{Erde}{Metall}{Feuer}{III Unterweisung}{Der Kachelofen}{Die Ofensetzerin setzt die eiserne Tür in den Kachelofen. Die Tür hält der Glut stand, die Kacheln nehmen die Hitze auf und geben sie noch Stunden später als Wärme ab.}
+  {Steh deinem Schüler bei, wenn es heiß wird. Was du ihm mitgegeben hast, muss sich nun bewähren, und du bist dabei. Was er durchsteht, geht auch in dich über und bleibt dir, lange nachdem die Probe vorbei ist. Wer unterweist, wird mitgeprüft.}
+  {Wer seine Schüler zu schnell in die Hitze schickt, sieht sie zerbrechen. Wer sie nie fordert, bleibt mit ihnen kalt.}
 \newpage
-\spruch{28}{Erde}{Feuer}{Holz}{IV Wurzelsuche}{Der Brennofen}{Du fragst, wer dich gebrannt hat, und findest das Feuer. Du fragst, was das Feuer genährt hat, und findest das Holz. Es wuchs einst aus deinem eigenen Boden, und seine Wurzeln stecken noch heute in dir.}
-  {Was dich geformt hat, hatte selbst eine Herkunft. Hinter der Glut, die dich gefestigt hat, liegt etwas, das in dich hineingewachsen ist und dich bis heute durchdringt: ein Anspruch, ein Ehrgeiz, ein fremder Plan. Stell dich ihm. Du kannst ihn halten, ohne dich von ihm sprengen zu lassen.}
-  {Ein Topf, in dem die Wurzeln ungehindert wachsen, springt. Wer keine Wurzel in sich duldet, bleibt leer.}
+\spruch{28}{Erde}{Feuer}{Holz}{IV Wurzelsuche}{Der Brennofen}{Die Töpferin fragt, woher die Glut kam, die ihren Krug gebrannt hat. Sie findet das Holz, dessen Wurzeln noch heute in ihrem Tonboden stecken.}
+  {Frag, was dich geformt hat. Hinter der Glut, die dich gefestigt hat, steckt etwas, das in dich hineingewachsen ist: ein Anspruch, ein Ehrgeiz, ein fremder Plan. Stell dich ihm. Du kannst es halten, ohne dich davon sprengen zu lassen.}
+  {Wer fremde Ansprüche ungehindert in sich wachsen lässt, zerbricht daran. Wer keinen Anspruch in sich duldet, bleibt leer.}
 \newpage
-\spruch{29}{Erde}{Feuer}{Metall}{V Gesammelte Kraft}{Der Schmelztiegel}{Im Feuer wirst du zum Tiegel, fest und hitzebeständig. Das Feuer macht das harte Metall flüssig, und du hältst es, bis es gegossen wird.}
-  {Bevor du dich um etwas Schwieriges kümmerst, holst du dir Wärme: Zuspruch, Nähe, Freude. Diese Wärme macht weich, was zu hart war, an dir und an der Lage. Dann kannst du tragen und halten, was jetzt Form annehmen will. Du gibst aus der Fülle.}
-  {Ein Tiegel, der nie im Feuer war, zerbricht beim ersten Guss. Einer, der zu oft im Feuer war, wird rissig.}
+\spruch{29}{Erde}{Feuer}{Metall}{V Gesammelte Kraft}{Der Schmelztiegel}{Die Gießerin brennt einen Tiegel aus Ton, bis er der Hitze standhält. Dann schmilzt sie darin Bronze, und der Tiegel hält sie, bis sie gegossen wird.}
+  {Hol dir Zuspruch, bevor du dich dem Schwierigen zuwendest. Nähe und Freude lösen, was sich in dir verhärtet hat. Dann kannst du tragen und halten, was jetzt Gestalt annehmen will. Du gibst aus der Fülle, nicht aus der Erschöpfung.}
+  {Wer ohne Rückhalt das Schwierige trägt, zerbricht beim ersten Mal. Wer zu oft für andere die Hitze aushält, bekommt Risse.}
 \newpage
-\spruch{30}{Erde}{Feuer}{Wasser}{VI Rückhalt}{Der Klinker}{Im Feuer gebrannt, wird dein Ton zu Klinker, und der Regen kann ihm nichts mehr anhaben. So gestärkt, hältst du das Wasser in seinen Grenzen.}
-  {Hinter dir steht, was dich gestärkt hat: Wärme, Begeisterung, Menschen, die an dich glauben. Sie halten der Kälte stand, die dich sonst aufweichen würde. Mit diesem Rückhalt kannst du Grenzen ziehen und Fließendes in seine Bahn lenken.}
-  {Ungebrannter Ton weicht im ersten Regen auf. Zu heiß gebrannter verzieht sich und taugt nicht mehr für die Mauer.}
+\spruch{30}{Erde}{Feuer}{Wasser}{VI Rückhalt}{Der Klinker}{Der Ziegler brennt Ton zu Klinker, dem kein Regen mehr etwas anhaben kann. Mit diesen Steinen mauert er die Kaimauer am Hafen.}
+  {Lass dich stärken, damit du Halt geben kannst. Es gibt Menschen, die an dich glauben, und ihre Zuversicht hält der Ernüchterung stand, die dich sonst aufweichen würde. So gestützt, kannst du Grenzen ziehen und anderen Richtung geben.}
+  {Wer sich nie bestärken lässt, weicht beim ersten Gegenwind auf. Wer sich zu sehr verhärtet, passt in keine gemeinsame Mauer mehr.}
 \newpage
-\spruch{31}{Erde}{Wasser}{Holz}{VII Damm}{Der Baum auf dem Deich}{Dein Deich hält das Wasser, und das Wasser lässt Bäume wachsen, auch auf dem Deich selbst. Ihre Wurzeln dringen in dich ein, und du musst ihnen standhalten.}
-  {Du hast eine Grenze gezogen, und in ihrem Schutz ist Leben entstanden. Nun wächst es weiter, in dich hinein, und stellt deine Ordnung infrage. Das ist kein Undank. Halte stand, aber prüfe auch, welche Wurzeln dich festigen und welche dich aushöhlen.}
-  {Ein Deich, auf dem Bäume ungehindert wachsen, wird von ihren Wurzeln ausgehöhlt. Einer, auf dem nicht einmal Gras wurzeln darf, wird vom Regen abgetragen.}
+\spruch{31}{Erde}{Wasser}{Holz}{VII Damm}{Der Baum auf dem Deich}{Der Deichgraf sieht Erlen auf seinem Deich wachsen, genährt vom Wasser, das der Deich zurückhält. Ihre Wurzeln dringen tief in den Wall.}
+  {Prüfe, was in deinem Schutz gewachsen ist. Du hast eine Grenze gezogen, und in ihrem Schutz ist Leben entstanden. Nun wächst es weiter, in deine Ordnung hinein, und stellt sie infrage. Halte stand, aber unterscheide, was dich festigt und was dich sprengt.}
+  {Wer alles wachsen lässt, was er geschützt hat, wird von innen gesprengt. Wer nichts wachsen lässt, hat nichts mehr, was ihn hält.}
 \newpage
-\spruch{32}{Erde}{Wasser}{Metall}{VIII Abkürzung}{Die Goldwäsche}{Du lenkst das Wasser durch eine Rinne aus Erde, und es spült den Sand fort bis auf den Fels. Dort liegt das Gold, das dein Boden hervorgebracht hat.}
-  {Du greifst ein und gibst dem Fließenden eine Richtung. Das Wasser tut den Rest: Es trägt fort, was leicht ist, und lässt liegen, was Gewicht hat. Was übrig bleibt, ist das Wertvolle, das immer schon in dir lag. Der kürzeste Weg dorthin führte durch das Wasser.}
-  {Wer zu viel Wasser durch die Rinne jagt, spült das Gold mit fort. Wer gar keins hindurchlässt, findet im Schlamm nichts.}
+\spruch{32}{Erde}{Wasser}{Metall}{VIII Abkürzung}{Die Goldwäsche}{Die Goldwäscherin schwenkt Sand und Wasser in ihrer Pfanne, bis der leichte Sand fortgespült ist. Am Boden bleiben die schweren Goldkörner.}
+  {Greif ein und lass dann los. Du bremst das Fließende und lässt es arbeiten: Es trägt fort, was leicht ist, und lässt liegen, was Gewicht hat. Was übrig bleibt, ist das Wertvolle, das immer schon in dir lag. Der kürzeste Weg dorthin führt mitten durch das Unbeständige.}
+  {Wer zu heftig sortiert, verliert mit dem Unwichtigen auch das Kostbare. Wer zu zaghaft ist, behält nur Sand.}
 \newpage
-\spruch{33}{Erde}{Wasser}{Feuer}{IX Strenger Weg}{Die Töpferei}{Du hältst das Wasser im Ton, knetest ihn und formst ihn auf der Scheibe. Solange er nass ist, darf kein Feuer an ihn heran. Erst am Ende dieser langen Arbeit wird er im Brand zum Gefäß.}
-  {Jetzt gilt Sorgfalt vor Begeisterung: kneten, auf der Scheibe formen, trocknen lassen, Schritt für Schritt. Jede Abkürzung würde sich rächen. Doch am Ende dieses strengen Weges kommt das Feuer zu dir, und du wirst, was du werden sollst: ein Gefäß, das hält.}
-  {Wer den Ton zu früh brennt, sieht ihn im Ofen springen. Wer ihn nie brennt, hat nur getrockneten Schlamm.}
+\spruch{33}{Erde}{Wasser}{Feuer}{IX Strenger Weg}{Die Töpferei}{Der Töpfer knetet den nassen Ton und formt ihn auf der Scheibe. Erst wenn das Gefäß getrocknet ist, darf es ins Feuer.}
+  {Sorgfalt geht jetzt vor Begeisterung. Formen, trocknen lassen, warten: Schritt für Schritt, und jede Abkürzung würde sich rächen. Das ist mühsam. Doch wenn alles bereit ist, kommt die Wärme zu dir, und du wirst, was du werden sollst.}
+  {Wer sich zu früh der Hitze einer Sache aussetzt, zerbricht daran. Wer es nie wagt, bleibt ungeformt.}
 \newpage
-\spruch{34}{Erde}{Holz}{Feuer}{X Läuterung}{Der Wurzelstock im Ofen}{Du hältst den Wurzeln stand, die in dich eindringen. Ihr Holz brennt schließlich im Ofen, und dich brennt es zu einem festen Gefäß.}
-  {Etwas Neues drängt in dein Leben, zerrt an deiner Ordnung, nimmt dir die Ruhe. Du stellst dich ihm. Dann geschieht das Unerwartete: Gerade das, was dich bedrängt hat, wird zum Feuer, das dich härtet. Läuterung heißt, durchs Feuer zu gehen und dabei fester zu werden.}
-  {Wer jedes Eindringen fürchtet, bleibt weicher Lehm. Wer sich allem öffnet, wird durchwurzelt und zerfällt.}
+\spruch{34}{Erde}{Holz}{Feuer}{X Läuterung}{Das Reisig}{Die Zieglerin rodet das Gestrüpp, das ihre Tongrube überwuchert hat. Das Reisig heizt ihren Ofen, und in seiner Glut wird aus dem Ton ein fester Ziegel.}
+  {Mach aus der Last eine Kraft. Etwas Fremdes drängt in dein Leben, zerrt an deiner Ordnung, nimmt dir die Ruhe. Stell dich ihm. Das, was dich bedrängt hat, kann zum Feuer werden, das dich härtet. Läuterung heißt, durchs Feuer zu gehen und dabei fester zu werden.}
+  {Wer jedes Eindringen fürchtet, bleibt weich und ungeprüft. Wer alles wuchern lässt, verliert sich selbst darunter.}
 \newpage
-\spruch{35}{Erde}{Holz}{Wasser}{XI List}{Die Weiden im nassen Grund}{Du hältst die Wurzeln der Weiden fest, die in dich hineinwachsen, und sie ziehen das Wasser heraus, das dich aufweichen würde. So wird der nasse Grund mit der Zeit fest.}
-  {Was dich bedrängt, kannst du nicht vertreiben. Also hältst du es fest und lässt es für dich arbeiten. Es nimmt dir ab, was dich schwer und schwammig machte. Klugheit heißt hier: den Gegner nicht bekämpfen, sondern ihm eine Aufgabe geben.}
-  {Zu viele Weiden saugen den Boden trocken. Ohne sie bleibt er ein Sumpf.}
+\spruch{35}{Erde}{Holz}{Wasser}{XI List}{Die Weiden im nassen Grund}{Der Bauer pflanzt Weiden in die nasse Wiese. Sie trinken viel Wasser, und der Grund wird mit der Zeit fester.}
+  {Gib dem Eindringling eine Aufgabe. Was dich bedrängt, kannst du nicht vertreiben. Also hältst du es fest und lässt es für dich arbeiten; es nimmt dir ab, was dich schwer und schwammig machte. Klug ist, den Gegner nicht zu bekämpfen, sondern ihn zu beschäftigen.}
+  {Wer fremde Kräfte für sich arbeiten lässt und sie nie in Schranken hält, wird am Ende von ihnen beherrscht. Wer keine fremde Hilfe zulässt, bleibt im Sumpf stecken.}
 \newpage
-\spruch{36}{Erde}{Holz}{Metall}{XII Aufstand}{Die Kriegssense}{Der Boden hält die alten Wurzelstöcke fest, und an ihnen wird die Sense stumpf. Da lassen die Bauern sie gerade schmieden und ziehen mit ihr los: Der Acker hat seine eigene Waffe hervorgebracht.}
-  {Lange hast du getragen und ausgehalten, und was in dich hineinwuchs, hast du festgehalten. Nun stößt die Härte, die über dich hinwegfahren will, auf Widerstand, und er ist zäher als sie. Aus dem, was du immer schon hattest, machst du das Werkzeug deines Aufstands, wie die Bauern im Bauernkrieg aus ihren Sensen.}
+\spruch{36}{Erde}{Holz}{Metall}{XII Aufstand}{Die Kriegssense}{Der Mäher schlägt seine Sense an alten Wurzelstöcken stumpf. Da lässt er sie gerade schmieden und zieht mit ihr los: Der Acker hat eine Waffe hervorgebracht.}
+  {Steh auf, wenn das Tragen zur Last wird. Lange hast du getragen und ausgehalten. Nun stößt die Härte, die über dich hinwegfahren will, auf Widerstand, und er ist zäher als sie. Aus dem, was du immer schon hattest, machst du das Werkzeug deines Aufstands.}
   {Wer jede Sense zur Waffe schmiedet, hat am Ende nichts mehr, womit er ernten kann. Wer sich nie widersetzt, wird gemäht wie Gras.}
 
 \newpage
 \markright{\element{Metall}}
-\spruch{37}{Metall}{Wasser}{Holz}{I Strom}{Die Baumschule}{Aus deiner blechernen Kanne fließt Wasser auf die jungen Bäume. Wenn sie gewachsen sind, stutzt du sie mit der Schere in Form.}
-  {Aus deiner Klarheit ist Ruhe geworden, und aus der Ruhe wächst Neues, das nicht mehr dir gehört. Es entwickelt sich nach eigenen Plänen. Doch weil du am Anfang standest, hast du das Recht und die Aufgabe, ihm das Maß vorzugeben.}
-  {Wer alles stutzt, was er hat wachsen lassen, zieht nur Hecken. Wer nie eingreift, erkennt seine Bäume bald nicht wieder.}
+\spruch{37}{Metall}{Wasser}{Holz}{I Strom}{Die Baumschule}{Die Gärtnerin gießt die jungen Linden aus ihrer Zinkkanne. Wenn sie gewachsen sind, stutzt sie sie mit der Schere in Form.}
+  {Gib Maß, wo du den Anfang gemacht hast. Aus deiner Klarheit ist Ruhe geworden, und aus der Ruhe wächst Neues, das nicht mehr dir gehört. Es folgt eigenen Plänen. Doch weil du am Anfang standest, hast du das Recht und die Aufgabe, ihm Form zu geben.}
+  {Wer alles zurechtstutzt, was er hat wachsen lassen, erstickt das Eigene darin. Wer nie eingreift, erkennt sein Werk bald nicht wieder.}
 \newpage
-\spruch{38}{Metall}{Wasser}{Feuer}{II Prüfung}{Der Löschtrog}{Im eisernen Trog neben der Esse steht Wasser; damit hält der Schmied das Feuer im Zaum. Doch am Ende muss das Eisen selbst in die Glut, und es zeigt sich, ob es standhält.}
-  {Du hast für Ruhe gesorgt, wo es hitzig wurde, und anderen geholfen, die Fassung zu bewahren. Jetzt kommt die Hitze zu dir: Leidenschaft, Druck, ein Konflikt, der dich selbst betrifft. Das ist deine Prüfung. Bleib bei dir. Eisen, das in die Glut muss, wird nicht schwächer, sondern brauchbarer.}
-  {Wer jede Hitze von sich fernhält, wird nie geschmiedet. Wer zu lange in der Glut bleibt, verbrennt.}
+\spruch{38}{Metall}{Wasser}{Feuer}{II Prüfung}{Der Löschtrog}{Der Schmied hält mit dem Wasser aus dem eisernen Trog sein Feuer im Zaum. Doch zuletzt muss das Eisen selbst in die Glut.}
+  {Tritt selbst an. Du hast für Ruhe gesorgt, wo es hitzig wurde, und anderen geholfen, die Fassung zu bewahren. Nun kommt die Hitze zu dir: ein Konflikt, der dich selbst betrifft. Das ist deine Prüfung. Bleib bei dir; wer durchs Feuer geht, wird nicht schwächer, sondern brauchbarer.}
+  {Wer jede Leidenschaft von sich fernhält, wird nie geformt. Wer sich zu lange in ihr aufhält, verbrennt.}
 \newpage
-\spruch{39}{Metall}{Wasser}{Erde}{III Unterweisung}{Das Erz im Flussbett}{Aus deinem Fels rinnt ein Bach, und der Bach gräbt sich durch die Erde. In der Schlucht, die er schneidet, liegt das Gestein offen, aus dem du stammst.}
-  {Du gibst weiter, was du klar erkannt hast, und jemand anderes macht daraus seinen eigenen Weg. Er stößt auf Widerstände und arbeitet sich durch. Dabei legt er frei, was du selbst vergessen hattest: woher du kommst und was dich getragen hat.}
-  {Ein Lehrer, der nur Antworten gibt, sieht nie, was seine Schüler freilegen. Einer, der nichts weitergibt, vergisst, woher er kommt.}
+\spruch{39}{Metall}{Wasser}{Erde}{III Unterweisung}{Das Erz im Flussbett}{Die Erzsucherin folgt einem Bach, der aus dem Fels rinnt, durch die Schlucht, die er geschnitten hat. In ihren Wänden liegt das Erz offen.}
+  {Lass andere ihren eigenen Weg graben. Was du klar erkannt hast, gibst du weiter, und jemand anderes macht daraus etwas Eigenes. Dabei legt er frei, was du selbst vergessen hattest: woher du kommst und was dich getragen hat.}
+  {Wer nur Antworten weitergibt, erfährt nie, was andere damit freilegen. Wer nichts weitergibt, vergisst, woher er kommt.}
 \newpage
-\spruch{40}{Metall}{Erde}{Feuer}{IV Wurzelsuche}{Die Glut im Berg}{Du folgst dem Erz zurück in den Berg und dem Berg zurück in die Tiefe. Dort unten glüht es noch, und du stehst der Hitze gegenüber, aus der alles kam.}
-  {Du suchst nach deinem Ursprung, und hinter dem festen Grund findest du etwas Heißes, Ungebändigtes: eine alte Leidenschaft, einen Zorn, eine Liebe, die du lange kühl gehalten hast. Stell dich ihr. Du hältst mehr Hitze aus, als du glaubst, und erkennst dich darin wieder.}
-  {Wer immer tiefer in die Glut hinabsteigt, schmilzt. Wer sie verleugnet, bleibt kalt und spröde.}
+\spruch{40}{Metall}{Erde}{Feuer}{IV Wurzelsuche}{Die Glut im Berg}{Die Bergfrau folgt dem Erz tief hinab in den Stollen. Je tiefer sie kommt, desto heißer wird das Gestein.}
+  {Geh deiner Klarheit auf den Grund. Hinter deiner Strenge findest du etwas Heißes, Ungebändigtes: eine alte Leidenschaft, einen Zorn, eine Liebe, die du lange kühl gehalten hast. Stell dich ihr. Du hältst mehr aus, als du glaubst, und erkennst dich darin wieder.}
+  {Wer sich ganz in seine Leidenschaft hinabbegibt, verliert die Fassung. Wer sie nicht wahrhaben will, bleibt kalt und spröde.}
 \newpage
-\spruch{41}{Metall}{Erde}{Wasser}{V Gesammelte Kraft}{Die Tropfsteinhöhle}{Du kehrst zurück in den Berg. Er lässt das Regenwasser nur langsam hindurch, und auf seinem Weg durch dein Gestein nimmt es Kalk auf. Tropfen für Tropfen baut es daraus in der Stille Tropfsteine.}
-  {Bevor du sprichst oder entscheidest, ziehst du dich an einen festen Ort zurück. Dort beruhigt sich, was in dir und um dich zu heftig strömt. Was du danach gibst, kommt Tropfen für Tropfen, aber es ist klar und hat Bestand.}
-  {Wer zu lange im Berg bleibt, gibt nur noch Tropfen, wo ein Strom gebraucht würde. Wer nie hineingeht, hat nichts Klares zu geben.}
+\spruch{41}{Metall}{Erde}{Wasser}{V Gesammelte Kraft}{Die Tropfsteinhöhle}{Die Höhlenforscherin hört es im Berg tropfen. Das Wasser, das durch das Gestein sickert, nimmt Kalk auf und baut daraus über Jahrtausende Tropfsteine.}
+  {Zieh dich zurück, bevor du sprichst. An einem festen, stillen Ort beruhigt sich, was in dir zu heftig strömt. Was du danach sagst, kommt nach und nach, aber es ist klar und hat Bestand.}
+  {Wer sich zu lange zurückzieht, gibt nur noch Tropfen, wo ein Strom gebraucht würde. Wer nie zur Ruhe kommt, hat nichts Klares zu sagen.}
 \newpage
-\spruch{42}{Metall}{Erde}{Holz}{VI Rückhalt}{Die Fallkerbe}{Das Eisen deiner Axt kommt aus dem Berg, und du stehst fest auf deinem Grund. Der Boden hält den Baum, bis die Axt ihn trifft; mit der Fallkerbe bestimmst du, wohin er fällt.}
-  {Du stützt dich auf das, woher du kommst: auf Menschen, die dich getragen haben, und auf eine Erfahrung, die dir niemand nehmen kann. Dieser Grund hält stand gegen alles, was wild in ihn hineinwächst. So gestützt, kannst du die Axt sicher führen und entscheiden, wohin es fällt.}
-  {Wer ohne Fallkerbe fällt, wird vom eigenen Baum getroffen. Wer nur seinen Stand prüft und nie zuschlägt, fällt keinen Baum.}
+\spruch{42}{Metall}{Erde}{Holz}{VI Rückhalt}{Die Fallkerbe}{Der Holzfäller stellt sich fest auf den Waldboden und schlägt die Fallkerbe in die Fichte. So bestimmt er, wohin sie fällt.}
+  {Steh fest, bevor du entscheidest. Stütz dich auf das, woher du kommst: auf Menschen, die dich getragen haben, und auf Erfahrung, die dir niemand nehmen kann. So gestützt, kannst du klar entscheiden und lenken, was daraus folgt.}
+  {Wer ohne festen Stand entscheidet, wird von den Folgen getroffen. Wer nur seinen Stand prüft, entscheidet nie.}
 \newpage
-\spruch{43}{Metall}{Holz}{Feuer}{VII Damm}{Die schartige Axt}{Deine Axt fällt Bäume, und aus dem Holz brennt der Köhler Kohle. Wird die Axt stumpf und schartig, muss sie selbst in diese Glut, bevor der Schmied sie neu ausschmieden kann.}
-  {Du hast klar entschieden und beendet, was zu viel war. Daraus ist etwas Lebendiges geworden, das sich nicht mehr in deine Ordnung fügt. Irgendwann musst du selbst in dieses Feuer, um wieder scharf zu werden. Halte stand. Es ist dein eigenes Werk.}
-  {Wer jedes Feuer fürchtet, das er selbst entfacht hat, wird stumpf. Wer zu lange in der Glut bleibt, verliert seine Härte.}
+\spruch{43}{Metall}{Holz}{Feuer}{VII Damm}{Der Schürhaken}{Der Bergbauer spaltet Anmachholz, und bald lodert das Feuer im Herd. Nun hält er es mit dem eisernen Schürhaken in Ordnung.}
+  {Begleite, was du entfacht hast. Du hast klar entschieden und beendet, was zu viel war. Daraus ist etwas Lebendiges geworden, das sich nicht mehr von selbst in deine Ordnung fügt. Du kannst nicht danebenstehen; du musst hinein und es lenken, ohne es zu ersticken.}
+  {Wer ständig eingreift, zerstört, was er fördern wollte. Wer sich heraushält, sieht es unter der eigenen Asche ersticken.}
 \newpage
-\spruch{44}{Metall}{Holz}{Wasser}{VIII Abkürzung}{Der Einbaum}{Deine Axt höhlt einen Stamm aus, und der Einbaum gleitet ins Wasser. Er saugt sich voll, bis er dicht ist, und trägt dich ohne Umweg ans andere Ufer.}
-  {Etwas Sperriges lag dir im Weg. Mit Axt und Dechsel hast du daraus ein Fahrzeug gemacht, und nun trägt es dich dorthin, wohin du wolltest: in die Stille, in die Tiefe, ans andere Ufer. Der kürzeste Weg führte nicht um das Hindernis herum, sondern mitten hindurch.}
-  {Wer den Stamm zu dünn aushöhlt, schlägt beim ersten Stoß leck. Ein Einbaum, der zu lange an Land liegt, trocknet aus und reißt.}
+\spruch{44}{Metall}{Holz}{Wasser}{VIII Abkürzung}{Der Einbaum}{Die Fischerin höhlt mit Beil und Dechsel einen Lindenstamm aus. Der Einbaum quillt im Wasser, bis er dicht ist, und trägt sie geradewegs ans andere Ufer.}
+  {Geh mitten hindurch. Etwas Sperriges lag dir im Weg. Mit klaren Entscheidungen hast du daraus etwas gemacht, das dich trägt: in die Stille, in die Tiefe, ans andere Ufer. Der kürzeste Weg führte nicht um das Hindernis herum, sondern durch es hindurch.}
+  {Wer zu viel wegnimmt, um schnell ans Ziel zu kommen, verliert, was ihn trägt. Wer eine Sache zu lange liegen lässt, dem trocknet sie aus und reißt.}
 \newpage
-\spruch{45}{Metall}{Holz}{Erde}{IX Strenger Weg}{Der Stampflehm}{Deine Axt macht aus Stämmen Bretter, und zwischen den Brettern wird Lehm festgestampft, Schicht um Schicht. Fällt die Schalung, steht eine Wand aus Erde, die dich schützt.}
-  {Eine Ordnung folgt auf die andere: erst die Bretter, dann der Lehm, Tag für Tag, Schicht um Schicht. Das ist mühsam und lässt wenig Raum für Eigenes. Doch am Ende dieses Weges steht etwas, das dich trägt und schützt, und du bist heimgekehrt zu dem, woraus du kommst.}
-  {Ist der Lehm zu nass, reißt die Wand beim Trocknen. Ist er zu trocken, bindet er nicht.}
+\spruch{45}{Metall}{Holz}{Erde}{IX Strenger Weg}{Der Stampflehm}{Der Zimmermann sägt Bretter für die Schalung, und Schicht um Schicht wird Lehm dazwischen gestampft. Fällt die Schalung, steht eine Wand aus Erde.}
+  {Bau Schicht für Schicht. Eine Ordnung folgt auf die andere, Tag für Tag, und für Eigenes bleibt wenig Raum. Doch was so entsteht, trägt und schützt dich, und du bist heimgekehrt zu dem, woraus du kommst.}
+  {Wer zu viel auf einmal will, bekommt Risse. Wer zu wenig hineingibt, bekommt nichts, was zusammenhält.}
 \newpage
-\spruch{46}{Metall}{Feuer}{Erde}{X Läuterung}{Die Schlacke}{Du hältst der Glut stand, und das Feuer trennt dich von der Schlacke. Was abfällt, kehrt in die Erde zurück, und du findest neuen Grund.}
-  {Du bist durch eine harte Zeit gegangen, in der vieles an dir verbrannt ist. Du hast standgehalten. Jetzt merkst du: Was abgefallen ist, war nicht das Wertvolle. Es geht zurück in den Boden und wird dort zu etwas Nützlichem. Und du stehst klarer da als vorher, auf festerem Grund.}
-  {Wer nach jedem Feuer der Schlacke nachtrauert, sieht nicht, wie rein er geworden ist. Wer das Feuer meidet, trägt seine Schlacke weiter mit sich.}
+\spruch{46}{Metall}{Feuer}{Erde}{X Läuterung}{Die Schlacke}{Die Schmelzerin hält das Erz in der Glut, bis sich das reine Metall von der Schlacke trennt. Die Schlacke wird gemahlen und düngt den Acker.}
+  {Lass fallen, was nicht zu dir gehört. Du bist durch eine harte Zeit gegangen, in der vieles an dir verbrannt ist. Jetzt merkst du: Was abgefallen ist, war nicht das Wertvolle. Es geht zurück in den Boden und wird dort nützlich. Und du stehst klarer da als vorher.}
+  {Wer jedem Verlust nachtrauert, sieht nicht, wie klar er geworden ist. Wer jede Krise meidet, trägt seinen Ballast weiter mit sich.}
 \newpage
-\spruch{47}{Metall}{Feuer}{Holz}{XI List}{Die Brandschneise}{Gegen das Feuer kommst du nicht an, also gehst du dorthin, wovon es lebt. Mit Axt und Säge schlägst du eine Schneise in den Wald, und wenn die Flammen sie erreichen, finden sie keine Nahrung mehr.}
-  {Die Hitze, die dir entgegenschlägt, kannst du nicht direkt löschen. Also hältst du stand und siehst genau hin, woher sie ihre Kraft nimmt. Dort setzt du an, klar und entschieden. Ein Konflikt, dem man die Nahrung entzieht, brennt von selbst aus.}
-  {Wer jede Schneise zu breit schlägt, verwüstet mehr als das Feuer. Wer keine schlägt, sieht zu, wie es sich ausbreitet.}
+\spruch{47}{Metall}{Feuer}{Holz}{XI List}{Die Brandschneise}{Der Förster sieht den Waldbrand kommen und schlägt mit Säge und Beil eine Schneise. Als die Flammen sie erreichen, finden sie keine Nahrung mehr.}
+  {Entzieh dem Streit seine Nahrung. Die Hitze, die dir entgegenschlägt, kannst du nicht direkt löschen. Sieh genau hin, woher sie ihre Kraft nimmt, und setze dort an, klar und entschieden. Ein Konflikt, dem niemand mehr Brennstoff gibt, brennt von selbst aus.}
+  {Wer zu viel opfert, um einen Streit zu ersticken, verwüstet mehr als der Streit. Wer gar nichts tut, sieht zu, wie er um sich greift.}
 \newpage
-\spruch{48}{Metall}{Feuer}{Wasser}{XII Aufstand}{Der Dampfkessel}{Der eiserne Kessel hält der Glut stand, und das Feuer kämpft gegen das Wasser darin an. Aus diesem doppelten Widerstand steigt Dampf, und er treibt mehr an, als du allein vermocht hättest.}
-  {Du hältst stand, und was dich bedrängt, wird selbst bedrängt. Zwischen den Fronten entsteht Druck. Gefasst und gelenkt, wird dieser Druck zu einer Kraft, die vieles in Bewegung bringt. Frag dich, wohin sie führen soll.}
-  {Ein Kessel ohne Ventil explodiert. Einer, der nie unter Druck steht, treibt nichts an.}
+\spruch{48}{Metall}{Feuer}{Wasser}{XII Aufstand}{Der Dampfkessel}{Der Heizer schürt das Feuer unter dem eisernen Kessel, und das Wasser darin stemmt sich gegen die Glut. Aus dem doppelten Widerstand steigt Dampf und treibt die Maschine an.}
+  {Mach aus Druck Bewegung. Du hältst stand, und was dich bedrängt, wird seinerseits bedrängt. Zwischen den Fronten entsteht Druck. Gefasst und gelenkt, wird er zu einer Kraft, die vieles in Bewegung bringt. Frag dich, wohin sie führen soll.}
+  {Wer allen Druck in sich einschließt, zerbirst. Wer nie unter Druck gerät, bewegt nichts.}
 
 \newpage
 \markright{\element{Wasser}}
-\spruch{49}{Wasser}{Holz}{Feuer}{I Strom}{Die Holztrift}{Dein Fluss trägt die geschlagenen Stämme zu Tal, und in der Stadt am Ufer brennen sie in vielen Herden. Bricht dort ein Feuer aus, holt man das Löschwasser wieder aus dir.}
-  {Aus deiner Ruhe ist etwas gewachsen, und es hat andere begeistert. Das Feuer, das jetzt brennt, ist nicht mehr deins. Aber du warst am Anfang da, und deine Ruhe wird gebraucht, wenn es zu heiß wird. Bleib in der Nähe.}
-  {Wer jedes Feuer gleich löscht, verbietet anderen die Freude. Wer sich ganz zurückzieht, sieht zu, wie die Stadt brennt.}
+\spruch{49}{Wasser}{Holz}{Feuer}{I Strom}{Die Holztrift}{Die Flößerin lässt die Stämme den Strom hinab zur Stadt treiben, wo sie in vielen Herden brennen. Bricht dort ein Brand aus, holt man das Löschwasser aus demselben Strom.}
+  {Bleib in der Nähe dessen, was du angestoßen hast. Aus deiner Ruhe ist etwas gewachsen, das andere begeistert. Das Feuer, das jetzt brennt, gehört nicht mehr dir. Aber deine Besonnenheit wird gebraucht, wenn es zu heiß wird.}
+  {Wer jede Begeisterung gleich dämpft, verbietet anderen die Freude. Wer sich ganz zurückzieht, sieht zu, wie sie außer Kontrolle gerät.}
 \newpage
-\spruch{50}{Wasser}{Holz}{Erde}{II Prüfung}{Der Auwald}{Du tränkst die Bäume, und ihre Wurzeln halten den Boden. Doch beim Hochwasser stehst du selbst dem Ufer gegenüber und musst deinen Weg durch die Erde finden.}
-  {Du hast andere gestärkt, und sie haben Ordnung geschaffen, wo es eng und hart war. Jetzt aber stehst du selbst vor einer Grenze, und keiner bahnt dir den Weg. Das ist deine Prüfung. Du hast mehr Kraft, als dir bewusst ist. Wasser findet seinen Weg.}
-  {Wer nie über die Ufer tritt, erfährt nie seine Kraft. Wer bei jedem Hochwasser alles mitreißt, zerstört auch, was ihn hält.}
+\spruch{50}{Wasser}{Holz}{Erde}{II Prüfung}{Der Auwald}{Der Strom tränkt die Erlen der Aue, und ihre Wurzeln halten das Ufer. Beim Hochwasser aber muss er sich selbst einen Weg durch das Land suchen.}
+  {Bahne dir deinen eigenen Weg. Du hast andere gestärkt, und sie haben Ordnung geschaffen, wo es eng und hart war. Jetzt stehst du selbst vor einer Grenze, und keiner bahnt dir den Weg. Hier musst du dich selbst bewähren. Du hast mehr Kraft, als dir bewusst ist.}
+  {Wer immer nur andere stärkt, erfährt nie die eigene Kraft. Wer bei der ersten Gelegenheit über die Ufer tritt, reißt auch mit, was ihn hielt.}
 \newpage
-\spruch{51}{Wasser}{Holz}{Metall}{III Unterweisung}{Der Baum im Fels}{Du tränkst einen jungen Baum, der in einer Felsspalte wurzelt. Seine Wurzeln drängen gegen den harten Stein und weiten den Spalt, und in diesem Spalt sammelst du dich wieder.}
-  {Du hast jemandem gegeben, was du weißt, und er geht damit seinen eigenen Weg, eigensinnig und widerständig. Du musst ihn nicht schützen. Gerade dort, wo er sich behauptet, zeigt er dir, woraus du selbst gemacht bist: aus Grundsätzen, an die du dich kaum noch erinnert hast.}
-  {Wer seinen Schüler vor jedem harten Stein bewahrt, lässt ihn nie stark werden. Wer ihn allein lässt, sieht ihn im Fels vertrocknen.}
+\spruch{51}{Wasser}{Holz}{Metall}{III Unterweisung}{Der Baum im Fels}{Die Bergbäuerin gießt eine junge Kiefer, die in einer Felsspalte wurzelt. Die Wurzeln weiten den Spalt, und darin sammelt sich das Wasser wieder.}
+  {Lass deinen Schüler eigensinnig sein. Du hast jemandem gegeben, was du weißt, und er geht damit seinen eigenen, widerständigen Weg. Gerade dort, wo er sich behauptet, zeigt er dir, woraus du selbst gemacht bist: aus Grundsätzen, an die du dich kaum noch erinnert hast.}
+  {Wer seinen Schüler vor jeder Härte bewahrt, lässt ihn nie stark werden. Wer ihn allein lässt, sieht ihn verkümmern.}
 \newpage
-\spruch{52}{Wasser}{Metall}{Erde}{IV Wurzelsuche}{Der unterirdische Fluss}{Du folgst deiner Quelle zurück in den Fels und dem Fels zurück in den Berg. Dort fließt du als unterirdischer Fluss und musst dir deinen Weg durch die Erde erst bahnen.}
-  {Du fragst, woher deine Gewissheiten kommen, und gehst tiefer als je zuvor. Hinter allem Klaren liegt etwas Schweres, Dunkles: eine alte Last, eine Pflicht, die nie jemand infrage gestellt hat. Stell dich ihr. Wasser bahnt sich seinen Weg, auch durch den Berg, langsam, aber sicher.}
-  {Wer immer tiefer in den Berg fließt, kommt nie mehr ans Licht. Wer an der Oberfläche bleibt, trocknet im ersten heißen Sommer aus.}
+\spruch{52}{Wasser}{Metall}{Erde}{IV Wurzelsuche}{Der unterirdische Fluss}{Wer einer Quelle auf den Grund geht, findet den Fels und hinter dem Fels den Berg. Tief in seinem Inneren bahnt sich ein Fluss seinen Weg.}
+  {Frag, woher deine Gewissheiten kommen. Hinter allem Klaren liegt etwas Schweres, Dunkles: eine alte Last, eine Pflicht, die nie jemand infrage gestellt hat. Stell dich ihr. Langsam, aber sicher findest du einen Weg hindurch.}
+  {Wer immer tiefer nach Gründen sucht, kommt nie mehr ans Licht. Wer an der Oberfläche bleibt, hat in der ersten Dürre nichts mehr.}
 \newpage
-\spruch{53}{Wasser}{Metall}{Holz}{V Gesammelte Kraft}{Der Obstgarten}{Im steinernen Becken sammelt sich das Regenwasser. Der Gärtner entfernt mit dem Messer die wilden Triebe, und erst danach gießt er den Baum, damit er Frucht trägt.}
-  {Bevor du anderen hilfst zu wachsen, kehrst du zu deinen Grundsätzen zurück. Sie machen dir klar, was weichen muss, damit Wachstum gelingt. Erst danach gibst du, ruhig und gezielt. Was du so nährst, wächst nicht wild, sondern trägt Frucht.}
-  {Wer gießt, ohne auszulichten, zieht Gestrüpp. Wer nur stutzt und nie gießt, hat bald einen dürren Stumpf.}
+\spruch{53}{Wasser}{Metall}{Holz}{V Gesammelte Kraft}{Der Obstgarten}{Die Gärtnerin schneidet die wilden Triebe aus dem Apfelbaum. Erst danach gießt sie ihn aus dem steinernen Becken, damit er Frucht trägt.}
+  {Kläre, bevor du hilfst. Bevor du anderen hilfst zu wachsen, kehrst du zu deinen Grundsätzen zurück. Sie zeigen dir, was weichen muss, damit Wachstum gelingt. Erst danach gibst du, ruhig und gezielt.}
+  {Wer hilft, ohne zu klären, nährt Wildwuchs. Wer nur kritisiert und nie hilft, lässt verdorren, was er beschnitten hat.}
 \newpage
-\spruch{54}{Wasser}{Metall}{Feuer}{VI Rückhalt}{Die Felswand}{Du entspringst dem Fels, und der Fels hält der Glut stand, die sich ihm nähert. In seinem Schutz kannst du das Feuer löschen.}
-  {Hinter dir steht etwas Festes: Grundsätze, die sich bewährt haben, Menschen mit klarem Urteil. Sie halten stand, wo die Hitze am größten ist. In ihrem Schutz behältst du die Ruhe und bringst zum Erlöschen, was außer Kontrolle geraten ist.}
-  {Wer sich nur hinter dem Fels verschanzt, löscht nie selbst. Wer ohne Rückhalt ins Feuer geht, verdampft.}
+\spruch{54}{Wasser}{Metall}{Feuer}{VI Rückhalt}{Die Felsquelle}{Der Wanderer trinkt in der Mittagshitze aus einer Quelle am Fels. Der Fels hält die Sonne ab, und sein Wasser ist kühl.}
+  {Lehn dich an das Feste in dir. Du hast Grundsätze, die sich bewährt haben, und Menschen mit klarem Urteil an deiner Seite. Sie halten stand, wo es am heißesten zugeht. In ihrem Schutz behältst du die Ruhe und kannst abkühlen, was sich erhitzt hat.}
+  {Wer sich nur hinter Grundsätzen verschanzt, hilft niemandem. Wer ohne sie in einen Streit geht, verdampft.}
 \newpage
-\spruch{55}{Wasser}{Feuer}{Erde}{VII Damm}{Der verschlammte Bach}{Du löschst den Brand, und die Asche wird zu neuem Boden. Doch der Regen spült ihn in dein Bett, und du musst dir deinen Weg neu graben.}
-  {Du hast etwas Hitziges beruhigt, und daraus ist Neues entstanden, fruchtbar, aber schwer. Jetzt liegt es dir selbst im Weg. Es ist kein Undank, dass dein eigenes Werk dich herausfordert. Grab dich hindurch; der neue Lauf wird klarer sein als der alte.}
-  {Wer jeden neuen Boden wegspült, lässt nichts wachsen. Wer sich vom Schlamm aufhalten lässt, wird zum Tümpel.}
+\spruch{55}{Wasser}{Feuer}{Erde}{VII Damm}{Der verschlammte Bach}{Regen löscht den Brand am Hang, und die Asche wird zu neuem Boden. Der nächste Guss spült ihn in den Bach, und der muss sich sein Bett neu graben.}
+  {Arbeite dich durch, was du selbst angestoßen hast. Du hast etwas Hitziges beruhigt, und daraus ist Neues entstanden, fruchtbar, aber schwer. Nun liegt es dir selbst im Weg. Dass dein eigenes Werk dich herausfordert, gehört dazu. Der neue Lauf wird klarer sein als der alte.}
+  {Wer alles Neue gleich fortspült, lässt nichts wachsen. Wer sich vom eigenen Werk aufhalten lässt, versumpft.}
 \newpage
-\spruch{56}{Wasser}{Feuer}{Holz}{VIII Abkürzung}{Der Wolkenbruch}{Du fällst als Regen auf das Feuer, das nach dem Wald greift. Wo es erlischt, trinken die Bäume, und du nährst sie ohne Umweg.}
-  {Etwas Hitziges bedrohte, was dir am Herzen liegt. Du hast es beherzt gelöscht. Nun kannst du deine Ruhe direkt dorthin geben, wo sie gebraucht wird: zu dem, was wachsen will. Der kürzeste Weg zum Wachstum war, dem Brand die Hitze zu nehmen.}
-  {Wer jedes Feuer im Wald löscht, lässt das dürre Holz sich häufen, bis es umso schlimmer brennt. Wer nie löscht, hat bald nichts mehr zu tränken.}
+\spruch{56}{Wasser}{Feuer}{Holz}{VIII Abkürzung}{Der Wolkenbruch}{Ein Wolkenbruch geht auf den Brand nieder, der nach dem Wald greift. Wo die Flammen erlöschen, trinken die Fichten.}
+  {Nimm einer Sache die Hitze, und sie kann wachsen. Etwas Hitziges bedrohte, was dir lieb ist. Du hast es beherzt beruhigt. Nun kann deine Ruhe direkt dorthin, wo sie gebraucht wird: zu dem, was wachsen will.}
+  {Wer zu spät eingreift, findet nur noch Asche. Wer zu heftig eingreift, reißt mit fort, was er retten wollte.}
 \newpage
-\spruch{57}{Wasser}{Feuer}{Metall}{IX Strenger Weg}{Das Härten}{Im Feuer wird der Stahl zum Glühen gebracht, bis er die richtige Farbe hat; dann nimmt ihm dein Wasser zischend die Hitze. So wird er hart, und am Ende findest du Halt an ihm.}
-  {Es ist eine Zeit strenger Übung: Hitze und Kälte wechseln, jeder Schritt verlangt Genauigkeit. Das ist anstrengend und lässt wenig Raum für Träume. Doch was du so bearbeitest, wird fest und klar. Am Ende dieses Weges hast du Grundsätze, auf die du dich stützen kannst.}
-  {Wer zu schroff abschreckt, bekommt Risse im Stahl. Wer nie abschreckt, behält weichen Stahl.}
+\spruch{57}{Wasser}{Feuer}{Metall}{IX Strenger Weg}{Das Härten}{Der Messerschmied bringt die Klinge zum Glühen, bis sie die richtige Farbe hat, und schreckt sie im Wasser ab. Zischend wird sie hart.}
+  {Übe, bis es sitzt. Es ist eine Zeit strenger Übung: Anspannung und Ruhe wechseln, jeder Schritt verlangt Genauigkeit. Das ist anstrengend und lässt wenig Raum für Träume. Doch daraus werden Grundsätze, auf die du dich stützen kannst.}
+  {Wer zu schroff mit sich ist, bekommt Risse. Wer sich nie fordert, bleibt weich.}
 \newpage
-\spruch{58}{Wasser}{Erde}{Metall}{X Läuterung}{Die Klamm}{Du gräbst dich durch die Erde, die dich aufhält, bis du auf Fels triffst. Dort wirst du klar, und in den Wänden glänzt das Erz.}
-  {Lange hast du gegen etwas Schweres angekämpft, das dich trübte und bremste. Du hast dich ihm gestellt und dich hindurchgearbeitet. Jetzt stößt du auf festen Grund, auf etwas Klares, das dir niemand mehr nehmen kann. Aus der Mühsal ist ein Neubeginn geworden.}
-  {Wer sich immer tiefer eingräbt, sieht nur noch die Wände seiner Schlucht. Wer der Erde ausweicht, bleibt trüb.}
+\spruch{58}{Wasser}{Erde}{Metall}{X Läuterung}{Die Klamm}{Der Bach trägt die weiche Erde ab, bis er auf Fels stößt. In Jahrtausenden gräbt er sich hinein und wird klar, und in den Wänden der Klamm glänzt das Erz.}
+  {Arbeite dich durch das Trübe. Lange hast du gegen etwas Schweres angekämpft, das dich trübte und bremste. Du hast dich ihm gestellt. Jetzt stößt du auf festen Grund, auf etwas Klares, das dir niemand mehr nehmen kann. Aus der Mühsal wird ein Neubeginn.}
+  {Wer sich immer tiefer in ein Problem gräbt, sieht nur noch dessen Wände. Wer jeder Mühe ausweicht, bleibt trüb.}
 \newpage
 \spruch{59}{Wasser}{Erde}{Feuer}{XI List}{Der Wasserkrug}{Du nagst am Ufer und legst den Ton frei; ein Töpfer formt daraus einen Krug und brennt ihn. In diesem Krug trägt man dich zum Feuer, und du löschst es.}
-  {Gegen das Feste kommst du nicht direkt an. Also arbeitest du geduldig an ihm, bis es sich wandelt und eine neue Gestalt annimmt. In dieser Gestalt aber trägt es dich, und du gelangst genau dorthin, wo du gebraucht wirst. Klugheit heißt, sich von seinem Gegner tragen zu lassen.}
-  {Wer sich immer tragen lässt, vergisst, dass er selbst fließen kann. Wer jeden Krug zerschlägt, erreicht das Feuer nie.}
+  {Lass dich tragen. Gegen das Feste kommst du nicht direkt an. Also arbeitest du geduldig an ihm, bis es sich wandelt. In seiner neuen Gestalt aber trägt es dich, und du gelangst genau dorthin, wo du gebraucht wirst.}
+  {Wer sich immer tragen lässt, vergisst, dass er selbst fließen kann. Wer jede Hilfe der Gegenseite zurückweist, kommt nie ans Ziel.}
 \newpage
-\spruch{60}{Wasser}{Erde}{Holz}{XII Aufstand}{Das Hochwasser}{Du trittst über die Ufer, und der Boden klammert sich an die Wurzeln, um nicht fortgerissen zu werden. Wenn das Wasser sinkt, grünt das getränkte Land, fruchtbarer als zuvor.}
-  {Du lehnst dich auf gegen das, was dich einengt, und es leistet seinerseits Widerstand. Eine Zeit lang ist alles in Aufruhr. Doch was danach bleibt, ist fruchtbar: Neues kann wachsen, wo vorher nichts war, und du hast es genährt.}
-  {Ein Fluss, der ständig über die Ufer tritt, macht das Land zum Sumpf. Einer, der es nie tut, lässt die Aue vertrocknen.}
+\spruch{60}{Wasser}{Erde}{Holz}{XII Aufstand}{Das Hochwasser}{Der Strom tritt über die Ufer, und der Boden klammert sich an die Wurzeln der Pappeln. Wenn das Wasser sinkt, grünt das Land, fruchtbarer als zuvor.}
+  {Brich aus, wenn die Enge dich erstickt. Du lehnst dich auf gegen das, was dich einengt, und es leistet seinerseits Widerstand. Eine Zeit lang ist alles in Aufruhr. Doch was danach bleibt, ist fruchtbar, und du hast es genährt.}
+  {Wer ständig aufbegehrt, macht jedes Zusammenleben zum Sumpf. Wer es nie tut, lässt das Land vertrocknen.}
 
 \endgroup
 
@@ -1686,19 +1963,21 @@ Klassische chinesische Texte werden nach Titel und Kapitel zitiert, etwa \textit
 
 \addsec*{Klassische Texte}
 
-\begin{itemize}[leftmargin=*]
+\begin{itemize}[leftmargin=*, itemsep=1pt]
   \item \textit{Shangshu} ({\cjk 尚書}), das \textit{Buch der Urkunden}, Kapitel „Hongfan“ ({\cjk 洪範}, „Der große Plan“): die fünf Elemente und ihre Natur. Englisch: James Legge, \textit{The Shoo King}, The Chinese Classics III, 1865.
   \item \textit{Lunyu} ({\cjk 論語}), die \textit{Gespräche} des Konfuzius, 12.22: rén als Liebe zu den Menschen. Deutsch: Richard Wilhelm, \textit{Kungfutse. Gespräche (Lun Yü)}, 1910.
   \item \textit{Huainanzi} ({\cjk 淮南子}), 139 v.\,Chr. Englisch: John S. Major u.\,a., \textit{The Huainanzi}, Columbia University Press 2010.
-  \item \textit{Chunqiu fanlu} ({\cjk 春秋繁露}), Dong Zhongshu zugeschrieben, Kapitel 58 „Wuxing xiangsheng“: Hervorbringen und Besiegen. Englisch: Sarah A. Queen, John S. Major, \textit{Luxuriant Gems of the Spring and Autumn}, Columbia University Press 2016.
+  \item \textit{Chunqiu fanlu} ({\cjk 春秋繁露}), Dong Zhongshu zugeschrieben, Kapitel 42 „Wuxing zhi yi“ (Vater und Sohn) und 58 „Wuxing xiangsheng“: Hervorbringen und Besiegen. Englisch: Sarah A. Queen, John S. Major, \textit{Luxuriant Gems of the Spring and Autumn}, Columbia University Press 2016.
   \item \textit{Huangdi neijing suwen} ({\cjk 黃帝內經素問}), Kapitel 5 (die fünf Gemütsbewegungen), 67 (Besiegtes und Nicht-Besiegtes, Übermaß und Mangel) und 68 (Übermaß und Grenze). Englisch: Paul U. Unschuld, Hermann Tessenow, \textit{Huang Di Nei Jing Su Wen}, University of California Press 2011.
+  \item \textit{Hanshu} ({\cjk 漢書}), Ban Gu, Abhandlung über die fünf Elemente ({\cjk 五行志} Wuxing zhi): das Holz als junges Yang.
+  \item Zhang Jiebin ({\cjk 張介賓}), \textit{Leijing tuyi} ({\cjk 類經圖翼}), 1624: Hervorbringen und Bändigen.
   \item \textit{Nanjing} ({\cjk 難經}), Schwierigkeiten 69 und 75: Mutter und Kind. Englisch: Paul U. Unschuld, \textit{Nan-ching. The Classic of Difficult Issues}, University of California Press 1986.
   \item \textit{Lingqijing} ({\cjk 靈棋經}), das Vorbild dieses Orakels. Englisch: Ralph D. Sawyer, Mei-chün Lee Sawyer, \textit{Ling Ch’i Ching. A Classic Chinese Oracle}, Shambhala 1995.
 \end{itemize}
 
 \addsec*{Weitere Quellen}
 
-\begin{itemize}[leftmargin=*]
+\begin{itemize}[leftmargin=*, itemsep=1pt]
   \item Jan Suchanek, \textit{Pentagame Compendium}, 1.~Auflage 2022, \href{https://pentagame.org}{pentagame.org}: Regeln, Geschichte, Notation und Theorie des Spiels, auf dem Stand von 2022 (Brett mit 100 Feldern und früherer Farbordnung); zum Wu Xing Teil~III, Kapitel~9.
   \item \href{https://iep.utm.edu/wuxing/}{Wuxing (Internet Encyclopedia of Philosophy)}
   \item \href{https://www.britannica.com/topic/wuxing}{Wuxing (Encyclopaedia Britannica)}

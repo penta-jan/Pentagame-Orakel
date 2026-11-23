@@ -531,6 +531,8 @@
 \author{Jan Suchanek}
 \date{2026}
 
+% \linkeseite: neue Seite, die eine gerade (linke) Seitenzahl hat; fügt nötigenfalls eine leere Seite ein
+\newcommand{\linkeseite}{\clearpage\ifodd\value{page}\hbox{}\thispagestyle{empty}\clearpage\fi}
 \makeatletter\renewcommand\@pnumwidth{2em}\makeatother % Platz für dreistellige Seitenzahlen im Inhaltsverzeichnis
 
 % Verzeichnis aller Sprüche am Ende (Datei .ver)
@@ -755,7 +757,7 @@ Die Lehre ist mehr als zwei Jahrtausende alt, ihre Wurzeln reichen noch weiter z
 
 In der Han-Zeit (202 v.\,Chr.\ bis 220 n.\,Chr.) wurde Wu Xing zu einem umfassenden Weltsystem. Das \textit{Huainanzi} ordnet den Kosmos nach den fünf Phasen, das \textit{Chunqiu fanlu}, das Dong Zhongshu zugeschrieben wird, verbindet sie mit der konfuzianischen Ethik, und der \textit{Innere Klassiker des Gelben Kaisers} (\textit{Huangdi neijing}) legt sie der Medizin zugrunde: Organe, Gefühle und Geschmäcker gehören je einem Element. Bis heute prägt Wu Xing die chinesische Medizin, den Kalender, die Kampfkünste und das Feng Shui.
 
-Die fünf Elemente ordnet man im Kreis an, im Lauf der Sonne, also im Uhrzeigersinn: Holz, Feuer, Erde, Metall, Wasser. Jedes geht aus dem vorigen hervor und nährt das nächste. Holz nährt das Feuer, das Feuer hinterlässt Asche und damit Erde, in der Erde wächst das Erz, am kühlen Metall schlägt sich Wasser nieder, und das Wasser lässt das Holz wachsen. Dieses Hervorbringen heißt {\cjk 生} shēng, und der Kreis, den es bildet, ist der Wandlungskreis.
+Die fünf Elemente ordnet man im Kreis an, im Lauf der Sonne, also im Uhrzeigersinn: Holz, Feuer, Erde, Metall, Wasser. Jedes geht aus dem vorigen hervor und nährt das nächste. Holz nährt das Feuer, das Feuer hinterlässt Asche und damit Erde, in der Erde wächst das Metall, am kühlen Metall schlägt sich Wasser nieder, und das Wasser lässt das Holz wachsen. Dieses Hervorbringen heißt {\cjk 生} shēng, und der Kreis, den es bildet, ist der Wandlungskreis.
 \end{einleitung}
 
 \begin{center}
@@ -767,28 +769,51 @@ Die fünf Elemente ordnet man im Kreis an, im Lauf der Sonne, also im Uhrzeigers
 \end{center}
 
 \begin{einleitung}
-Im Pentagame steht jedes Element für eine der fünf Farben. Die Farben des heutigen Bretts sind bewusst nach dem Wu Xing gewählt und stehen in seiner Reihenfolge; nur Wasser ist blau statt schwarz. Die Tabelle nennt zu jedem Element seine Zeit und Lage, sein Thema und seine beiden Seiten: die Tugend als Licht, die Gemütsbewegung als Schatten.
+Den fünf Elementen ordnet die Überlieferung beinahe alles zu: Himmelsrichtungen und Jahreszeiten, Farben, Zahlen und Planeten, Organe, Geschmäcker und Töne. Dieses Buch beschränkt sich auf das, was für das Orakel zählt: die Zeit und Lage jedes Elements, sein Thema und seine beiden Seiten, die Tugend als Licht und die Gemütsbewegung als Schatten. Die beiden Tabellen auf den folgenden Seiten stehen einander gegenüber; die Seiten der einzelnen Elemente nennen darüber hinaus Farbe, Organ und Planet.
 \end{einleitung}
 
+\linkeseite
+\noindent{\large\bfseries Zeit und Thema}\par\smallskip
 \begin{center}
-\footnotesize\setlength{\tabcolsep}{2.5pt}
-\begin{tabularx}{\textwidth}{@{}lLLLL@{}}
+\small\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1}
+\begin{tabularx}{\textwidth}{@{}m{0.22\textwidth}>{\raggedright\arraybackslash}m{0.3\textwidth}>{\raggedright\arraybackslash}X@{}}
 \toprule
-\textbf{Element} & \textbf{Zeit, Lage} & \textbf{Thema} & \textbf{Licht:} \newline \textbf{Tugend} & \textbf{Schatten:} \newline \textbf{Emotion} \\
+\textbf{Element} & \textbf{Zeit, Lage} & \textbf{Thema} \\
 \midrule
-\elementmitfarbe{Holz}{Grün} & Frühling, Osten    & Aufbruch, Plan, Wachstum           & Güte \newline \mbox{({\cjk 仁} rén)} & Zorn \newline \mbox{({\cjk 怒} nù)} \\
-\elementmitfarbe{Feuer}{Rot} & Sommer, Süden      & Ausdruck, Begeisterung, Begegnung  & Anstand \newline \mbox{({\cjk 禮} lǐ)} & Übermut \newline \mbox{({\cjk 喜} xǐ)} \\
-\elementmitfarbe{Erde}{Gelb} & Spätsommer, Übergänge, Mitte & Sammlung, Fürsorge, Halt           & Vertrauen \newline \mbox{({\cjk 信} xìn)} & Grübeln \newline \mbox{({\cjk 思} sī)} \\
-\elementmitfarbe{Metall}{Weiß} & Herbst, Westen     & Ernte, Klarheit, Abschied          & Gerechtigkeit \newline \mbox{({\cjk 義} yì)} & Trauer \newline \mbox{({\cjk 憂} yōu)} \\
-\elementmitfarbe{Wasser}{Blau} & Winter, Norden     & Ruhe, Tiefe, Ursprung              & Weisheit \newline \mbox{({\cjk 智} zhì)} & Furcht \newline \mbox{({\cjk 恐} kǒng)} \\
+\rule[-1.1em]{0pt}{2.9em}\elementmitfarbe{Holz}{Grün} & Frühling, Osten & Aufbruch, Plan, Wachstum \\
+\rule[-1.1em]{0pt}{2.9em}\elementmitfarbe{Feuer}{Rot} & Sommer, Süden & Ausdruck, Begeisterung, Begegnung \\
+\rule[-1.1em]{0pt}{2.9em}\elementmitfarbe{Erde}{Gelb} & Spätsommer, Übergänge, Mitte & Sammlung, Fürsorge, Halt \\
+\rule[-1.1em]{0pt}{2.9em}\elementmitfarbe{Metall}{Weiß} & Herbst, Westen & Ernte, Klarheit, Abschied \\
+\rule[-1.1em]{0pt}{2.9em}\elementmitfarbe{Wasser}{Blau} & Winter, Norden & Ruhe, Tiefe, Ursprung \\
 \bottomrule
 \end{tabularx}
 \end{center}
 
 \begin{einleitung}
-{\small Die Spalte „Licht“ nennt die fünf konfuzianischen Tugenden ({\cjk 五常} wǔcháng). Zur Tugend des Holzes gehört auch die Liebe: Konfuzius erklärt {\cjk 仁} rén als „die Menschen lieben“ ({\cjk 愛人} ài rén; \textit{Lunyu} 12.22). Die Spalte „Schatten“ folgt den fünf Gemütsbewegungen der chinesischen Medizin ({\cjk 五志} wǔzhì; \textit{Suwen} 5): Zorn, Freude, Nachdenken, Trauer und Furcht. Keine von ihnen ist an sich schlecht. Zum Schatten wird eine Gemütsbewegung erst, wenn sie übermäßig wird oder sich staut; darum steht beim Feuer der Übermut als Schatten der Freude ({\cjk 喜} xǐ) und bei der Erde das Grübeln als Schatten des Nachdenkens ({\cjk 思} sī). Die Erde hat keine eigene Jahreszeit: Ihr gehören der Spätsommer und die Übergänge am Ende jeder Jahreszeit. Die folgenden Seiten stellen die Elemente einzeln vor.\par}
+{\small Zeit und Lage folgen dem Lauf des Jahres und der Sonne: Das Holz gehört dem Morgen des Jahres und dem Osten, wo die Sonne aufgeht, das Wasser dem Winter und dem Norden. Die Erde hat keine eigene Jahreszeit: Ihr gehören der Spätsommer und die Übergänge am Ende jeder Jahreszeit, und unter den Richtungen die Mitte.\par}
 \end{einleitung}
+
 \newpage
+\noindent{\large\bfseries Licht und Schatten}\par\smallskip
+\begin{center}
+\small\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1}
+\begin{tabularx}{\textwidth}{@{}m{0.22\textwidth}>{\raggedright\arraybackslash}m{0.33\textwidth}>{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Element} & \textbf{Licht} & \textbf{Schatten} \\
+\midrule
+\rule[-1.1em]{0pt}{2.9em}\elementmitfarbe{Holz}{Grün} & Güte ({\cjk 仁} rén) & Zorn ({\cjk 怒} nù) \\
+\rule[-1.1em]{0pt}{2.9em}\elementmitfarbe{Feuer}{Rot} & Anstand ({\cjk 禮} lǐ) & Übermut ({\cjk 喜} xǐ) \\
+\rule[-1.1em]{0pt}{2.9em}\elementmitfarbe{Erde}{Gelb} & Vertrauen ({\cjk 信} xìn) & Grübeln ({\cjk 思} sī) \\
+\rule[-1.1em]{0pt}{2.9em}\elementmitfarbe{Metall}{Weiß} & Gerechtigkeit ({\cjk 義} yì) & Trauer ({\cjk 憂} yōu) \\
+\rule[-1.1em]{0pt}{2.9em}\elementmitfarbe{Wasser}{Blau} & Weisheit ({\cjk 智} zhì) & Furcht ({\cjk 恐} kǒng) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{einleitung}
+{\small Die Spalte „Licht“ nennt die fünf konfuzianischen Tugenden ({\cjk 五常} wǔcháng). Zur Tugend des Holzes gehört auch die Liebe: Konfuzius erklärt {\cjk 仁} rén als „die Menschen lieben“ ({\cjk 愛人} ài rén; \textit{Lunyu} 12.22). Die Spalte „Schatten“ folgt den fünf Gemütsbewegungen der chinesischen Medizin ({\cjk 五志} wǔzhì; \textit{Suwen} 5): Zorn, Freude, Nachdenken, Trauer und Furcht. Keine von ihnen ist an sich schlecht. Zum Schatten wird eine Gemütsbewegung erst, wenn sie übermäßig wird oder sich staut; darum steht beim Feuer der Übermut als Schatten der Freude ({\cjk 喜} xǐ) und bei der Erde das Grübeln als Schatten des Nachdenkens ({\cjk 思} sī). Die folgenden Seiten stellen die Elemente einzeln vor.\par}
+\end{einleitung}
+\linkeseite
 \markright{\element{Holz}}
 \begin{orakelblock}
 \verz{}{Holz}{element:Holz}\hypertarget{element:Holz}{\tikz{\elementkreis{1.6em}{0}{Holz}}}\par
@@ -815,7 +840,7 @@ Im ältesten Text, der die fünf Elemente nennt, dem Kapitel „Großer Plan“ 
 
 Im Kreis des Hervorbringens ist das Holz das Kind des Wassers und die Mutter des Feuers. Es bändigt die Erde, wie Wurzeln den Boden durchdringen, und wird vom Metall gebändigt, wie die Klinge den Baum fällt. Ihm gehören der Osten, wo die Sonne aufgeht, und der Morgen.
 
-Die Gelehrten der Han-Zeit nannten das Holz das junge Yang ({\cjk 少陽} shàoyáng; \textit{Hanshu}, Abhandlung über die fünf Elemente): Die Wärme nimmt zu, ist aber noch nicht voll entfaltet. Die Medizin ordnet ihm Leber, Sehnen und Augen zu, den sauren Geschmack und den Zorn (\textit{Suwen} 5); die konfuzianische Ethik die Güte, die andere wachsen lässt.
+Die Gelehrten der Han-Zeit nannten das Holz das junge Yang ({\cjk 少陽} shàoyáng; \textit{Hanshu}, Abhandlung über die fünf Elemente): Die Wärme nimmt zu, ist aber noch nicht voll entfaltet. Die Medizin ordnet ihm Leber, Sehnen und Augen zu, den sauren Geschmack und den Zorn; im selben Kapitel heißt es: „Der Osten bringt den Wind hervor, der Wind bringt das Holz hervor“ ({\cjk 東方生風，風生木}; \textit{Suwen} 5). Die konfuzianische Ethik gibt ihm die Güte, die andere wachsen lässt.
 \end{minipage}
 \end{orakelblock}
 \newpage
@@ -1006,16 +1031,27 @@ Zwischen diesen Punkten gibt es zwei Arten von Strecken. Kurze Strecken führen 
 \end{minipage}\end{center}
 
 \begin{einleitung}
-Die Ecken tragen die fünf Farben in der Reihenfolge des Wandlungskreises: im Uhrzeigersinn Holz (grün), Feuer (rot), Erde (gelb), Metall (weiß) und Wasser (blau). Die Kreuzungen tragen dieselben Farben, jeweils gegenüber ihrer Ecke. So erscheint der Wandlungskreis zweimal, außen groß und innen klein, und beide laufen im selben Drehsinn.
+Die Ecken tragen die fünf Farben in der Reihenfolge des Wandlungskreises: im Uhrzeigersinn Holz (grün), Feuer (rot), Erde (gelb), Metall (weiß) und Wasser (blau). Die Farben des heutigen Bretts sind bewusst nach dem Wu Xing gewählt; nur das Wasser ist blau statt, wie in der Überlieferung, schwarz. Die Kreuzungen tragen dieselben Farben, jeweils gegenüber ihrer Ecke. So erscheint der Wandlungskreis zweimal, außen groß und innen klein, und beide laufen im selben Drehsinn.
 
-Man kann das Pentagame auch räumlich sehen: als Blick von oben auf ein fünfseitiges Antiprisma, zwei gegeneinander verdrehte Fünfecke übereinander, verbunden durch Dreiecke. Das nähere Fünfeck erscheint groß als Ring, das fernere klein als Pentagon, und die Wechselstrecken sind die Kanten dazwischen. Der Fünferkreis des Wu Xing wird so in eine weitere Dimension gehoben. Dieses Buch folgt dem Pentagame: Es nimmt das überlieferte Schema, verdoppelt es und gelangt so von den fünf Elementen und vier Richtungen zu den reicheren Erscheinungen der Paare, Wendungen und Tripel.
+Die Figur ist vom Goldenen Schnitt durchzogen. Die Kreuzungen teilen jede Linie des Sterns in drei Stücke, und das äußere Stück ist rund 1,618-mal so lang wie das innere: das Verhältnis des Goldenen Schnitts. Auf dem Brett kehrt es wieder, denn eine Wechselstrecke ist um genau dieses Maß länger als eine Strecke auf dem Pentagon.
+
+Man kann das Pentagame auch räumlich sehen: als Blick von oben auf ein fünfseitiges Antiprisma, zwei gegeneinander verdrehte Fünfecke übereinander, verbunden durch Dreiecke. Das nähere Fünfeck erscheint groß als Ring, das fernere klein als Pentagon, und die Wechselstrecken sind die Kanten dazwischen.
 \end{einleitung}
 
+\newpage
 \begin{center}\begin{minipage}{\linewidth}\centering
 \input{work/antiprisma}\par
 \smallskip
 {\small\itshape Das fünfseitige Antiprisma. Von oben gesehen erscheint das nähere Fünfeck groß als Ring, das fernere klein als Pentagon.\par}
 \end{minipage}\end{center}
+
+\begin{einleitung}
+Die beiden Fünfecke des Antiprismas sind um 36 Grad gegeneinander verdreht. Ein Fünfeck, um diesen Winkel gedreht, gleicht einem, das auf dem Kopf steht. Darum liegt im Pentagame jede Kreuzung ihrer Ecke gegenüber, und doch laufen beide Kreise im selben Drehsinn.
+
+Von jeder Ecke führen zwei Kanten hinunter, zu den Kreuzungen der beiden Elemente, die im Wandlungskreis zwei Schritte entfernt liegen: von der Holz-Ecke zur Erde- und zur Metall-Kreuzung. Die Ringe oben und unten verbinden die Elemente, die einander nähren; die Kanten dazwischen verbinden die, die einander bändigen. So wird der Fünferkreis des Wu Xing in eine weitere Dimension gehoben.
+
+Dieses Buch folgt dem Pentagame: Es nimmt das überlieferte Schema, verdoppelt es und gelangt so von den fünf Elementen und vier Richtungen zu den reicheren Erscheinungen der Paare, Wendungen und Tripel.
+\end{einleitung}
 
 \newpage
 \addchap{Die vier Richtungen}\markboth{Die vier Richtungen}{\mbox{}}\label{kap:beziehungen}\verzkap{Die vier Richtungen}
@@ -1057,7 +1093,6 @@ Zu shēng und kè gibt es jeweils ein Gegenstück in der Gegenrichtung. Einen Sc
 Die vier Richtungen heißen in diesem Buch kurz +1, −1, +2 und −2: Die Zahl sagt, wie weit, das Vorzeichen, ob vor oder zurück.
 \end{einleitung}
 
-\newpage
 \addsec*{Die Bewegungen im Pentagame}\markright{Die Bewegungen im Pentagame}
 
 \begin{einleitung}
@@ -1096,7 +1131,6 @@ Dieselbe Zählung verwendet das \textit{Pentagame Compendium} für die Züge: ±
 \end{einleitung}
 
 
-\newpage
 \addsec*{Im Einzelnen}\markright{Im Einzelnen}
 
 \begin{einleitung}
@@ -1120,7 +1154,7 @@ Das Bild auf der zweiten Seite zeigt die Richtung zweimal: schwarz von außen, v
 \end{center}
 
 
-\newpage
+\linkeseite
 \markright{+1 \quad Nähren}
 \begin{orakelblock}
 \verz{+1}{Nähren}{beziehung:1}\hypertarget{beziehung:1}{{\Large\bfseries +1}}\par
@@ -1345,7 +1379,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \end{tabular*}\par}
 \newpage
 \markright{\element{Erde}}\verzgr{Erde}
-\paar{Erde}{Metall}{Das Erz}{Im Gestein reift das Erz.}
+\paar{Erde}{Metall}{Das Gold}{Im Gestein wächst das Gold heran.}
   {Vertrau der langen Geduld. Du hast gepflegt, gehütet, durchgetragen, oft ohne zu sehen, wozu. Jetzt zeigt sich, was darin herangereift ist: etwas Klares und Wertvolles. Lass es ans Licht.}
   {Wer das Gereifte zu schnell verbraucht, steht bald mit leeren Händen da. Wer es nie herausgibt, behält seinen Schatz für sich.}
   {{\small Alle sechs Tripel:}\par\smallskip
@@ -1680,11 +1714,11 @@ Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ei
   {Bleib bei der Sache, Tag für Tag. Diese Arbeit verlangt Genauigkeit, und keine Nachlässigkeit bleibt ohne Folgen. Das fühlt sich vielleicht eng an. Aber die strenge Ordnung hat einen Sinn: Am Ende führt sie dir zu, was dich nährt.}
   {Wer alles in Regeln zwingt, hat bald mehr Vorschriften als Leben. Wer alles laufen lässt, verliert, was er hätte nutzen können.}
 \newpage
-\spruch{10}{Holz}{Metall}{Wasser}{X Umkehren}{Die Schleuse}{Die Schifferin wartet vor dem eisernen Schleusentor. Wasser strömt ein und hebt ihr Boot auf eine neue Höhe.}
-  {Nimm die Grenze an, vor der du stehst. Sie ist hart, und du kannst nichts tun als warten. Doch was dich aufhält, hält auch etwas für dich bereit. Wenn sich die Lage öffnet, stehst du höher als zuvor: Was dich aufgehalten hat, hat dich gehoben.}
-  {Wer ungeduldig gegen jede Grenze anrennt, kommt keinen Schritt weiter. Wer jede Grenze fürchtet, bleibt für immer unten.}
+\spruch{10}{Holz}{Metall}{Wasser}{X Umkehren}{Der Anker}{Die Schifferin liegt vor Anker. Kippt die Tide, dreht sich ihr Boot um den Anker, und er hält es gegen die neue Strömung.}
+  {Lass dich drehen, ohne dich loszureißen. Wenn die Lage umschlägt und dir entgegenströmt, was eben noch half, braucht es einen festen Halt. Wer ihn hat, kann sich der neuen Richtung zuwenden, ohne abzutreiben.}
+  {Wer nirgends festmacht, treibt mit jeder Strömung davon. Wer sich nie drehen lässt, bricht beim ersten Gegenstrom.}
 \newpage
-\spruch{11}{Holz}{Metall}{Erde}{XI Umgehen}{Der eingewachsene Zaun}{Der Ahorn umwächst den eisernen Zaun, statt gegen ihn anzukämpfen. Der Draht rostet; seine Wurzeln halten den Grund, wo die Grenze war.}
+\spruch{11}{Holz}{Metall}{Erde}{XI Umgehen}{Die eingewachsene Kette}{Der Ahorn am Feldrain umwächst die eiserne Kette, die man um ihn gelegt hat. Das Eisen rostet zu Erde, und seine Wurzeln halten den Grund.}
   {Kämpfe nicht, wachse. Gegen eine harte Vorschrift oder einen starken Gegner richtest du mit Gewalt nichts aus. Nimm ihn in dein Leben auf, ohne dich ihm zu unterwerfen, und wachse weiter. Mit der Zeit verliert er seine Macht, und der Raum, um den gestritten wurde, gehört dir. Geduld ist hier die klügste List.}
   {Wer jedes Hindernis in sich aufnimmt, trägt am Ende viel Fremdes mit sich herum. Wer sich dagegen sperrt, statt es zu umfassen, schnürt sich selbst die Luft ab.}
 \newpage
@@ -1794,15 +1828,15 @@ Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ei
 
 \newpage
 \markright{\element{Metall}}\verzgr{Metall}
-\spruch{37}{Metall}{Wasser}{Holz}{I Fortschreiten}{Das Saatkorn}{Die Bäuerin leitet Quellwasser vom Fels auf die Felder. Im Herbst schneidet sie das Korn und hebt das beste als Saat auf.}
+\spruch{37}{Metall}{Wasser}{Holz}{I Fortschreiten}{Das Saatkorn}{Die Bäuerin zieht mit dem Spaten Gräben, die Quellwasser auf die Felder leiten. Im Herbst schneidet sie das Korn mit der Sichel und hebt das beste als Saat auf.}
   {Gib weiter, was dich genährt hat, aber verbrauche nicht alles. Was du heute zurücklegst, trägt die, die nach dir kommen. Maß zu halten ist keine Kargheit, sondern Fürsorge über die eigene Zeit hinaus.}
   {Wer alles aufbraucht, hat im nächsten Frühjahr nichts zu säen. Wer nur hortet, lässt die Seinen heute hungern.}
 \newpage
-\spruch{38}{Metall}{Wasser}{Feuer}{II Prüfen}{Der Löschtrog}{Der Schmied hält mit dem Wasser aus dem eisernen Trog sein Feuer im Zaum. Doch zuletzt muss das Eisen selbst in die Glut.}
+\spruch{38}{Metall}{Wasser}{Feuer}{II Prüfen}{Der Löschtrog}{Der Schmied hält mit dem Wasser aus dem eisengefassten Trog sein Feuer im Zaum. Doch zuletzt muss das Eisen selbst in die Glut.}
   {Tritt selbst an. Du hast für Ruhe gesorgt, wo es hitzig wurde, und anderen geholfen, die Fassung zu bewahren. Nun kommt die Hitze zu dir: ein Konflikt, der dich selbst betrifft. Das ist deine Prüfung. Bleib bei dir; wer durchs Feuer geht, wird nicht schwächer, sondern brauchbarer.}
   {Wer jede Leidenschaft von sich fernhält, wird nie geformt. Wer sich zu lange in ihr aufhält, verbrennt.}
 \newpage
-\spruch{39}{Metall}{Wasser}{Erde}{III Begleiten}{Das Erz im Flussbett}{Die Erzsucherin folgt einem Bach, der aus dem Fels rinnt, durch die Schlucht, die er geschnitten hat. In ihren Wänden liegt das Erz offen.}
+\spruch{39}{Metall}{Wasser}{Erde}{III Begleiten}{Die Erzader}{Die Erzsucherin folgt einem Bach durch die Schlucht, die er ins Gestein geschnitten hat. In ihren Wänden liegt das Erz offen.}
   {Lass andere ihren eigenen Weg graben. Was du klar erkannt hast, gibst du weiter, und jemand anderes macht daraus etwas Eigenes. Dabei legt er frei, was du selbst vergessen hattest: woher du kommst und was dich getragen hat.}
   {Wer nur Antworten weitergibt, erfährt nie, was andere damit freilegen. Wer nichts weitergibt, vergisst, woher er kommt.}
 \newpage
@@ -1810,7 +1844,7 @@ Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ei
   {Geh deiner Klarheit auf den Grund. Hinter deiner Strenge findest du etwas Heißes, Ungebändigtes: eine alte Leidenschaft, einen Zorn, eine Liebe, die du lange kühl gehalten hast. Stell dich ihr. Du hältst mehr aus, als du glaubst, und erkennst dich darin wieder.}
   {Wer sich ganz in seine Leidenschaft hinabbegibt, verliert die Fassung. Wer sie nicht wahrhaben will, bleibt kalt und spröde.}
 \newpage
-\spruch{41}{Metall}{Erde}{Wasser}{V Ausholen}{Der Mühlteich}{Über Nacht staut die Müllerin den Bach im Mühlteich. Am Morgen zieht sie das eiserne Schütz, und mit Wucht treibt das Wasser das Rad.}
+\spruch{41}{Metall}{Erde}{Wasser}{V Ausholen}{Der Mühlteich}{Über Nacht staut die Müllerin den Bach im Mühlteich. Am Morgen zieht sie das eisenbeschlagene Schütz, und mit Wucht treibt das Wasser das Rad.}
   {Sammle dich, bevor du handelst. Was in der Ruhe zusammenkommt, entfaltet später eine Kraft, die kein hastiger Anlauf hätte. Halte zurück, bis es genug ist; dann lass es mit einem Mal los.}
   {Wer immer nur zurückhält, staut, bis der Damm bricht. Wer alles sofort verausgabt, hat nie die Kraft für den großen Schritt.}
 \newpage
@@ -1851,9 +1885,9 @@ Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ei
   {Bahne dir deinen eigenen Weg. Du hast andere gestärkt, und sie haben Ordnung geschaffen, wo es eng und hart war. Jetzt stehst du selbst vor einer Grenze, und keiner bahnt dir den Weg. Hier musst du dich selbst bewähren. Du hast mehr Kraft, als dir bewusst ist.}
   {Wer immer nur andere stärkt, erfährt nie die eigene Kraft. Wer bei der ersten Gelegenheit über die Ufer tritt, reißt auch mit, was ihn hielt.}
 \newpage
-\spruch{51}{Wasser}{Holz}{Metall}{III Begleiten}{Der Baum im Fels}{Die Bergbäuerin gießt eine junge Kiefer, die in einer Felsspalte wurzelt. Die Wurzeln weiten den Spalt, und darin sammelt sich das Wasser wieder.}
-  {Lass deinen Schüler eigensinnig sein. Du hast jemandem gegeben, was du weißt, und er geht damit seinen eigenen, widerständigen Weg. Gerade dort, wo er sich behauptet, zeigt er dir, woraus du selbst gemacht bist: aus Grundsätzen, an die du dich kaum noch erinnert hast.}
-  {Wer seinen Schüler vor jeder Härte bewahrt, lässt ihn nie stark werden. Wer ihn allein lässt, sieht ihn verkümmern.}
+\spruch{51}{Wasser}{Holz}{Metall}{III Begleiten}{Das Hammerwerk}{Der Bach treibt das hölzerne Rad des Hammerwerks. Die Schmiedin führt das Eisen unter den Hammer, und Schlag um Schlag nimmt es Form an.}
+  {Führe, und lass die Kraft wirken, die dir zur Verfügung steht. Wer einen anderen begleitet, muss nicht selbst zuschlagen; es genügt, ihn im richtigen Moment an die richtige Stelle zu bringen. Was dabei Gestalt gewinnt, prägt auch die Hand, die geführt hat.}
+  {Wer alles selbst erzwingen will, erschöpft sich. Wer nur die fremde Kraft walten lässt, verliert die Form aus der Hand.}
 \newpage
 \spruch{52}{Wasser}{Metall}{Erde}{IV Ergründen}{Der Probierstein}{Die Geldwechslerin streicht eine fremde Münze über den schwarzen Probierstein und tropft Scheidewasser auf den Strich. Nur echtes Gold bleibt stehen.}
   {Frag, woher deine Gewissheiten kommen. Was man dir als wertvoll übergeben hat, ist nicht schon deshalb echt. Prüf es, bevor du darauf baust, und prüf ebenso, was du selbst weitergibst.}
@@ -1863,7 +1897,7 @@ Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ei
   {Nimm hin, was dir genommen wird. Ein Rückschlag zur Unzeit trifft dich, und manches, das du begonnen hast, geht verloren. Sammle deine Kraft auf das, was bleibt; es wird dafür umso besser gedeihen.}
   {Wer jedem Verlust nachtrauert, versäumt, was ihm geblieben ist. Wer nichts verlieren will, verzettelt sich in allem.}
 \newpage
-\spruch{54}{Wasser}{Metall}{Feuer}{VI Beistehen}{Der Burgbrunnen}{Der Burgvogt lässt einen Brunnen tief in den Fels schlagen. Schießt der Feind Brandpfeile, halten die steinernen Mauern stand, und Löschwasser ist genug da.}
+\spruch{54}{Wasser}{Metall}{Feuer}{VI Beistehen}{Der Burgbrunnen}{Der Burgvogt lässt einen Brunnen tief in den Fels schlagen und das Tor mit Eisen beschlagen. Schießt der Feind Brandpfeile, hält das Tor stand, und Löschwasser ist genug da.}
   {Lehn dich an das Feste in dir. Du hast Grundsätze, die sich bewährt haben, und Menschen mit klarem Urteil an deiner Seite. Sie halten stand, wo es am heißesten zugeht. In ihrem Schutz behältst du die Ruhe und kannst abkühlen, was sich erhitzt hat.}
   {Wer sich nur hinter Grundsätzen verschanzt, hilft niemandem. Wer ohne sie in einen Streit geht, verdampft.}
 \newpage
@@ -1871,7 +1905,7 @@ Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ei
   {Arbeite dich durch, was du selbst angestoßen hast. Du hast etwas Hitziges beruhigt, und daraus ist Neues entstanden, fruchtbar, aber schwer. Nun liegt es dir selbst im Weg. Dass dein eigenes Werk dich herausfordert, gehört dazu. Der neue Lauf wird klarer sein als der alte.}
   {Wer alles Neue gleich fortspült, lässt nichts wachsen. Wer sich vom eigenen Werk aufhalten lässt, versumpft.}
 \newpage
-\spruch{56}{Wasser}{Feuer}{Holz}{VIII Abkürzen}{Der Wolkenbruch}{Ein Wolkenbruch geht auf den Brand nieder, der nach dem Wald greift. Wo die Flammen erlöschen, tränkt er die Fichten.}
+\spruch{56}{Wasser}{Feuer}{Holz}{VIII Abkürzen}{Das Gewitter}{Ein Gewitter zieht auf, und der Blitz fährt in eine Fichte. Doch der Wolkenbruch löscht den Brand und tränkt den Wald.}
   {Nimm einer Sache die Hitze, und sie kann wachsen. Etwas Hitziges bedrohte, was dir lieb ist. Du hast es beherzt beruhigt. Nun kann deine Ruhe direkt dorthin, wo sie gebraucht wird: zu dem, was wachsen will.}
   {Wer zu spät eingreift, findet nur noch Asche. Wer zu heftig eingreift, reißt mit fort, was er retten wollte.}
 \newpage
@@ -1879,7 +1913,7 @@ Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ei
   {Übe, bis es sitzt. Es ist eine Zeit strenger Übung: Anspannung und Ruhe wechseln, jeder Schritt verlangt Genauigkeit. Das ist anstrengend und lässt wenig Raum für Träume. Doch daraus werden Grundsätze, auf die du dich stützen kannst.}
   {Wer zu schroff mit sich ist, bekommt Risse. Wer sich nie fordert, bleibt weich.}
 \newpage
-\spruch{58}{Wasser}{Erde}{Metall}{X Umkehren}{Die Klamm}{Der Bach trägt Erde ab, bis er auf Fels stößt. Über Jahrtausende gräbt er die Klamm, in der Erz glänzt.}
+\spruch{58}{Wasser}{Erde}{Metall}{X Umkehren}{Die Klamm}{Der Bach trägt Erde ab, bis er auf Fels stößt. Über Jahrtausende gräbt er die Klamm, und sein Wasser wird klar.}
   {Arbeite dich durch das Trübe. Lange hast du gegen etwas Schweres angekämpft, das dich trübte und bremste. Du hast dich ihm gestellt. Jetzt stößt du auf festen Grund, auf etwas Klares, das dir niemand mehr nehmen kann. Aus der Mühsal wird ein Neubeginn.}
   {Wer sich immer tiefer in ein Problem gräbt, sieht nur noch dessen Wände. Wer jeder Mühe ausweicht, bleibt trüb.}
 \newpage

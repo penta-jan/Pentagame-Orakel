@@ -1,6 +1,13 @@
 % Pentagame-Orakel: Das Buch der 60 Wandlungen
 % Mit XeLaTeX kompilieren:  xelatex pentagame-orakel.tex
-\documentclass[12pt,paper=a5,DIV=13,headings=small,twoside=false]{scrbook}
+% Druckfassung zweiseitig: xelatex "\def\druck{1}\input{pentagame-orakel}"
+% PDF und Vorschau einseitig: xelatex pentagame-orakel
+% In beiden Fassungen sind ungerade Seiten rechte Seiten.
+\ifdefined\druck
+  \documentclass[12pt,paper=a5,DIV=13,headings=small,twoside=true,open=any]{scrbook}
+\else
+  \documentclass[12pt,paper=a5,DIV=13,headings=small,twoside=false]{scrbook}
+\fi
 
 \usepackage{fontspec}
 \usepackage[headsepline]{scrlayer-scrpage}
@@ -659,6 +666,8 @@
   Alle Texte wurden vom Autor geprüft und verantwortet.\par}
 \clearpage
 \tableofcontents
+% Vorspann auf gerade Seitenzahl auffüllen, damit Seite 1 eine rechte Seite ist
+\clearpage\ifodd\value{page}\else\hbox{}\thispagestyle{empty}\clearpage\fi
 \mainmatter
 
 \addchap{Einführung}\markboth{Einführung}{\mbox{}}

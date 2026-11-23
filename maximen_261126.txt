@@ -1,0 +1,321 @@
+PAARE
+
+1  Holz → Feuer, Das Brennen: Holz brennt und wird zu Licht und Wärme.
+2  Holz → Wasser, Die Wurzel: Die Wurzel zieht Wasser aus der Tiefe.
+3  Holz → Erde, Der Keim: Der Keim durchbricht die Erde.
+4  Holz → Metall, Das Hartholz: Hartes Holz macht die Klinge stumpf.
+5  Feuer → Erde, Die Asche: Das Feuer erlischt, und seine Asche düngt den Boden.
+6  Feuer → Holz, Die Flamme: Die Flamme greift nach dem Holz.
+7  Feuer → Metall, Die Hitze: Hitze macht Metall geschmeidig.
+8  Feuer → Wasser, Der Schauer: Das Feuer zischt im Regen und brennt dennoch weiter.
+9  Erde → Metall, Das Gold: Im Gestein wächst das Gold heran.
+10 Erde → Feuer, Das Gefäß: Im Feuer wird weicher Ton fest.
+11 Erde → Wasser, Der Wall: Der Wall hält das Wasser.
+12 Erde → Holz, Der feste Grund: Fester Boden hält die Wurzel.
+13 Metall → Wasser, Der Tau: Auf kaltem Metall schlägt sich Wasser nieder.
+14 Metall → Erde, Der Berg: Das Erz kommt aus dem Berg.
+15 Metall → Holz, Die Klinge: Die Klinge schneidet das Holz.
+16 Metall → Feuer, Die Tür: Die eiserne Tür hält der Glut stand.
+17 Wasser → Holz, Der Regen: Der Regen tränkt die Wurzeln.
+18 Wasser → Metall, Die Quelle: Die Quelle entspringt dem Fels.
+19 Wasser → Feuer, Das Löschen: Wasser löscht die Glut.
+20 Wasser → Erde, Die Rinne: Wasser gräbt sich eine Rinne.
+
+
+TRIPEL
+
+1  Holz–Feuer–Erde, I Fortschreiten, Das Haus: Die Zieglerin heizt mit Buchenholz den Ofen und brennt Lehm zu Backstein. Eichenbalken fassen die Ziegel: Ein Haus entsteht.
+
+Das Haus: Aus Backstein und Balken entsteht ein Haus.
+
+
+2  Holz–Feuer–Metall, II Prüfen, Das zweischneidige Schwert: Der Schmied facht mit Holzkohle die Esse an und schmiedet ein zweischneidiges Schwert. In der Klinge sieht er sein eigenes Gesicht.
+
+Die Schmiede: In Hitze wird Eisen zu schmiedbarem Schwert.
+
+
+3  Holz–Feuer–Wasser, III Begleiten, Der Herd: Die Köchin schürt das Feuer und setzt getrocknete Bohnen auf. Erst nach Stunden sind sie weich und bekömmlich.
+
+Der Herd: Auf heißem Feuer wird guter Schmaus.
+
+
+4  Holz–Wasser–Metall, IV Ergründen, Das Fass: Die Winzerin füllt das ausgetrocknete Fass mit Wasser. Die Dauben quellen und drücken gegen die eisernen Reifen, bis es dicht ist.
+
+Der Reif: Ein dichtes Fass ist eisenbereift.
+
+
+5  Holz–Wasser–Feuer, V Ausholen, Das grüne Holz: Grünes Buchenholz brennt nicht. Eine Försterin lässt es ein Jahr lang trocknen; dann wärmt es den ganzen Winter.
+
+Der Kamin: Gut Brennholz muss lagern. 
+
+6  Holz–Wasser–Erde, VI Beistehen, Die Uferweide: Der Fischer pflanzt Weiden an das Ufer, an dem der Bach nagt. Ihre Wurzeln ziehen Wasser aus dem Bach und halten das Land.
+
+Das Ufer: Jeder Wandel braucht Anstoß.
+
+
+7  Holz–Erde–Metall, VII Pflegen, Der Quader: Sorgsam setzt der Steinmetz Holzkeile in den Fels und tränkt sie. Sie quellen, der Fels bricht, und aus der rohen Masse wird ein Block, den er behauen kann.
+
+Der Quader: Feines wird aus Rohem.
+
+
+8  Holz–Erde–Feuer, VIII Abkürzen, Die Glashütte: Die Glasmacherin mischt Sand mit Buchenasche, und in der Glut wird er flüssig. Ohne die Asche schmölze er im Holzfeuer nie.
+
+Das Glas: Hartes ist nicht immer sichtbar.
+
+
+9  Holz–Erde–Wasser, IX Heimkehren, Der Biberdamm: Der Biber verbaut Nacht für Nacht Äste und Schlamm zu einem Damm, bis sich das Wasser staut. Für den Winter versenkt er Zweige als Vorrat im Teich.
+
+Das Wehr: Was im Fluss ist, lässt sich formen. 
+
+
+10 Holz–Metall–Wasser, X Umkehren, Der Anker: Die Schifferin liegt vor Anker. Kippt die Tide, dreht sich ihr Boot um den Anker, und er hält es gegen die neue Strömung.
+
+Das Schiff: Vieles ist Möglich.
+
+11 Holz–Metall–Erde, XI Umgehen, Die eingewachsene Kette: Der Ahorn am Feldrain umwächst die eiserne Kette, die man um ihn gelegt hat. Das Eisen rostet zu Erde, und seine Wurzeln halten den Grund.
+
+Die Wallung: Alle Wunden heilt die Zeit.
+
+
+12 Holz–Metall–Feuer, XII Umwälzen, Der heiße Bohrer: Der Zimmermann bohrt in einen Eichenbalken. Das harte Holz hält den Bohrer fest, bis er heiß läuft und die Späne glimmen.
+
+Der Funke: Alles Große beginnt klein.
+
+
+13 Feuer–Erde–Metall, I Fortschreiten, Der Glockenguss: Die Glockengießerin brennt eine Lehmform und macht Bronze flüssig. Wird die Form zerschlagen, steht eine Glocke da, die Jahrhunderte überdauert.
+
+Der Guss: Aus Bewegung wird Form.
+
+
+14 Feuer–Erde–Wasser, II Prüfen, Der Backofen: Der Bäcker schiebt den Teig in den Lehmofen. Wenn das Brot beim Klopfen hohl klingt, ist der Teig gar.
+
+Der Ofen: Umfassung führt zu Vollendung.
+
+
+15 Feuer–Erde–Holz, III Begleiten, Der Kohlenmeiler: Die Köhlerin deckt den Holzstoß mit Erde ab, damit er glimmt und nicht brennt. Tag und Nacht wacht sie, bis aus Holz Kohle geworden ist.
+
+Der Meiler: Durch Verminderung gewinnen.
+
+
+16 Feuer–Holz–Wasser, IV Ergründen, Die Jahresringe: Die alte Frau legt ein Scheit aufs Feuer und sieht seine Jahresringe: breite aus nassen Jahren, schmale aus trockenen. Es zischt; noch immer ist Wasser darin.
+
+Das Rätsel: Alles hinterlässt Spuren.
+   
+
+17 Feuer–Holz–Erde, V Ausholen, Die Herdasche: Die Bäuerin heizt den Winter über mit Holz. Im Frühjahr bricht der Keim durch die Kruste, und sie streut ihre Herdasche aufs Beet.
+
+Der Neubeginn: Sich Lösen bietet Kraft.
+
+
+18 Feuer–Holz–Metall, VI Beistehen, Der Ambossstock: Der Schmied stellt seinen Amboss auf einen Eichenklotz, der jeden Schlag abfängt. So getragen, kann er das glühende Eisen in Form schlagen.
+
+Die Abwehr: Widerstand ist Stärke. 
+
+
+19 Feuer–Metall–Wasser, VII Pflegen, Der Kessel: Der Kesselschmied treibt den Kupferkessel, immer wieder weich geglüht. Kocht der später über dem Herd über, zischt es in der Glut.
+
+Der Topf: Aus Wärme Nahrung.
+
+
+20 Feuer–Metall–Erde, VIII Abkürzen, Die Pflugschar: Die Schmiedin wirft ein Schwert ins Feuer und macht daraus eine Pflugschar. Der edle Stahl geht in die Erde und dient dem Acker.
+
+Die Umwandlung: Der gute Zweck will manchmal erst gefunden werden.
+
+
+21 Feuer–Metall–Holz, IX Heimkehren, Das Wagenrad: Der Wagner zieht einen glühenden Eisenreifen auf das Rad. Das Holz raucht, und beim Abkühlen zieht sich das Eisen fest zusammen.
+
+Die Gemeinschaft: Zusammenhalt macht stark.
+
+
+22 Feuer–Wasser–Holz, X Umkehren, Die Badstube: Die Baderin schürt das Kesselfeuer und gießt heißes Wasser in den Holzzuber. Wer erschöpft kam, steigt gestärkt heraus.
+
+Das Bad: Wasche meine Seele, nicht nur mein Gesicht.
+
+
+23 Feuer–Wasser–Metall, XI Umgehen, Das Feuersetzen: Der Bergmann heizt den Fels mit Feuer, bis der Stein heiß ist, und gießt dann Wasser darauf. Der Fels springt, und das Erz liegt offen.
+
+Der Bruch: Was fest schien, wird formbar.
+
+
+* 24 Feuer–Wasser–Erde, XII Umwälzen, Die junge Insel: Lava fließt zischend ins Meer und erstarrt zu Stein. Gegen die Brandung wächst die Insel Jahr um Jahr hinaus. 
+
+Das Land: Wo nichts war, kann vieles werden.
+
+
+25 Erde–Metall–Wasser, I Fortschreiten, Der Brunnen: Die Brunnenbauerin mauert einen Schacht bis hinab ins Gestein. Dort sammelt sich klares Wasser, reich an Mineralien, und das ganze Dorf schöpft daraus.
+
+Der Schacht: In der Tiefe ist Klarheit.
+
+
+26 Erde–Metall–Holz, II Prüfen, Die Quecke: Der Gärtner hackt das Beet frei, doch die Quecke treibt ihre Wurzeln weiter durch den Boden. Mit ihr muss er selbst fertig werden.
+
+Das Kraut: Alles Gewachsene hat sein Recht.
+
+
+* 27 Erde–Metall–Feuer, III Begleiten, Der Stubenofen: Die Hausfrau heizt den Lehmofen und bleibt dabei, bis das Feuer heruntergebrannt ist. Die eiserne Tür hält der Glut stand, und der Lehm wärmt noch Stunden später.
+
+Der Anfang: Vor dem Funken ist das Feuerzeug. 
+
+
+** 28 Erde–Feuer–Holz, IV Ergründen, Der Brennofen: Die Töpferin fragt, woher die Glut kam, die ihren Krug gebrannt hat. Sie findet das Holz, dessen Wurzeln noch heute in ihrem Tonboden stecken.
+
+Die Sonne: Alles Leben strebt zum Licht.
+
+
+29 Erde–Feuer–Metall, V Ausholen, Der Schmelztiegel: Die Gießerin brennt einen Tiegel aus Ton, bis er feuerfest ist. Darin schmilzt sie Bronze und gießt sie in eine Form.
+
+Der Guss (*doppelt?*): Ein Abbild ist nie besser als sein Urbild.
+
+
+30 Erde–Feuer–Wasser, VI Beistehen, Der Klinker: Der Ziegler brennt Ton zu Klinker, dem kein Regen mehr etwas anhaben kann. Mit diesen Steinen mauert er die Kaimauer am Hafen.
+
+Der Schirm: Gegen kleine Unbill helfen feste Wände.
+
+
+31 Erde–Wasser–Holz, VII Pflegen, Die junge Erle: Im Sickerwasser am Deich keimt eine Erle. Der Deichgraf reißt sie sofort aus, bevor ihre Wurzeln den Wall sprengen.
+
+Die Vielfalt: Ein guter Garten bedarf mancher Pflege.
+
+
+32 Erde–Wasser–Metall, VIII Abkürzen, Die Goldwäsche: Die Goldwäscherin schwenkt Sand und Wasser in ihrer Pfanne, bis der leichte Sand fortgespült ist. Am Boden bleiben die schweren Goldkörner.
+
+Der Fund: Am Grunde liegt das Gold.
+
+33 Erde–Wasser–Feuer, IX Heimkehren, Die Töpferei: Der Töpfer knetet nassen Ton und formt ihn auf der Scheibe. Erst wenn das Gefäß getrocknet ist, darf es ins Feuer.
+
+Der Ton: Was formbar ist, kann alles werden.
+
+
+34 Erde–Holz–Feuer, X Umkehren, Das Reisig: Die Zieglerin rodet Gestrüpp bei ihrer Grube. Mit dem Reisig heizt sie den Ofen, bis in der Glut aus Ton wieder Ziegel werden.
+
+Der Zuwachs: Umsicht führt zu Wachstum.
+
+
+* 35 Erde–Holz–Wasser, XI Umgehen, Der Wassergraben: Der Burgherr lässt vor dem Wall einen Graben (ausheben und) fluten. Der (hölzerne) Belagerungsturm des Feindes versinkt (im Morast, bevor er heran ist).
+
+Die Burg: Sicherheit ist Friede.
+
+
+36 Erde–Holz–Metall, XII Umwälzen, Die Kriegssense: Der Mäher schlägt seine Sense an alten Wurzelstöcken stumpf. Da lässt er sie gerade schmieden und zieht mit ihr los: Der Acker hat eine Waffe hervorgebracht.
+
+Der Tausch: Was der Acker gibt, bekommt der Markt.
+
+
+37 Metall–Wasser–Holz, I Fortschreiten, Das Saatkorn: Die Bäuerin zieht mit dem Spaten Gräben, die Quellwasser auf die Felder leiten. Im Herbst schneidet sie das Korn mit der Sichel und hebt das beste als Saat auf.
+
+Der Speicher: Gute Arbeit trägt mehrfach Frucht.
+
+
+** 38 Metall–Wasser–Feuer, II Prüfen, Der Löschtrog: Der Schmied hält mit dem Wasser aus dem eisengefassten Trog sein Feuer im Zaum. Doch zuletzt muss das Eisen selbst in die Glut.
+
+Das Härten: Abkühlung stählt. 
+
+
+* 39 Metall–Wasser–Erde, III Begleiten, Die Erzader: Die Erzsucherin folgt einem Bach durch die Schlucht, die er ins Gestein geschnitten hat. In ihren Wänden liegt das Erz offen. 
+
+Der Strom: Gutes wie Schlechtes spült der Regen fort.
+
+
+40 Metall–Erde–Feuer, IV Ergründen, Die Glut im Berg: Die Bergfrau folgt dem Erz tief hinab in den Stollen. Je tiefer sie kommt, desto heißer wird das Gestein.
+
+Die Suche: Wer zu tief schürft, dem droht Gefahr.
+
+
+41 Metall–Erde–Wasser, V Ausholen, Der Mühlteich: Über Nacht staut die Müllerin den Bach im Mühlteich. Am Morgen zieht sie das eisenbeschlagene Schütz, und mit Wucht treibt das Wasser das Rad.
+
+Die Mühle: Klug ist, wer alle Kräfte nutzt.
+
+
+42 Metall–Erde–Holz, VI Beistehen, Die Fallkerbe: Der Holzfäller stellt sich fest auf den Waldboden und schlägt die Fallkerbe in eine Fichte. So bestimmt er, wohin sie fällt.
+
+Der Sturz: Die Fallrichtung bestimmt den Sturz.
+
+
+43 Metall–Holz–Feuer, VII Pflegen, Der Schürhaken: Der Bergbauer spaltet Anmachholz, und bald lodert das Feuer im Herd. Nun hält er es mit dem eisernen Schürhaken in Ordnung.
+
+Das Schüren: Aus der Sammlung kommt Wachstum. 
+
+
+44 Metall–Holz–Wasser, VIII Abkürzen, Der Einbaum: Die Fischerin dechselt einen Lindenstamm zum Einbaum aus. Im Wasser gelagert, reißt er nicht, und er trägt sie geradewegs ans andere Ufer.
+
+Das Boot: Was schwierig schien, wird einmal Federleicht.
+
+
+45 Metall–Holz–Erde, IX Heimkehren, Der Stampflehm: Der Zimmermann sägt Bretter für die Schalung, und Schicht um Schicht wird Lehm dazwischen gestampft. Fällt die Schalung, steht eine Wand aus Erde.
+
+Die Wand: Wo Heimat ist, herrscht Ordnung.
+
+
+* 46 Metall–Feuer–Erde, X Umkehren, Die Schlacke: Die Schmelzerin hält Erz in der Glut, bis sich das reine Metall von der Schlacke trennt. Die Schlacke wird gemahlen und düngt den Acker.
+
+Die Läuterung: Gutes ist noch besser ohne Schlechtes.
+
+
+47 Metall–Feuer–Holz, XI Umgehen, Die Brandschneise: Der Förster sieht den Waldbrand kommen und schlägt mit Säge und Beil eine Schneise. Als die Flammen sie erreichen, finden sie keine Nahrung mehr.
+
+Die Obacht: Manche Trennung bedarf der Bewachung.  
+
+
+48 Metall–Feuer–Wasser, XII Umwälzen, Das belagerte Tor: Im Torturm heizt der Wächter einen eisernen Kessel voll Wasser. Als die Belagerer das Tor berennen, gießt er es siedend auf sie hinab.
+
+Die Abschreckung: Taten sind wahrer als Worte.
+
+
+49 Wasser–Holz–Feuer, I Fortschreiten, Die Holztrift: Die Flößerin treibt Stämme hinab zur Stadt, wo sie zu Brennholz werden. Bricht ein Brand aus, löscht man ihn aus demselben Strom.
+
+Der Vorrat: Gut beraten ist, wer nicht auf eins nur sich verlässt.
+
+
+50 Wasser–Holz–Erde, II Prüfen, Der Auwald: Der Strom tränkt die Erlen der Aue, und ihre Wurzeln halten das Ufer. Beim Hochwasser aber muss er sich selbst einen Weg durch das Land suchen.
+
+Der Aufbruch: Wer gehen kann, der findet einen Ort.
+
+
+51 Wasser–Holz–Metall, III Begleiten, Das Hammerwerk: Der Bach treibt das hölzerne Rad des Hammerwerks. Die Schmiedin führt das Eisen unter den Hammer, und Schlag um Schlag nimmt es Form an.
+
+Die Ausdauer: Viele leichte Schläge formen jeden Block. 
+
+
+52 Wasser–Metall–Erde, IV Ergründen, Der Probierstein: Die Geldwechslerin streicht eine fremde Münze über den schwarzen Probierstein und tropft Scheidewasser auf den Strich. Nur echtes Gold bleibt stehen.
+
+Das Abwägen: Es ist nicht alles Gold, was glänzt. *(trad.)
+
+
+53 Wasser–Metall–Holz, V Ausholen, Der Spätfrost: In klarer Mondnacht gefriert der Tau auf der Apfelblüte, und viele Blüten erfrieren. Die übrigen trägt der Baum umso kräftiger aus.
+
+Die Auswahl: Prüfet alles und behaltet das Beste. *(Bibel)
+
+
+54 Wasser–Metall–Feuer, VI Beistehen, Der Burgbrunnen: Der Burgvogt lässt einen Brunnen tief in den Fels schlagen und das Tor mit Eisen beschlagen. Schießt der Feind Brandpfeile, hält das Tor stand, und Löschwasser ist genug da.
+
+Die Quelle: Wer sich selbst genügt, braucht Feinde nicht zu fürchten.
+
+
+55 Wasser–Feuer–Erde, VII Pflegen, Das neue Bachbett: Regen löscht den Brand am Hang, die Asche wird Boden. Der nächste Guss spült ihn in den Bach, der sich ein neues Bett graben muss.
+
+Der Neubeginn: Wer alles verloren hat, hat alles zu gewinnen. 
+
+
+56 Wasser–Feuer–Holz, VIII Abkürzen, Das Gewitter: Ein Gewitter zieht auf, und der Blitz fährt in eine Fichte. Doch der Wolkenbruch löscht den Brand und tränkt den Wald.
+
+Der Blitz: Unverhofft kommt oft. *(trad.)
+
+
+57 Wasser–Feuer–Metall, IX Heimkehren, Das Härten: Der Messerschmied bringt eine Klinge zum Glühen, bis sie die richtige Farbe hat, und schreckt sie im Wasser ab. Zischend wird sie hart.
+
+Die Enttäuschung: Einsicht in die Wahrheit ist stets ein Gewinn.
+
+
+58 Wasser–Erde–Metall, X Umkehren, Die Klamm: Der Bach trägt Erde ab, bis er auf Fels stößt. Über Jahrtausende gräbt er die Klamm, und sein Wasser wird klar.
+
+Die Ergründung: Auf jede Frage gibt es eine Antwort.
+
+
+*** 59 Wasser–Erde–Feuer, XI Umgehen, Der Wasserkrug: (Du) nagst am Ufer und legst den Ton frei; ein Töpfer formt daraus einen Krug und brennt ihn. In diesem Krug trägt man dich zum Feuer, und du löschst es.
+
+Die Hilfe: Niemand kann allein bestehen.
+
+
+60 Wasser–Erde–Holz, XII Umwälzen, Das Hochwasser: Der Strom tritt über die Ufer, doch die Wurzeln der Eichen halten den Boden. Sinkt das Wasser, grünt das Land fruchtbarer als zuvor.
+
+Die Schwemme: Erneuerung kommt von Außen. 

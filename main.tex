@@ -407,7 +407,10 @@
 \expandafter\def\csname mustername IV\endcsname{Ergründen}
 % Ausgabe: "Muster: II. Die Prüfung", Nummer und Name als Link
 \def\musterlink#1 #2\endmusterlink{\hyperlink{muster:#1}{\textit{#1.~\csname mustername #1\endcsname}}}
-\newcommand{\paartitellink}[2]{\hyperlink{paar:#1-#2}{\textit{\csname paartitel#1-#2\endcsname}}}
+\newcommand{\paartitellink}[2]{%
+  \pgfmathtruncatemacro{\ptnr}{mod(\csname elnum#2\endcsname-\csname elnum#1\endcsname+5,5)}%
+  \pgfmathtruncatemacro{\ptnum}{4*\csname elnum#1\endcsname+\csname bzidx\ptnr\endcsname}%
+  \hyperlink{paar:#1-#2}{\textit{\ptnum.~\csname paartitel#1-#2\endcsname}}}
 \def\musterref#1 #2\endmusterref{{\small Wendung:}~\hyperlink{muster:#1}{\textit{#1.~\csname mustername #1\endcsname}}}
 
 % Kleine Kreispfeile für die Drehrichtung

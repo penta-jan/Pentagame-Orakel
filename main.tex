@@ -576,8 +576,8 @@
 % der grünen Kreuzung (rot) die vier Beziehungen; Punkt am Anfang, Pfeil bis in die Mitte des Ziels
 \tikzset{bezlabel/.style={font=\scriptsize, align=center, inner sep=1pt, text=black, fill=white, fill opacity=0.85, text opacity=1},
   bezinnen/.style={font=\scriptsize, inner sep=1pt, text=pfeilinnen, fill=white, fill opacity=0.85, text opacity=1},
-  bezpfeil/.style={{Circle[length=3.2pt]}-{Stealth[scale=1.25]}, color=\pfeilfarbe, preaction={draw=white, line width=3.4pt, opacity=0.9, arrows=-}},
-  bezpfeilrueck/.style={{Stealth[scale=1.25]}-{Circle[length=3.2pt]}, color=\pfeilfarbe, preaction={draw=white, line width=3.4pt, opacity=0.9, arrows=-}}}
+  bezpfeil/.style={{Circle[length=3.2pt]}-{Stealth[scale=1.25]}, color=\pfeilfarbe},
+  bezpfeilrueck/.style={{Stealth[scale=1.25]}-{Circle[length=3.2pt]}, color=\pfeilfarbe}}
 \newcommand{\bezabstand}{6.5pt}% Abstand der Pfeilanfänge vom Mittelpunkt
 \makeatletter
 % \brettbild: das farbige Brett ohne Pfeile, Holz oben; Ecken und Kreuzungen verweisen auf die Elemente
@@ -621,7 +621,8 @@
   \fi
   \def\pp@lw{1.3pt}%
   \def\rpart{#2}\def\rplus{plus}%
-  \begin{pentdiag}[stops=50, radius=#1, background=white]
+  \renewcommand{\bezabstand}{2.5pt}%
+  \begin{pentdiag}[stops=50, radius=#1, background=white, fieldscale=0.72]
     \pgfmathsetmacro{\rj}{0.381966*\kvar}%
     \ifx\rpzeige\rpinnen\else
     \renewcommand{\pfeilfarbe}{pfeilaussen}%

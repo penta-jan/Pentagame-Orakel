@@ -88,6 +88,7 @@
 
 \def\pp@stops{50}             % board type: 50 (default) or 100 stops (legacy)
 \def\pp@radius{0.3\linewidth} % default ring radius, evaluated per diagram
+\def\pp@fieldscale{1}          % size factor for corners and junctions
 \def\pp@lw{}                  % user line width; empty = scale with the board
 \def\pp@arcoff{0}             % 0: arcs numbered from 0; 1: legacy numbering from 1
 \def\pp@t{0}                 % turn: shift of all colour indices (0..4)
@@ -171,6 +172,7 @@
 
 \define@key{pentpack@diag}{stops}{\pp@checkstops{#1}}
 \define@key{pentpack@diag}{radius}{\def\pp@radius{#1}}
+\define@key{pentpack@diag}{fieldscale}{\def\pp@fieldscale{#1}}
 \define@key{pentpack@diag}{rotate}{\renewcommand{\rota}{#1}}
 \define@key{pentpack@diag}{turn}{\pp@setturn{#1}}
 \define@key{pentpack@diag}{background}{\renewcommand{\blackness}{#1}}
@@ -251,6 +253,8 @@
     \def\pp@step{18}\def\pp@ccorn{3}\def\pp@midring{2}\def\pp@midinner{2}%
     \def\pp@autolw{0.8\svar}%
   \fi
+  \setlength{\cvar}{\pp@fieldscale\cvar}% fieldscale: corners and junctions smaller or larger (simplified diagrams)
+  \setlength{\jvar}{\pp@fieldscale\jvar}%
   \setlength{\fvar}{0.75\svar}%
   \setlength{\pp@anilw}{0.12\svar}%
   \pgfmathsetmacro\pp@anisc{1.25*\svar/28.45276}% animal radius 1.25 stops
@@ -1232,7 +1236,10 @@
 \tikzset{
     corn/.pic={
         \filldraw[draw=\stopaccent, fill, line width=0.3pt] (0,0) circle (\cvar);
-        \filldraw[draw=\stopaccent, fill=\stopshade, line width=0.3pt] (0,0) circle (0.8\cvar);
+        % only the detailed board (with all stops) shows the corner as a ring, as on the real board;
+        % the simplified diagrams draw it solid, like the junctions
+        \ifthenelse{\boolean{details}}
+          {\filldraw[draw=\stopaccent, fill=\stopshade, line width=0.3pt] (0,0) circle (0.8\cvar);}{}
     },
     junc/.pic={
         \filldraw[draw=\stopaccent, fill, line width=0.3pt] (0,0) circle (\jvar);

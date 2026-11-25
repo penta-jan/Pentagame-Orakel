@@ -141,7 +141,9 @@
 % \musterbrett{Schritte 1}{Schritte 2}: der Weg ab Ecke 0 (schwarz) und ab Kreuzung 0a (rot),
 % auf einem kleinen, grauen 100er-Brett (kleinere Ecken, Pfeile besser sichtbar)
 \newcommand{\mustergrau}{black!30}
-\colorlet{dreieckfarbe}{yellow!22}
+\colorlet{dreieckfarbe}{yellow!30}
+\definecolor{dreieckrand}{rgb}{0.15,0.35,0.65}% dünne Randlinie des Dreiecks, auch im Druck sichtbar
+\pgfdeclarelayer{dreieck}\pgfsetlayers{dreieck,main}% Dreieck unter dem Brett, damit es keine Felder überdeckt
 \newcommand{\musterbrett}[2]{{%
   \boardwhite
   \renewcommand{\mywhite}{\mustergrau}\renewcommand{\myblue}{\mustergrau}%
@@ -151,9 +153,10 @@
   \pgfmathtruncatemacro{\dreieckc}{mod(10-#1-#2,5)}%
   \begin{pentdiag}[stops=100, radius=0.16\textwidth, background=white]
     % das Dreieck der drei Elemente, aus den Ecken gebildet, hellgelb hinterlegt
-    \begin{scope}[blend mode=multiply]
+    \begin{pgfonlayer}{dreieck}
       \fill[dreieckfarbe] (0.center) -- (\dreieckb.center) -- (\dreieckc.center) -- cycle;
-    \end{scope}
+      \draw[dreieckrand, line width=0.6pt, line join=round] (0.center) -- (\dreieckb.center) -- (\dreieckc.center) -- cycle;
+    \end{pgfonlayer}
     \renewcommand{\pfeilfarbe}{pfeilaussen}%
     \gdef\musterpos{0}\gdef\mustertyp{c}%   von der Ecke oben
     \musterschritt{#1}{}
@@ -236,9 +239,10 @@
   \pentcolours[100]{green,red,yellow,white,blue}%
   \xdef\tripelstart{\csname elpos#1\endcsname}%
   \begin{pentdiag}[stops=100, radius=0.17\textwidth, background=white]
-    \begin{scope}[blend mode=multiply]% Dreieck der drei Elemente, hellgelb
+    \begin{pgfonlayer}{dreieck}% Dreieck der drei Elemente, hellgelb, unter dem Brett
       \fill[dreieckfarbe] (\csname elpos#1\endcsname.center) -- (\csname elpos#2\endcsname.center) -- (\csname elpos#3\endcsname.center) -- cycle;
-    \end{scope}
+      \draw[dreieckrand, line width=0.6pt, line join=round] (\csname elpos#1\endcsname.center) -- (\csname elpos#2\endcsname.center) -- (\csname elpos#3\endcsname.center) -- cycle;
+    \end{pgfonlayer}
     \expandafter\expandafter\expandafter\tripelbrettweg\csname musterschritte #4\endcsname
   \end{pentdiag}}}
 \def\tripelmuster#1 #2\endtripelmuster{#1}
@@ -305,6 +309,7 @@
 % Kopf eines Musters, aufgebaut wie ein Spruch:
 % Nummer, Bild, Überschrift, dann die Schritte
 % \musterkopf{Nummer}{Name}{Schritte 1}{Schritte 2}{Text 1.}{Text 2.}{Anfang->Ende}
+\newcommand{\wzelle}[3]{\hyperlink{muster:#1}{\textbf{#1}\newline \csname mustername #1\endcsname}\newline{\scriptsize #2\newline #3}}
 \newcommand{\musterkopf}[7]{%
   \verz{#1}{#2}{muster:#1}\hypertarget{muster:#1}{{\Large\bfseries #1}}\par
   \smallskip
@@ -312,7 +317,7 @@
   \smallskip
   {\large\bfseries\color{ueberschriftfarbe} #2}\par
   \smallskip
-  {\small\bnlink{#5}, dann \bnlink{#6}: \bnlink{#7}.\\
+  {\small\bnlink{#5}, dann \bnlink{#6}.\\
   Ein \csname musterdreieck #1\endcsname-Dreieck.\par}
   \smallskip}
 
@@ -374,7 +379,7 @@
    {\large\bfseries #3}\par
    {\small Richtung:}~\hyperlink{beziehung:\paarnr}{\textit{\csname bzlabel\paarnr\endcsname~\csname bzname\paarnr\endcsname}}\par
    \smallskip
-   \textbf{#4}\par
+   \textbf{#4\\\dervorgang}\par\gdef\dervorgang{}
    \smallskip
    \lichtschatten{#5}{#6}
    \linkteil
@@ -397,11 +402,11 @@
 \expandafter\def\csname mustername II\endcsname{Prüfen}
 \expandafter\def\csname mustername III\endcsname{Begleiten}
 \expandafter\def\csname mustername VII\endcsname{Pflegen}
-\expandafter\def\csname mustername IX\endcsname{Heimkehren}
-\expandafter\def\csname mustername VIII\endcsname{Abkürzen}
+\expandafter\def\csname mustername IX\endcsname{Festigen}
+\expandafter\def\csname mustername VIII\endcsname{Erschließen}
 \expandafter\def\csname mustername X\endcsname{Umkehren}
 \expandafter\def\csname mustername XII\endcsname{Umwälzen}
-\expandafter\def\csname mustername XI\endcsname{Umgehen}
+\expandafter\def\csname mustername XI\endcsname{Standhalten}
 \expandafter\def\csname mustername V\endcsname{Ausholen}
 \expandafter\def\csname mustername VI\endcsname{Beistehen}
 \expandafter\def\csname mustername IV\endcsname{Ergründen}
@@ -427,6 +432,9 @@
 % \tripelbild{Text}: das Bild zum folgenden \spruch
 \newcommand{\dasbild}{}
 \newcommand{\tripelbild}[1]{\gdef\dasbild{#1}}
+\newcommand{\dervorgang}{}
+\newcommand{\tripelvorgang}[1]{\gdef\dervorgang{#1}}
+\newcommand{\paarvorgang}[1]{\gdef\dervorgang{#1}}
 \newcommand{\spruch}[9]{%
   \begin{orakelblock}
    \verz{#1}{#6}{spruch:#1}\hypertarget{spruch:#1}{{\Large\bfseries #1}}\par
@@ -440,12 +448,14 @@
    {\large\bfseries #6}\par
    {\small\paartitellink{#2}{#3} \& \paartitellink{#3}{#4}:~\musterlink#5\endmusterlink}\par
    \smallskip
-   \textbf{#7}\par
-   \smallskip
    {\justifying\setlength{\parindent}{0pt}\noindent\textit{Das Bild:} \dasbild\par}
    \smallskip
+   {\justifying\setlength{\parindent}{0pt}\noindent\textit{Der Sinn:} \dervorgang\par}
+   \smallskip
+   \textbf{#7}\par
+   \smallskip
    \lichtschatten{#8}{#9}
-  \end{orakelblock}\gdef\dasbild{}
+  \end{orakelblock}\gdef\dasbild{}\gdef\dervorgang{}
 }
 
 % \wandlungskreis[art]: die fünf Elemente im Kreis, Holz oben, im Uhrzeigersinn.
@@ -594,13 +604,26 @@
 % jeweils von der grünen Ecke (schwarz) und der grünen Kreuzung (rot)
 \newcommand{\rpfont}{\footnotesize}
 \tikzset{rplabel/.style={font=\rpfont, inner sep=1pt, fill=white, fill opacity=0.85, text opacity=1}}
+\def\rpzeige{beide}\def\rpbeide{beide}\def\rpaussen{aussen}\def\rpinnen{innen}% welche Pfeile \richtungspaar zeigt
+% \richtungsfaktor: Maßstab der Bilder im Kapitel „Die vier Richtungen“. Der Wandlungskreis wird damit skaliert,
+% die Bretter bekommen denselben Kreisradius (3 cm * \wkscale * \richtungsfaktor), damit Kreis und Ring gleich groß sind.
+\newcommand{\richtungsfaktor}{0.6}
+\newcommand{\richtungsradius}{\fpeval{3*\wkscale*\richtungsfaktor}cm}
 \newcommand{\richtungspaar}[2][0.19\textwidth]{{%
-  \boardcoloured
-  \pentcolours[50]{green,red,yellow,white,blue}%
+  \ifx\rpzeige\rpbeide
+    \boardcoloured
+    \pentcolours[50]{green,red,yellow,white,blue}%
+  \else
+    \boardwhite
+    \renewcommand{\mywhite}{\mustergrau}\renewcommand{\myblue}{\mustergrau}%
+    \renewcommand{\mygreen}{\mustergrau}\renewcommand{\myred}{\mustergrau}%
+    \renewcommand{\myyellow}{\mustergrau}%
+  \fi
   \def\pp@lw{1.3pt}%
   \def\rpart{#2}\def\rplus{plus}%
   \begin{pentdiag}[stops=50, radius=#1, background=white]
     \pgfmathsetmacro{\rj}{0.381966*\kvar}%
+    \ifx\rpzeige\rpinnen\else
     \renewcommand{\pfeilfarbe}{pfeilaussen}%
     \ifx\rpart\rplus
       \pbogen{4}{bezpfeilrueck, shorten >=\bezabstand}
@@ -613,18 +636,21 @@
       \plinie{0}{2a}{bezpfeil, shorten <=\bezabstand}
         node[rplabel, pos=0.55, right=2pt, text=black] {\hyperlink{beziehung:3}{\XeTeXLinkBox{−2 {\cjk 侮}}}};
     \fi
+    \fi
+    \ifx\rpzeige\rpaussen\else
     \renewcommand{\pfeilfarbe}{pfeilinnen!75!black}%
     \ifx\rpart\rplus
       \draw[bezpfeil, shorten <=\bezabstand] (270:\rj pt) arc[start angle=270, end angle=198, radius=\rj pt]
-        node[rplabel, pos=0.5, below left=1pt, text=pfeilinnen] {\hyperlink{beziehung:1}{\XeTeXLinkBox{+1}}};
+        node[rplabel, pos=0.5, below left=1pt, text=pfeilinnen] {\hyperlink{beziehung:1}{\XeTeXLinkBox{+1 {\cjk 生}}}};
       \plinie{0a}{3}{bezpfeil, shorten <=\bezabstand}
-        node[rplabel, pos=0.62, below left=2pt, text=pfeilinnen] {\hyperlink{beziehung:2}{\XeTeXLinkBox{+2}}};
+        node[rplabel, pos=0.62, below left=2pt, text=pfeilinnen] {\hyperlink{beziehung:2}{\XeTeXLinkBox{+2 {\cjk 克}}}};
     \else
       \draw[bezpfeil, shorten <=\bezabstand] (270:\rj pt) arc[start angle=270, end angle=342, radius=\rj pt]
-        node[rplabel, pos=0.5, below right=1pt, text=pfeilinnen] {\hyperlink{beziehung:4}{\XeTeXLinkBox{−1}}};
+        node[rplabel, pos=0.5, below right=1pt, text=pfeilinnen] {\hyperlink{beziehung:4}{\XeTeXLinkBox{−1 {\cjk 泄}}}};
       \plinie{0a}{2}{bezpfeil, shorten <=\bezabstand}
-        node[rplabel, pos=0.62, below right=2pt, text=pfeilinnen] {\hyperlink{beziehung:3}{\XeTeXLinkBox{−2}}};
+        node[rplabel, pos=0.62, below right=2pt, text=pfeilinnen] {\hyperlink{beziehung:3}{\XeTeXLinkBox{−2 {\cjk 侮}}}};
     \fi
+      \fi
   \end{pentdiag}}}
 \newcommand{\beziehungsuebersicht}{{%
   \boardcoloured
@@ -711,11 +737,11 @@ Wer Pentagame spielt, kennt diesen Moment: Die dritte Figur erreicht ihr Ziel un
 \end{tabular}
 \end{center}
 
-Zu jeder Erscheinung gibt es einen Spruch: zu jedem Element, jeder Richtung, jedem Paar, jeder Wendung und jedem Tripel. Ein Spruch besteht aus einem knappen Urteil, fett gesetzt, und einer Deutung darunter. Die Deutung zeigt immer beide Seiten: das Licht und den Schatten. Bei den Tripeln steht zwischen Urteil und Deutung noch ein Bild, eine kleine Szene, die das Urteil anschaulich macht.
+Zu jeder Erscheinung gibt es einen Spruch: zu jedem Element, jeder Richtung, jedem Paar, jeder Wendung und jedem Tripel. Ein Spruch besteht aus einem knappen Urteil, fett gesetzt, und einer Deutung darunter. Die Deutung zeigt immer beide Seiten: das Licht und den Schatten. Vor dem Urteil stehen bei den Tripeln ein Bild und sein Sinn; bei den Paaren folgt der Sinn dem Urteil.
 
-Die Bilder der Sprüche bauen aufeinander auf. Jedes Paar hat einen eigenen Vorgang aus Natur und Handwerk, wie er tatsächlich geschieht: Holz brennt, der Wall hält das Wasser, die Klinge schneidet das Holz. Die Ordnung stammt aus China, die Bilder aber aus dem vorindustriellen Europa: Meiler und Hammerwerk, Fass und Einbaum, Burgtor und Badstube. Jede Wendung ist eine Art der Bewegung aus zwei Schritten, etwa das Ausholen oder das Umgehen. Ein Tripel fügt die Vorgänge seiner beiden Paare zu einer Szene zusammen, dem Bild, und sein Urteil fasst ihren Sinn in einen Satz. Wer die Paare kennt, erkennt sie in den Tripeln wieder.
+Die Bilder der Sprüche bauen aufeinander auf. Jedes Paar hat ein eigenes Geschehen aus Natur und Handwerk, wie es tatsächlich vorkommt: Holz brennt, der Wall hält das Wasser, die Klinge schneidet das Holz. Die Ordnung stammt aus China, die Bilder aber aus dem vorindustriellen Europa: Meiler und Hammerwerk, Fass und Einbaum, Burgtor und Badstube. Jede Wendung ist eine Art der Bewegung aus zwei Schritten, etwa das Ausholen oder das Standhalten. Ein Tripel fügt die Geschehen seiner beiden Paare zu einer Szene zusammen, dem Bild, und sein Urteil fasst ihren Sinn in einen Satz. Wer die Paare kennt, erkennt sie in den Tripeln wieder.
 
-Das bekannteste Orakel Chinas ist das \textit{Yijing} ({\cjk 易經}), bei uns als \textit{I Ging} oder \textit{Buch der Wandlungen} bekannt. Seine ältesten Teile sind fast dreitausend Jahre alt. Es besteht aus 64 Zeichen von je sechs ganzen oder geteilten Linien; zu jedem Zeichen gehören ein Urteil und ein Bild. In Europa wurde es vor allem durch die deutsche Übersetzung von Richard Wilhelm (1924) bekannt. Mit den fünf Elementen hat das I Ging ursprünglich nichts zu tun. Dieses Buch übernimmt von ihm aber die Form: zuerst das Urteil, dann das Bild.
+Das bekannteste Orakel Chinas ist das \textit{Yijing} ({\cjk 易經}), bei uns als \textit{I Ging} oder \textit{Buch der Wandlungen} bekannt. Seine ältesten Teile sind fast dreitausend Jahre alt. Es besteht aus 64 Zeichen von je sechs ganzen oder geteilten Linien; zu jedem Zeichen gehören ein Urteil und ein Bild. In Europa wurde es vor allem durch die deutsche Übersetzung von Richard Wilhelm (1924) bekannt. Mit den fünf Elementen hat das I Ging ursprünglich nichts zu tun. Dieses Buch übernimmt von ihm die beiden Teile Urteil und Bild, stellt aber das Bild voran.
 
 Das unmittelbare Vorbild ist das \href{https://en.wikipedia.org/wiki/Lingqijing}{Lingqijing} ({\cjk 靈棋經}, „Klassiker der göttlichen Spielsteine“), ein chinesisches Orakel, das wohl in der frühen Wei-Jin-Zeit entstanden ist. Dort ergeben drei Positionen (Himmel, Mensch, Erde) mit je fünf Zuständen 125 Sprüche. Beim Pentagame-Orakel kommt keine Farbe doppelt vor, deshalb sind es 60 Tripel.
 
@@ -1037,7 +1063,7 @@ In der Ordnung von Yin und Yang ist das Wasser das große Yin ({\cjk 太陰} tà
 \end{orakelblock}
 
 \newpage
-\addchap{Das Pentagame}\markboth{Das Pentagame}{\mbox{}}\label{kap:brett}
+\addchap{Die Elemente im Pentagame}\markboth{Die Elemente im Pentagame}{\mbox{}}\label{kap:brett}
 
 \begin{einleitung}
 Das Pentagame ist eine geometrische Figur, auf der gespielt wird. Außen liegt ein Kreis, der Ring, mit fünf Ecken. Durch die Ecken laufen die fünf Linien eines Sterns, des Pentagramms; wo sie einander schneiden, liegen innen fünf Kreuzungen. Sie bilden ein kleines Fünfeck, das Pentagon.
@@ -1078,102 +1104,111 @@ Dieses Buch folgt dem Pentagame: Es nimmt das überlieferte Schema, verdoppelt e
 \addchap{Die vier Richtungen}\markboth{Die vier Richtungen}{\mbox{}}\label{kap:beziehungen}\verzkap{Die vier Richtungen}
 
 \begin{einleitung}
-Von jedem Element führt eine Bewegung zu jedem der vier anderen. Diese vier Bewegungen gehen in vier Richtungen: einen oder zwei Schritte im Wandlungskreis, vorwärts oder zurück. Geht man eine Richtung von allen fünf Elementen aus, schließt sich der Kreis; die Tradition spricht deshalb von Zyklen. Hier heißen sie Richtungen.
-\end{einleitung}
+Von jedem Element führt eine Bewegung zu jedem der vier anderen. Diese Bewegungen gehen in vier Richtungen: einen oder zwei Schritte im Wandlungskreis, vorwärts oder zurück. In diesem Buch heißen sie kurz +1, −1, +2 und −2; die Zahl sagt, wie weit, das Vorzeichen, ob vor oder zurück. Geht man eine Richtung von allen fünf Elementen aus, schließt sich der Kreis; die Tradition spricht deshalb von Zyklen.
 
-\addsec*{Nähren und Bändigen}\markright{Nähren und Bändigen}
-
-\begin{einleitung}
-Ein Schritt im Sonnenlauf vorwärts (+1) ist, wie schon beschrieben, das Hervorbringen oder Nähren ({\cjk 生} shēng). Zwei Schritte vorwärts (+2), also über ein Element hinweg, führt eine Diagonale durch den Kreis: Das ist das Bändigen ({\cjk 克} kè). Zusammen bilden die Diagonalen ein Pentagramm. Diese beiden Richtungen ergeben bereits das vollständige Bild des Wu Xing.
+Ein Schritt vorwärts (+1) ist das Nähren ({\cjk 生} shēng), zwei Schritte vorwärts (+2), über ein Element hinweg, das Bändigen ({\cjk 克} kè). Diese beiden Richtungen ergeben bereits das vollständige Bild des Wu Xing: außen den Kreis, innen das Pentagramm. Zu jeder gibt es ein Gegenstück in der Gegenrichtung. Einen Schritt zurück (−1) liegt das Annehmen ({\cjk 泄} xiè), bei dem das Kind von der Mutter nimmt; zwei Schritte zurück (−2) das Sich stellen ({\cjk 侮} wǔ), mit dem sich das Gebändigte gegen seinen Bändiger wendet.
 \end{einleitung}
 
 \begin{center}
-\begin{minipage}{\linewidth}\centering
-\scalebox{0.75}{\wandlungskreis[ke]}\par
+\begin{minipage}[t]{0.48\linewidth}\centering
+\scalebox{\richtungsfaktor}{\wandlungskreis[ke]}\par
 \smallskip
-{\small\itshape Nähren ({\cjk 生} shēng) und Bändigen ({\cjk 克} kè): außen der Kreis, innen das Pentagramm.\par}
+{\small\itshape +1 Nähren und +2 Bändigen\par}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\centering
+\scalebox{\richtungsfaktor}{\wandlungskreis[gegen]}\par
+\smallskip
+{\small\itshape −1 Annehmen und −2 Sich stellen\par}
 \end{minipage}
 \end{center}
 
 \newpage
-\addsec*{Annehmen und Sich stellen}\markright{Annehmen und Sich stellen}
+\addsec*{Die Richtungen im Pentagame}\markright{Die Richtungen im Pentagame}
 
 \begin{einleitung}
-Zu shēng und kè gibt es jeweils ein Gegenstück in der Gegenrichtung. Einen Schritt zurück (−1) liegt das Annehmen ({\cjk 泄} xiè), bei dem das Kind an der Mutter zehrt. Zwei Schritte zurück (−2) liegt das Sich stellen ({\cjk 侮} wǔ), die Auflehnung des Gebändigten gegen seinen Bändiger.
+Im Pentagame erscheint der Wandlungskreis zweimal, außen auf dem Ring und innen auf dem Pentagon (siehe \hyperref[kap:brett]{„Die Elemente im Pentagame“}). Jeder Zug von einem farbigen Feld zu einem andersfarbigen ist eine Bewegung in eine der vier Richtungen. Die einfachen Richtungen, Nähren und Annehmen, bleiben auf ihrem Kreis. Die doppelten, Bändigen und Sich stellen, wechseln die Ebene: Sie führen über eine Wechselstrecke von der Ecke zur Kreuzung oder von der Kreuzung zur Ecke. Die Diagonale des Wandlungskreises wird so zum Übergang zwischen außen und innen.
+
+\textbf{Nähren und Bändigen.} Nähren (+1) ist ein kurzer Schritt im Uhrzeigersinn, von Holz zu Feuer: außen von Ecke zu Ecke, innen von Kreuzung zu Kreuzung. Bändigen (+2) erreicht die Erde. Auf dem Ring läge sie zwei Schritte im Uhrzeigersinn. Ihre Kreuzung aber liegt auf der anderen Seite der Mitte, von der Holz-Ecke aus gesehen links. Die Wechselstrecke führt deshalb gegen den Uhrzeigersinn: von der Holz-Ecke zur Erde-Kreuzung und ebenso von der Holz-Kreuzung zur Erde-Ecke.
 \end{einleitung}
 
 \begin{center}
 \begin{minipage}{\linewidth}\centering
-\scalebox{0.75}{\wandlungskreis[gegen]}\par
-\smallskip
-{\small\itshape Annehmen ({\cjk 泄} xiè) und Sich stellen ({\cjk 侮} wǔ): außen der Kreis, innen das Pentagramm.\par}
+\begin{minipage}[t]{0.48\linewidth}\centering
+{\renewcommand{\rpfont}{\tiny}\def\rpzeige{aussen}\richtungspaar[\richtungsradius]{plus}}\par
+{\small\itshape Nähren und Bändigen von der Ecke\par}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\centering
+{\renewcommand{\rpfont}{\tiny}\def\rpzeige{innen}\richtungspaar[\richtungsradius]{plus}}\par
+{\small\itshape Nähren und Bändigen von der Kreuzung\par}
 \end{minipage}
-\end{center}
-
-\begin{einleitung}
-Die vier Richtungen heißen in diesem Buch kurz +1, −1, +2 und −2: Die Zahl sagt, wie weit, das Vorzeichen, ob vor oder zurück.
-\end{einleitung}
-
-\addsec*{Die Bewegungen im Pentagame}\markright{Die Bewegungen im Pentagame}
-
-\begin{einleitung}
-Im Pentagame erscheint der Wandlungskreis zweimal, außen auf dem Ring und innen auf dem Pentagon (siehe \hyperref[kap:brett]{„Das Pentagame“}). Jeder Zug von einem farbigen Feld zu einem andersfarbigen ist eine Bewegung in eine der vier Richtungen. Die Bewegungen der einfachen Richtungen, Nähren und Annehmen, bleiben auf ihrem Kreis. Die der doppelten, Bändigen und Sich stellen, wechseln die Ebene: Sie führen über eine Wechselstrecke von der Ecke zur Kreuzung oder von der Kreuzung zur Ecke. Die Diagonale des Wandlungskreises wird so zum Übergang zwischen außen und innen.
-\end{einleitung}
-
-\begin{einleitung}
-\textbf{Nähren und Bändigen.} Nähren (+1, {\cjk 生} shēng) ist ein kurzer Schritt im Uhrzeigersinn, von Holz zu Feuer: außen von Ecke zu Ecke, innen von Kreuzung zu Kreuzung. Bändigen (+2, {\cjk 克} kè) erreicht die Erde. Auf dem Ring läge sie zwei Schritte im Uhrzeigersinn, also rechts herum. Ihre Kreuzung aber liegt auf der anderen Seite der Mitte, von der Holz-Ecke aus gesehen links. Die Wechselstrecke führt deshalb gegen den Uhrzeigersinn: von der Holz-Ecke zur Erde-Kreuzung und ebenso von der Holz-Kreuzung zur Erde-Ecke.
-\end{einleitung}
-
-\begin{center}
-\begin{minipage}{\linewidth}\centering
-{\renewcommand{\rpfont}{\small}\richtungspaar[0.17\textwidth]{plus}}\par
-\smallskip
-{\small\itshape Nähren ({\cjk 生} shēng) und Bändigen ({\cjk 克} kè) von Holz aus: schwarz von der Ecke, rot von der Kreuzung.\par}
 \end{minipage}
 \end{center}
 
 \newpage
 \begin{einleitung}
-\textbf{Annehmen und Sich stellen.} Annehmen (−1, {\cjk 泄} xiè) ist ein kurzer Schritt gegen den Uhrzeigersinn, von Holz zu Wasser: außen von Ecke zu Ecke, innen von Kreuzung zu Kreuzung. Sich stellen (−2, {\cjk 侮} wǔ) erreicht das Metall. Auf dem Ring läge es zwei Schritte gegen den Uhrzeigersinn, also links herum. Seine Kreuzung aber liegt auf der anderen Seite der Mitte, von der Holz-Ecke aus gesehen rechts. Die Wechselstrecke führt deshalb im Uhrzeigersinn: von der Holz-Ecke zur Metall-Kreuzung und ebenso von der Holz-Kreuzung zur Metall-Ecke.
+\textbf{Annehmen und Sich stellen.} Annehmen (−1) ist ein kurzer Schritt gegen den Uhrzeigersinn, von Holz zu Wasser. Sich stellen (−2) erreicht das Metall. Auf dem Ring läge es zwei Schritte gegen den Uhrzeigersinn. Seine Kreuzung aber liegt auf der anderen Seite der Mitte, von der Holz-Ecke aus gesehen rechts. Die Wechselstrecke führt deshalb im Uhrzeigersinn: von der Holz-Ecke zur Metall-Kreuzung und ebenso von der Holz-Kreuzung zur Metall-Ecke.
 \end{einleitung}
 
 \begin{center}
 \begin{minipage}{\linewidth}\centering
-{\renewcommand{\rpfont}{\small}\richtungspaar[0.17\textwidth]{minus}}\par
-\smallskip
-{\small\itshape Annehmen ({\cjk 泄} xiè) und Sich stellen ({\cjk 侮} wǔ) von Holz aus: schwarz von der Ecke, rot von der Kreuzung.\par}
+\begin{minipage}[t]{0.48\linewidth}\centering
+{\renewcommand{\rpfont}{\tiny}\def\rpzeige{aussen}\richtungspaar[\richtungsradius]{minus}}\par
+{\small\itshape Annehmen und Sich stellen von der Ecke\par}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\centering
+{\renewcommand{\rpfont}{\tiny}\def\rpzeige{innen}\richtungspaar[\richtungsradius]{minus}}\par
+{\small\itshape Annehmen und Sich stellen von der Kreuzung\par}
+\end{minipage}
 \end{minipage}
 \end{center}
 
 \begin{einleitung}
-Bändigen führt also gegen den Uhrzeigersinn, Sich stellen im Uhrzeigersinn: Das Vorzeichen bezieht sich auf den Wandlungskreis, nicht auf den Drehsinn im Pentagame. Die Wechselstrecke ist dabei nur der direkte Weg. Wer auf dem Ring zwei Schritte vorwärts geht, kommt ebenfalls beim übernächsten Element an, und auch das ist Bändigen; diese beiden Schritte bilden die Wendung \hyperlink{muster:I}{I, Fortschreiten}.
-
-Dieselbe Zählung verwendet das \textit{Pentagame Compendium} für die Züge: ±1 auf Ring oder Pentagon, ±2 entlang des Sterns.
+Bändigen führt also gegen den Uhrzeigersinn, Sich stellen im Uhrzeigersinn: Das Vorzeichen bezieht sich auf den Wandlungskreis, nicht auf den Drehsinn im Pentagame. Die Wechselstrecke ist dabei nur der direkte Weg. Wer auf dem Ring zwei Schritte vorwärts geht, kommt ebenfalls beim übernächsten Element an; diese beiden Schritte bilden die Wendung \hyperlink{muster:I}{I, Fortschreiten}. Dieselbe Zählung verwendet das \textit{Pentagame Compendium} für die Züge: ±1 auf Ring oder Pentagon, ±2 entlang des Sterns.
 \end{einleitung}
 
-
-\addsec*{Im Einzelnen}\markright{Im Einzelnen}
-
-\begin{einleitung}
-Jede der vier Richtungen hat zwei Seiten: Die erste zeigt sie im Wandlungskreis, die zweite ihre Bewegungen im Pentagame.
-
-Das Bild auf der zweiten Seite zeigt die Richtung zweimal: schwarz von außen, von der Ecke oben, und rot von innen, von der Kreuzung unten in der Mitte. Die Bilder sind bewusst grau: Die Ecke oben kann jedes der fünf Elemente sein, und die Richtung sieht für alle gleich aus.
-\end{einleitung}
-
+\newpage\markright{Weg und Bedeutung}
+\noindent{\large\bfseries Weg und Bedeutung}\par\smallskip
 \begin{center}
-\footnotesize\setlength{\tabcolsep}{3pt}\renewcommand{\arraystretch}{1.3}
-\begin{tabularx}{\textwidth}{@{}>{\raggedright}p{0.21\textwidth} >{\raggedright}p{0.31\textwidth} >{\raggedright\arraybackslash}X c@{}}
+\small\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright}p{0.25\textwidth}>{\raggedright}p{0.2\textwidth}>{\raggedright\arraybackslash}X@{}}
 \toprule
-\textbf{Richtung} & \mbox{\textbf{Im Wandlungskreis}} & \textbf{Im Pentagame} & \textbf{Drehsinn} \\
+\textbf{Richtung} & \textbf{Weg} & \textbf{Bedeutungen} \\
 \midrule
-\hyperlink{beziehung:1}{\textbf{+1} Nähren} & 1 vor\newline {\cjk 生} shēng & vor\newline{\scriptsize\itshape kurz, auf Ring oder Pentagon} & \uzs \\
-\hyperlink{beziehung:4}{\textbf{−1} Annehmen} & 1 zurück\newline {\cjk 泄} xiè & zurück\newline{\scriptsize\itshape kurz, auf Ring oder Pentagon} & \guzs \\
-\hyperlink{beziehung:2}{\textbf{+2} Bändigen} & 2 vor\newline {\cjk 克} kè & Wechsel vor\newline{\scriptsize\itshape lang, auf einer Wechselstrecke} & \guzs \\
-\hyperlink{beziehung:3}{\textbf{−2} \mbox{Sich stellen}} & 2 zurück\newline {\cjk 侮} wǔ & Wechsel zurück\newline{\scriptsize\itshape lang, auf einer Wechselstrecke} & \uzs \\
+\hyperlink{beziehung:1}{\textbf{+1} Nähren}\newline {\cjk 生} shēng & 1 vor\newline kurz \uzs & hervorbringen, wachsen lassen, fördern, weitergeben, zum Ausdruck bringen \\
+\hyperlink{beziehung:4}{\textbf{−1} Annehmen}\newline {\cjk 泄} xiè & 1 zurück\newline kurz \guzs & schöpfen, sich nähren lassen, zehren, ablassen, sich entlasten \\
+\hyperlink{beziehung:2}{\textbf{+2} Bändigen}\newline {\cjk 克} kè & 2 vor\newline Wechsel \guzs & zügeln, ordnen, formen, tragen, meistern \\
+\hyperlink{beziehung:3}{\textbf{−2} Sich stellen}\newline {\cjk 侮} wǔ & 2 zurück\newline Wechsel \uzs & widerstehen, trotzen, sich messen, sich auflehnen, sich bewähren \\
 \bottomrule
 \end{tabularx}
 \end{center}
 
+\begin{einleitung}
+{\small Die Bedeutungen folgen den Schriftzeichen. {\cjk 生} zeigt einen Spross über der Erde; das älteste Wörterbuch, das \textit{Shuowen jiezi}, erklärt es mit „voranschreiten“ ({\cjk 進}). {\cjk 克} heißt dort „schultern“ ({\cjk 肩}): eine Last tragen, ihr gewachsen sein, sie bezwingen. {\cjk 泄} ist das Ablassen von Wasser und im übertragenen Sinn das Sich-Luft-Machen. {\cjk 侮} heißt verhöhnen, im \textit{Shuowen} auch verletzen ({\cjk 傷}).
+
+Die chinesische Schicksalskunde (Bazi) liest die Richtungen von dem Element aus, bei dem die Bewegung beginnt. Was es nährt, ist sein Ausdruck und Werk ({\cjk 食傷}); wovon es annimmt, sein Rückhalt und Schutz ({\cjk 印}); was es bändigt, sein Besitz und Ziel ({\cjk 財}); dem es sich stellt, Ordnung, Pflicht und Druck ({\cjk 官殺}).\par}
+\end{einleitung}
+
+\newpage\markright{Licht und Schatten}
+\noindent{\large\bfseries Licht und Schatten}\par\smallskip
+\begin{center}
+\small\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright}p{0.25\textwidth}>{\raggedright}X>{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Richtung} & \textbf{Licht} & \textbf{Schatten} \\
+\midrule
+\hyperlink{beziehung:1}{\textbf{+1} Nähren} & Fürsorge, Weitergabe & Erschöpfung, Verwöhnen \\
+\hyperlink{beziehung:4}{\textbf{−1} Annehmen} & Entlastung\newline ({\cjk 實者瀉其子}) & Auszehrung\newline ({\cjk 子盜母氣}) \\
+\hyperlink{beziehung:2}{\textbf{+2} Bändigen} & Ordnung, Maß\newline ({\cjk 制} zhì) & Überwältigen\newline ({\cjk 乘} chéng) \\
+\hyperlink{beziehung:3}{\textbf{−2} Sich stellen} & Bewährung, Mut & Verhöhnen\newline ({\cjk 侮} wǔ) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{einleitung}
+{\small Die Medizin unterscheidet bei jeder Richtung das gesunde Maß von der Störung. Fülle leitet man über das Kind ab; ist das Kind aber selbst geschwächt, stiehlt es der Mutter die Kraft. Bändigen hält in Schranken; wird es maßlos, überwältigt es. Das Sich stellen gilt der Tradition vor allem als Störung; dieses Buch liest es auch als Bewährung.
+
+Jede Richtung hat im Folgenden zwei Seiten. Die erste zeigt sie im Wandlungskreis, die zweite im Pentagame: schwarz von der Ecke oben, rot von der Kreuzung unten in der Mitte. Die Bilder sind bewusst grau: Die Ecke oben kann jedes der fünf Elemente sein, und die Richtung sieht für alle gleich aus.\par}
+\end{einleitung}
 
 \linkeseite
 \markright{+1 \quad Nähren}
@@ -1321,11 +1356,12 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
 
 \textbf{Gleichgewicht.} Hervorbringen und Bändigen brauchen einander. Dong Zhongshu fasst das Schema in einen Satz: „Benachbarte bringen einander hervor, übernächste besiegen einander“ ({\cjk 比相生而間相勝}; \textit{Chunqiu fanlu} 58). Der \textit{Neijing} ergänzt: „Übermaß schadet; was folgt, setzt ihm eine Grenze; durch die Grenze entstehen Wachsen und Wandlung“ ({\cjk 亢則害，承乃制，制則生化}; \textit{Suwen} 68). Auch das Nähren kann zu viel sein: Zu viel Wasser lässt das Holz faulen. Und das Bändigen ist nicht nur Zwang: Erst im Feuer wird das Eisen formbar, erst unter der Axt der Baum zum Balken. Darum zeigt sich in jedem Paar beides, das Gelingen und die Gefahr.
 
-\textbf{Bilder.} Jedes Paar hat ein eigenes Bild: einen Vorgang aus Natur oder Handwerk, wie er tatsächlich geschieht. Holz brennt, der Keim bricht durch die Erde, hartes Holz macht die Klinge stumpf. Das Urteil nennt nur diesen Vorgang; was er für dich bedeutet, sagen Licht und Schatten. Dieselben Bilder kehren in den Tripeln wieder.
+\textbf{Bilder.} Jedes Paar hat ein eigenes Bild: ein Geschehen aus Natur oder Handwerk, wie es tatsächlich vorkommt. Holz brennt, der Keim bricht durch die Erde, hartes Holz macht die Klinge stumpf. Das Urteil nennt nur dieses Geschehen. Der Satz darunter nennt seinen Sinn in den Themen der beiden Elemente, etwa: Der Plan entfacht die Begeisterung. Was es für dich bedeutet, sagen Licht und Schatten. Dieselben Bilder kehren in den Tripeln wieder.
 \end{einleitung}
 
 \newpage
 \markright{\element{Holz}}\verzgr{Holz}
+\paarvorgang{Der Plan entfacht die Begeisterung.}
 \paar{Holz}{Feuer}{Das Brennen}{Holz brennt und wird zu Licht und Wärme.}
   {Lass deinen Plan zünden. Was du vorbereitet hast, kann jetzt andere begeistern; zeig es und teile es. Dass der Plan dabei aufgebraucht wird, ist kein Verlust: Dafür war er da.}
   {Wer seine Vorhaben zu schnell verfeuert, hat bald nichts mehr, woran er sich wärmen kann. Wer sie nie aus der Hand gibt, entzündet niemanden.}
@@ -1335,6 +1371,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \mbox{\hyperlink{spruch:34}{\mycombination[0.5em]{Erde}{Holz}{Feuer}~34}} & \mbox{\hyperlink{spruch:43}{\mycombination[0.5em]{Metall}{Holz}{Feuer}~43}} & \mbox{\hyperlink{spruch:49}{\mycombination[0.5em]{Wasser}{Holz}{Feuer}~49}}
    \end{tabular*}\par}
 \newpage
+\paarvorgang{Das Wachstum schöpft aus der Tiefe.}
 \paar{Holz}{Wasser}{Die Wurzel}{Die Wurzel zieht Wasser aus der Tiefe.}
   {Trink, bevor du weiterwächst. Wende dich dem zu, was dich nährt: der Stille, dem Wissen, deiner Herkunft. Das ist kein Stillstand; in dieser Zeit sammelt sich die Kraft, die später nach oben drängt.}
   {Wer nur nach außen wächst, hat in der ersten Dürre nichts, woraus er schöpfen kann. Wer sich nur in die Tiefe zurückzieht, kommt nie ans Licht.}
@@ -1344,6 +1381,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~16}} & \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~35}} & \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~44}}
    \end{tabular*}\par}
 \newpage
+\paarvorgang{Der Aufbruch durchbricht den Halt.}
 \paar{Holz}{Erde}{Der Keim}{Der Keim durchbricht die Erde.}
   {Brich auf, was festgefahren ist. Gewohnheiten, Abläufe, eingefahrene Beziehungen: Etwas in dir will wachsen und braucht Raum. Dein Wille ist zart und doch stärker als die Kruste. Wo du durchbrichst, kommt auch für andere wieder Bewegung hinein.}
   {Wer sein Vorhaben zu tief vergräbt, verbraucht seine Kraft, bevor es ans Licht kommt. Wer vor jeder Kruste zurückweicht, erstickt darunter.}
@@ -1353,6 +1391,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~17}} & \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Holz}{Erde}~45}} & \mbox{\hyperlink{spruch:50}{\mycombination[0.5em]{Wasser}{Holz}{Erde}~50}}
    \end{tabular*}\par}
 \newpage
+\paarvorgang{Das Wachstum trotzt dem strengen Urteil.}
 \paar{Holz}{Metall}{Das Hartholz}{Hartes Holz macht die Klinge stumpf.}
   {Gib nicht jedem Anspruch nach. Man will dich kleiner, bequemer, gefälliger: mit Regeln, Kritik, Erwartungen. Halte dagegen, nicht mit Gewalt, sondern mit deiner eigenen Spannung, mit dem, was in dir gewachsen ist.}
   {Wer jedem Anspruch widersteht, wird am Ende mit Gewalt gebrochen. Wer jedem nachgibt, wird nach fremdem Maß zurechtgestutzt.}
@@ -1363,6 +1402,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \end{tabular*}\par}
 \newpage
 \markright{\element{Feuer}}\verzgr{Feuer}
+\paarvorgang{Die Begeisterung nährt die Sammlung.}
 \paar{Feuer}{Erde}{Die Asche}{Das Feuer erlischt, und seine Asche düngt den Boden.}
   {Lass die Begeisterung zur Ruhe kommen. Die Flammen sind kleiner geworden, aber nichts ist verloren: Was du mit Leidenschaft begonnen hast, wird jetzt fruchtbar. Auf diesem Boden können andere säen.}
   {Wer nur noch von vergangener Begeisterung lebt, sät nichts Neues. Wer immer nur lodert, hinterlässt keinen Boden, auf dem etwas wachsen kann.}
@@ -1372,6 +1412,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \mbox{\hyperlink{spruch:1}{\mycombination[0.5em]{Holz}{Feuer}{Erde}~1}} & \mbox{\hyperlink{spruch:46}{\mycombination[0.5em]{Metall}{Feuer}{Erde}~46}} & \mbox{\hyperlink{spruch:55}{\mycombination[0.5em]{Wasser}{Feuer}{Erde}~55}}
    \end{tabular*}\par}
 \newpage
+\paarvorgang{Die Begeisterung zehrt vom Plan.}
 \paar{Feuer}{Holz}{Die Flamme}{Die Flamme greift nach dem Holz.}
   {Nimm, was dich nährt. Deine Leidenschaft braucht Stoff: Pläne, Ideen, Menschen und Vorhaben, die dich einmal entzündet haben. Greif zu, ohne dich zu schämen.}
   {Wer alles verschlingt, was ihm begegnet, steht bald im Leeren. Wer nicht zugreift, erlischt, obwohl ihm genug angeboten wird.}
@@ -1381,6 +1422,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~28}} & \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~47}} & \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~56}}
    \end{tabular*}\par}
 \newpage
+\paarvorgang{Die Begeisterung erweicht das starre Urteil.}
 \paar{Feuer}{Metall}{Die Hitze}{Hitze macht Metall geschmeidig.}
   {Bring in Bewegung, was erstarrt ist. Eine Regel, eine verhärtete Haltung, eine festgefahrene Lage: Mit kalter Gewalt richtest du nichts aus. Bleib beharrlich dran, bis es nachgibt, und gib ihm dann Form.}
   {Wer zu hitzig drängt, verdirbt, was er formen wollte. Wer zu kühl bleibt, zerbricht es beim ersten Versuch.}
@@ -1390,6 +1432,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \mbox{\hyperlink{spruch:2}{\mycombination[0.5em]{Holz}{Feuer}{Metall}~2}} & \mbox{\hyperlink{spruch:29}{\mycombination[0.5em]{Erde}{Feuer}{Metall}~29}} & \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~57}}
    \end{tabular*}\par}
 \newpage
+\paarvorgang{Die Begeisterung trotzt der Stille.}
 \paar{Feuer}{Wasser}{Der Schauer}{Das Feuer zischt im Regen und brennt dennoch weiter.}
   {Erlaube der Ernüchterung nicht, deine Leidenschaft zu löschen. Zweifel, nüchterne Einwände, ein kaltes Wort: Weich ihnen nicht aus. Was danach noch brennt, ist echt.}
   {Wer gegen jeden Einwand anlodert, verbraucht sich im Streit. Wer beim ersten Zweifel erlischt, hat nie wirklich gebrannt.}
@@ -1400,6 +1443,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \end{tabular*}\par}
 \newpage
 \markright{\element{Erde}}\verzgr{Erde}
+\paarvorgang{Die Fürsorge bringt die Ernte hervor.}
 \paar{Erde}{Metall}{Das Gold}{Im Gestein wächst das Gold heran.}
   {Vertrau der langen Geduld. Du hast gepflegt, gehütet, durchgetragen, oft ohne zu sehen, wozu. Jetzt zeigt sich, was darin herangereift ist: etwas Klares und Wertvolles. Lass es ans Licht.}
   {Wer das Gereifte zu schnell verbraucht, steht bald mit leeren Händen da. Wer es nie herausgibt, behält seinen Schatz für sich.}
@@ -1409,6 +1453,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \mbox{\hyperlink{spruch:7}{\mycombination[0.5em]{Holz}{Erde}{Metall}~7}} & \mbox{\hyperlink{spruch:13}{\mycombination[0.5em]{Feuer}{Erde}{Metall}~13}} & \mbox{\hyperlink{spruch:58}{\mycombination[0.5em]{Wasser}{Erde}{Metall}~58}}
    \end{tabular*}\par}
 \newpage
+\paarvorgang{Der Halt schöpft aus der Begeisterung.}
 \paar{Erde}{Feuer}{Das Gefäß}{Im Feuer wird weicher Ton fest.}
   {Lass dich von der Glut verwandeln. Du bist verlässlich, tragfähig, geduldig. Jetzt darfst du dich erwärmen lassen: von Freude, von Nähe, von einer Begeisterung, die nicht deine eigene sein muss. Erst sie gibt deiner Verlässlichkeit Gestalt.}
   {Wer sich zu schnell mitreißen lässt, bekommt Risse. Wer sich nie berühren lässt, bleibt formlos.}
@@ -1418,6 +1463,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~8}} & \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~40}} & \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~59}}
    \end{tabular*}\par}
 \newpage
+\paarvorgang{Der Halt fasst die Tiefe.}
 \paar{Erde}{Wasser}{Der Wall}{Der Wall hält das Wasser.}
   {Gib dem Fließenden Halt. Um dich herum ist viel in Bewegung: Gefühle, Ideen, Menschen, die nicht wissen, wohin. Bei dir finden sie eine Grenze, an der sie sich sammeln können. Das ist keine Enge, sondern Schutz.}
   {Wer seine Grenzen nie überprüft, wird von dem überrascht, was sie unterspült. Wer keine zieht, lässt alles über die Ufer treten.}
@@ -1427,6 +1473,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~9}} & \mbox{\hyperlink{spruch:14}{\mycombination[0.5em]{Feuer}{Erde}{Wasser}~14}} & \mbox{\hyperlink{spruch:41}{\mycombination[0.5em]{Metall}{Erde}{Wasser}~41}}
    \end{tabular*}\par}
 \newpage
+\paarvorgang{Der Halt widersteht dem Aufbruch.}
 \paar{Erde}{Holz}{Der feste Grund}{Fester Boden hält die Wurzel.}
   {Lass dich nicht umgraben. Etwas Neues drängt zu dir herein: ein Plan, ein Mensch, eine Veränderung. Gib nicht einfach nach. Gerade indem du festhältst, gibst du dem Neuen den Halt, den es zum Stehen braucht.}
   {Wer zu fest ist, lässt nichts Neues ein. Wer überall nachgibt, kann nichts halten, wenn der Sturm kommt.}
@@ -1437,6 +1484,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \end{tabular*}\par}
 \newpage
 \markright{\element{Metall}}\verzgr{Metall}
+\paarvorgang{Die Klarheit bringt Ruhe hervor.}
 \paar{Metall}{Wasser}{Der Tau}{Auf kaltem Metall schlägt sich Wasser nieder.}
   {Lass das Geklärte sich setzen. Du hast entschieden, getrennt, aufgeräumt. Nun stellt sich eine Ruhe ein, still und klar. Was du geklärt hast, beginnt zu fließen.}
   {Wer nie zur Ruhe kommt, bei dem setzt sich nichts. Wer zu kühl wird, erstarrt.}
@@ -1446,6 +1494,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~10}} & \mbox{\hyperlink{spruch:19}{\mycombination[0.5em]{Feuer}{Metall}{Wasser}~19}} & \mbox{\hyperlink{spruch:25}{\mycombination[0.5em]{Erde}{Metall}{Wasser}~25}}
    \end{tabular*}\par}
 \newpage
+\paarvorgang{Die Klarheit schöpft aus der Sammlung.}
 \paar{Metall}{Erde}{Der Berg}{Das Erz kommt aus dem Berg.}
   {Kehr zurück zu dem, was dich hervorgebracht hat. Hinter deiner Klarheit und Strenge liegt ein Grund, der dich getragen hat: Menschen, die für dich gesorgt haben, ein Ort, eine lange Geduld. Nimm an, was er dir gibt; deine Härte bekommt dadurch Wärme.}
   {Wer nie von seiner Herkunft loskommt, wird nie er selbst. Wer sie vergisst, weiß nicht mehr, woraus er gemacht ist.}
@@ -1455,6 +1504,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Metall}{Erde}~11}} & \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~20}} & \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~52}}
    \end{tabular*}\par}
 \newpage
+\paarvorgang{Die Klarheit beschneidet das Wachstum.}
 \paar{Metall}{Holz}{Die Klinge}{Die Klinge schneidet das Holz.}
   {Entscheide klar. Etwas ist zu groß geworden, zu wild, zu verzweigt. Sieh es und handle: ein Nein, ein Ende, ein Abschied. Das ist nicht kalt. Wo etwas Altes fällt, kann Neues wachsen.}
   {Wer alles beendet, steht am Ende allein. Wer nie etwas beendet, dem wächst das Leben zu.}
@@ -1464,6 +1514,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~21}} & \mbox{\hyperlink{spruch:26}{\mycombination[0.5em]{Erde}{Metall}{Holz}~26}} & \mbox{\hyperlink{spruch:53}{\mycombination[0.5em]{Wasser}{Metall}{Holz}~53}}
    \end{tabular*}\par}
 \newpage
+\paarvorgang{Die Klarheit widersteht der Leidenschaft.}
 \paar{Metall}{Feuer}{Die Tür}{Die eiserne Tür hält der Glut stand.}
   {Bleib dir treu, wenn es heiß wird. Leidenschaft, Druck, Gefühle, die dich verformen könnten: Setz dich ihnen aus, ohne dich zu verlieren. Du darfst die Hitze spüren und behältst doch deine Form.}
   {Wer jeder Hitze standhalten will, wird spröde. Wer jeder nachgibt, verliert seine Form.}
@@ -1474,6 +1525,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \end{tabular*}\par}
 \newpage
 \markright{\element{Wasser}}\verzgr{Wasser}
+\paarvorgang{Die Tiefe nährt den Aufbruch.}
 \paar{Wasser}{Holz}{Der Regen}{Der Regen tränkt die Wurzeln.}
   {Gib weiter, was du gesammelt hast. Du hast lange still gelegen, nachgedacht, gelernt. Jetzt fängt durch dich etwas an zu wachsen: ein Plan, ein Mensch, ein Vorhaben. Du musst nicht daran ziehen; es wächst, wenn es genug zu trinken hat.}
   {Wer zu viel gibt, erstickt, was er fördern will. Wer zu wenig gibt, lässt es verdorren.}
@@ -1483,6 +1535,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~22}} & \mbox{\hyperlink{spruch:31}{\mycombination[0.5em]{Erde}{Wasser}{Holz}~31}} & \mbox{\hyperlink{spruch:37}{\mycombination[0.5em]{Metall}{Wasser}{Holz}~37}}
    \end{tabular*}\par}
 \newpage
+\paarvorgang{Die Ruhe schöpft aus der Klarheit.}
 \paar{Wasser}{Metall}{Die Quelle}{Die Quelle entspringt dem Fels.}
   {Kehr zu dem zurück, was du klar weißt. In der Unruhe suchst du etwas Festes, und du findest es in dir: Grundsätze, Gewissheiten, ein klares Ja und ein klares Nein. Daraus kann dein Handeln frisch hervorgehen.}
   {Wer zu lange an seinen Grundsätzen festhält, wird hart. Wer keine hat, versickert.}
@@ -1492,6 +1545,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~4}} & \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~23}} & \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~32}}
    \end{tabular*}\par}
 \newpage
+\paarvorgang{Die Ruhe zügelt die Begeisterung.}
 \paar{Wasser}{Feuer}{Das Löschen}{Wasser löscht die Glut.}
   {Bring Ruhe in die Aufregung. Um dich herum brennt es: Streit, Aufregung, Leidenschaften, die außer Kontrolle geraten. Bleib ruhig; deine Ruhe breitet sich aus, und was eben noch loderte, kommt zur Besinnung.}
   {Wer jede Leidenschaft löscht, sitzt bald im Kalten. Wer zu zaghaft beschwichtigt, bewirkt nichts.}
@@ -1501,6 +1555,7 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
    \mbox{\hyperlink{spruch:5}{\mycombination[0.5em]{Holz}{Wasser}{Feuer}~5}} & \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~33}} & \mbox{\hyperlink{spruch:38}{\mycombination[0.5em]{Metall}{Wasser}{Feuer}~38}}
    \end{tabular*}\par}
 \newpage
+\paarvorgang{Die Tiefe trotzt dem festen Halt.}
 \paar{Wasser}{Erde}{Die Rinne}{Wasser gräbt sich eine Rinne.}
   {Stell dich deinen Grenzen. Manche kannst du nicht einfach überspülen. Arbeite dich an ihnen ab, geduldig und beharrlich, Jahr um Jahr. Mit der Zeit formst du selbst das Ufer, das dich führt.}
   {Wer sich zu tief in einen Kampf eingräbt, findet nicht mehr heraus. Wer jedem Widerstand ausweicht, verliert sich in der Ebene.}
@@ -1515,17 +1570,78 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
 \addchap{Die zwölf Wendungen}\markboth{Die zwölf Wendungen}{\mbox{}}\label{kap:muster}\verzkap{Die zwölf Wendungen}
 
 \begin{einleitung}
-Eine Bewegung führt in einer der vier Richtungen von einem Element zu einem anderen. Folgen zwei Bewegungen aufeinander, entsteht ein Doppelschritt: vom ersten Element über ein zweites zu einem dritten. Die beiden Richtungen eines solchen Doppelschritts bilden eine Wendung. Mit ihm ist zugleich eine dritte Richtung gegeben, die vom Anfang unmittelbar zum Ende führt. Nach zweimal Nähren (+1, +1) etwa steht man zwei Schritte weiter im Kreis, und dorthin führt vom Anfang aus das Bändigen (+2).
+Eine Bewegung führt in einer der vier Richtungen von einem Element zu einem anderen. Folgen zwei Bewegungen aufeinander, entsteht ein Doppelschritt: vom ersten Element über ein zweites zu einem dritten. Die beiden Richtungen eines solchen Doppelschritts bilden eine Wendung. Anfang und Ende sind dabei zwar auch miteinander verbunden, doch was eine Wendung ausmacht, sind ihre beiden Schritte.
 
 Für die erste Richtung gibt es vier Möglichkeiten, für die zweite nur drei, denn sie darf die erste nicht aufheben: Auf +1 folgt nie −1, auf +2 nie −2, sonst stünde man wieder am Anfang. So ergeben sich zwölf Wendungen.
 
-Eine Wendung ist an kein Element gebunden. Erst wenn sie bei einem bestimmten Element beginnt, wird aus ihr eines der 60 Tripel des folgenden Kapitels; unter jeder Wendung stehen deshalb die fünf Tripel, in denen sie vorkommt. Weil sie keinem Element gehört, spricht eine Wendung nicht in Bildern. Sie beschreibt eine Art, sich zu bewegen, wie die Richtungen, und heißt deshalb wie diese mit einem Verb: Fortschreiten, Ausholen, Umgehen.
+Eine Wendung ist an kein Element gebunden. Erst wenn sie bei einem bestimmten Element beginnt, wird aus ihr eines der 60 Tripel des folgenden Kapitels; unter jeder Wendung stehen deshalb die fünf Tripel, in denen sie vorkommt. Weil sie keinem Element gehört, spricht eine Wendung nicht in Bildern. Sie beschreibt eine Art, sich zu bewegen, wie die Richtungen, und ist deshalb wie diese nach einer Tätigkeit benannt: Fortschreiten, Ausholen, Standhalten.
 
-\textbf{Drei Familien.} Rechnet man die beiden Schritte zusammen, ergeben sich drei Familien. Im \emph{Gleichlauf} folgen zwei gleiche kleine Schritte aufeinander (I, IV). Im \emph{Gegenlauf} folgt auf einen Schritt ein Gegenschritt anderer Größe (III, V, VIII, X). Im \emph{Umlauf} führen beide Schritte so weit, dass man auf der anderen Seite des Kreises herauskommt (II, VI, VII, IX, XI, XII): Wer sich zweimal widersetzt, steht am Ende einen Schritt voraus.
+\textbf{Drei Familien.} Nach ihren beiden Schritten bilden die Wendungen drei Familien zu je vier. Im \emph{Gleichschritt} folgt zweimal derselbe Schritt (I, IV, IX, XII). Im \emph{Gegenschritt} folgt auf einen Schritt einer mit anderem Vorzeichen (III, V, VIII, X). Im \emph{Wechselschritt} bleibt das Vorzeichen, aber die Größe wechselt (II, VI, VII, XI).
+\end{einleitung}
+
+\begin{einleitung}
+Die zwölf Wendungen sind nach ihrem ersten und dann nach ihrem zweiten Schritt geordnet, jeweils in der Folge +1, −1, +2, −2. In jeder Zeile bleibt ein Feld leer, weil der zweite Schritt den ersten nicht aufheben darf. Auf der Diagonale steht der Gleichschritt; unter dem Namen steht, ob die Wendung ein Yin- oder ein Yang-Dreieck bildet (dazu unten mehr).
+\end{einleitung}
+
+\begin{center}
+\colorlet{wtgleich}{black!16}\colorlet{wtgegen}{black!7}\colorlet{wtwechsel}{white}
+\tikzset{wtlinie/.style={draw=black!60, line width=0.4pt}}
+\newcommand{\wtz}{2.2cm}
+\begin{tikzpicture}[x=\wtz, y=\wtz]
+  \path[use as bounding box] (-0.57,0.62) rectangle (4.57,-4.35);% symmetrisch, damit das Quadrat mittig steht
+  \foreach \s/\z [count=\k from 0] in {+1/生,−1/泄,+2/克,−2/侮} {
+    \node[font=\cjk] at (\k+0.5, 0.22) {\z};
+    \node[font=\cjk] at (-0.22, -\k-0.5) {\z};
+    \node[font=\small\bfseries] at (\k+0.5, -4.2) {\s};
+    \node[font=\small\bfseries] at (4.22, -\k-0.5) {\s};
+  }
+  \node[font=\footnotesize, anchor=south] at (2, 0.38) {zweiter Schritt};
+  \node[font=\footnotesize, rotate=90, anchor=south] at (-0.45, -2) {erster Schritt};
+
+  \draw[wtlinie, fill=wtgleich] (0,0) rectangle ++(1,-1);
+  \draw[wtlinie, fill=white] (1,0) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtwechsel] (2,0) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtgegen] (3,0) rectangle ++(1,-1);
+  \draw[wtlinie, fill=white] (0,-1) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtgleich] (1,-1) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtgegen] (2,-1) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtwechsel] (3,-1) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtwechsel] (0,-2) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtgegen] (1,-2) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtgleich] (2,-2) rectangle ++(1,-1);
+  \draw[wtlinie, fill=white] (3,-2) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtgegen] (0,-3) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtwechsel] (1,-3) rectangle ++(1,-1);
+  \draw[wtlinie, fill=white] (2,-3) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtgleich] (3,-3) rectangle ++(1,-1);
+  \node[align=center, font=\footnotesize, text width=2.1cm] at (0.5,-0.5) {\hyperlink{muster:I}{\textbf{I}\\\csname mustername I\endcsname}\\Yin};
+  \node[font=\footnotesize, text=black!50] at (1.5,-0.5) {–};
+  \node[align=center, font=\footnotesize, text width=2.1cm] at (2.5,-0.5) {\hyperlink{muster:II}{\textbf{II}\\\csname mustername II\endcsname}\\Yang};
+  \node[align=center, font=\footnotesize, text width=2.1cm] at (3.5,-0.5) {\hyperlink{muster:III}{\textbf{III}\\\csname mustername III\endcsname}\\Yin};
+  \node[font=\footnotesize, text=black!50] at (0.5,-1.5) {–};
+  \node[align=center, font=\footnotesize, text width=2.1cm] at (1.5,-1.5) {\hyperlink{muster:IV}{\textbf{IV}\\\csname mustername IV\endcsname}\\Yin};
+  \node[align=center, font=\footnotesize, text width=2.1cm] at (2.5,-1.5) {\hyperlink{muster:V}{\textbf{V}\\\csname mustername V\endcsname}\\Yin};
+  \node[align=center, font=\footnotesize, text width=2.1cm] at (3.5,-1.5) {\hyperlink{muster:VI}{\textbf{VI}\\\csname mustername VI\endcsname}\\Yang};
+  \node[align=center, font=\footnotesize, text width=2.1cm] at (0.5,-2.5) {\hyperlink{muster:VII}{\textbf{VII}\\\csname mustername VII\endcsname}\\Yang};
+  \node[align=center, font=\footnotesize, text width=2.1cm] at (1.5,-2.5) {\hyperlink{muster:VIII}{\textbf{VIII}\\\csname mustername VIII\endcsname}\\Yin};
+  \node[align=center, font=\footnotesize, text width=2.1cm] at (2.5,-2.5) {\hyperlink{muster:IX}{\textbf{IX}\\\csname mustername IX\endcsname}\\Yang};
+  \node[font=\footnotesize, text=black!50] at (3.5,-2.5) {–};
+  \node[align=center, font=\footnotesize, text width=2.1cm] at (0.5,-3.5) {\hyperlink{muster:X}{\textbf{X}\\\csname mustername X\endcsname}\\Yin};
+  \node[align=center, font=\footnotesize, text width=2.1cm] at (1.5,-3.5) {\hyperlink{muster:XI}{\textbf{XI}\\\csname mustername XI\endcsname}\\Yang};
+  \node[font=\footnotesize, text=black!50] at (2.5,-3.5) {–};
+  \node[align=center, font=\footnotesize, text width=2.1cm] at (3.5,-3.5) {\hyperlink{muster:XII}{\textbf{XII}\\\csname mustername XII\endcsname}\\Yang};
+\end{tikzpicture}\par\smallskip
+{\footnotesize
+\tikz[baseline=-0.6ex]\draw[wtlinie, fill=wtgleich] (0,-0.15) rectangle (0.3,0.15); Gleichschritt\quad
+\tikz[baseline=-0.6ex]\draw[wtlinie, fill=wtgegen] (0,-0.15) rectangle (0.3,0.15); Gegenschritt\quad
+\tikz[baseline=-0.6ex]\draw[wtlinie, fill=wtwechsel] (0,-0.15) rectangle (0.3,0.15); Wechselschritt\par}
+\end{center}
+
+\begin{einleitung}
 
 Das Bild über jeder Wendung zeigt ihre zwei Richtungen als Pfeile im Pentagame, wie bei den Richtungen schwarz von außen und rot von innen; die Ecke oben kann jedes Element sein.
 
-\textbf{Dreiecke.} Die drei Elemente einer Wendung bilden ein Dreieck. Liegen sie im Wandlungskreis nebeneinander, ist das Dreieck stumpf: Zwei Seiten verbinden benachbarte Elemente (±1), eine Seite übernächste (±2). Es ist vom Hervorbringen geprägt, ein Stück vom Kreis. Ist zwischen ihnen ein Element ausgelassen, ist das Dreieck spitz, mit zwei Seiten ±2 und einer Seite ±1. Es ist vom Bändigen geprägt, ein Stück vom Stern. Im Bild über jeder Wendung ist ihr Dreieck hellgelb hinterlegt.
+\textbf{Dreiecke.} Die drei Elemente einer Wendung bilden ein Dreieck. Liegen sie im Wandlungskreis nebeneinander, ist das Dreieck stumpf: Zwei Seiten verbinden benachbarte Elemente (±1), eine Seite übernächste (±2). Es ist vom Hervorbringen geprägt, ein Stück vom Kreis. Ist zwischen ihnen ein Element ausgelassen, ist das Dreieck spitz, mit zwei Seiten ±2 und einer Seite ±1. Es ist vom Bändigen geprägt, ein Stück vom Stern. Im Bild über jeder Wendung ist ihr Dreieck hellgelb hinterlegt und blau umrandet.
 
 \end{einleitung}
 
@@ -1546,10 +1662,10 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{I \quad Fortschreiten}
 \begin{orakelblock}
 \musterkopf{I}{Fortschreiten}{1}{1}{Nähren}{Nähren}{Bändigen}
-\textbf{Was genährt wurde, nährt weiter, und der Anfang behält das Maß über das Ende.}\par
+\textbf{Was genährt wurde, nährt weiter.}\par
 \smallskip
-\lichtschatten{Fortschreiten ist die ruhigste Wendung: Eins folgt aus dem anderen, ohne Bruch und ohne Umweg. Was begonnen wurde, setzt sich fort und wächst über seinen Ursprung hinaus. Der Ursprung bleibt dennoch wichtig, denn von ihm kommt das Maß, das dem Wachsen die Richtung gibt.}
-  {Fortschreiten kann zum bloßen Weiterlaufen werden, bei dem niemand mehr fragt, wohin. Oder der Anfang hält das Ende so fest, dass nichts Eigenes entsteht.}
+\lichtschatten{Fortschreiten ist die ruhigste Wendung: Eins folgt aus dem anderen, ohne Bruch und ohne Umweg. Was du empfangen hast, gibst du in eigener Gestalt weiter, und es reicht über dich hinaus.}
+  {Fortschreiten kann zum bloßen Weiterlaufen werden, bei dem niemand mehr fragt, wohin. Oder es bleibt beim Empfangen, und nichts Eigenes entsteht.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:1}{\mycombination[0.5em]{Holz}{Feuer}{Erde}~1}} \hfill \mbox{\hyperlink{spruch:13}{\mycombination[0.5em]{Feuer}{Erde}{Metall}~13}} \hfill \mbox{\hyperlink{spruch:25}{\mycombination[0.5em]{Erde}{Metall}{Wasser}~25}} \hfill \mbox{\hyperlink{spruch:37}{\mycombination[0.5em]{Metall}{Wasser}{Holz}~37}} \hfill \mbox{\hyperlink{spruch:49}{\mycombination[0.5em]{Wasser}{Holz}{Feuer}~49}}\par
 \end{orakelblock}
@@ -1558,7 +1674,7 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{II \quad Prüfen}
 \begin{orakelblock}
 \musterkopf{II}{Prüfen}{1}{2}{Nähren}{Bändigen}{Sich stellen}
-\textbf{Auf das Nähren folgt das Bändigen. Am Ende muss der Anfang sich dem stellen, was daraus geworden ist.}\par
+\textbf{Erst genährt, dann gefordert: Was hervorgebracht wurde, muss etwas meistern.}\par
 \smallskip
 \lichtschatten{Prüfen heißt: Was empfangen wurde, muss sich in eigener Kraft bewähren. Die Zeit des Nährens ist vorbei, nun zählt, ob die Kraft zum Bändigen reicht. Daran zeigt sich, was das Nähren wert war.}
   {Prüfen kann zur Härte werden, die nur noch fordert und nichts mehr gibt. Oder die Probe wird immer wieder verschoben, und nichts muss sich je bewähren.}
@@ -1570,9 +1686,9 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{III \quad Begleiten}
 \begin{orakelblock}
 \musterkopf{III}{Begleiten}{1}{3}{Nähren}{Sich stellen}{Annehmen}
-\textbf{Wer nährt, begleitet das Genährte bis an seinen Widerstand. Was es dort lernt, kommt zu ihm zurück.}\par
+\textbf{Wer nährt, begleitet das Genährte bis an seinen Widerstand.}\par
 \smallskip
-\lichtschatten{Begleiten heißt mitzugehen, wo ein anderer auf Widerstand stößt, ohne ihm den Weg abzunehmen. Wer so begleitet, empfängt selbst: Was der andere in der Bewährung findet, nährt am Ende auch den, der ihn genährt hat.}
+\lichtschatten{Begleiten heißt mitzugehen, wo ein anderer auf Widerstand stößt, ohne ihm den Weg abzunehmen. Du hilfst ihm, sich zu messen, und lässt ihn doch selbst bestehen.}
   {Begleiten kann zum Bevormunden werden, das jeden Widerstand aus dem Weg räumt. Oder es wird zum bloßen Zuschauen, das den anderen allein lässt, wenn es darauf ankommt.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:3}{\mycombination[0.5em]{Holz}{Feuer}{Wasser}~3}} \hfill \mbox{\hyperlink{spruch:15}{\mycombination[0.5em]{Feuer}{Erde}{Holz}~15}} \hfill \mbox{\hyperlink{spruch:27}{\mycombination[0.5em]{Erde}{Metall}{Feuer}~27}} \hfill \mbox{\hyperlink{spruch:39}{\mycombination[0.5em]{Metall}{Wasser}{Erde}~39}} \hfill \mbox{\hyperlink{spruch:51}{\mycombination[0.5em]{Wasser}{Holz}{Metall}~51}}\par
@@ -1582,10 +1698,10 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{IV \quad Ergründen}
 \begin{orakelblock}
 \musterkopf{IV}{Ergründen}{4}{4}{Annehmen}{Annehmen}{Sich stellen}
-\textbf{Zweimal zurück zur Quelle: Hinter dem, was nährt, liegt, was begrenzt.}\par
+\textbf{Zweimal zurück zur Mutter: Auch wer nährt, ist selbst genährt worden.}\par
 \smallskip
-\lichtschatten{Ergründen heißt, nicht beim Nächstliegenden stehen zu bleiben. Hinter jeder Quelle liegt eine ältere, und dort findet sich oft eine Grenze, die lange unbemerkt gewirkt hat. Was erkannt ist, wirkt nicht mehr im Verborgenen.}
-  {Ergründen kann sich ohne Ende in die Vergangenheit verlieren, die alles erklärt und nichts ändert. Wer aber nie nach dem Ursprung fragt, stößt sich an Grenzen, die er nicht sieht.}
+\lichtschatten{Ergründen heißt, nicht beim Nächstliegenden stehen zu bleiben. Hinter jeder Herkunft liegt eine ältere, und dort findet sich, was lange unbemerkt gewirkt hat. Was erkannt ist, wirkt nicht mehr im Verborgenen.}
+  {Ergründen kann sich ohne Ende in die Vergangenheit verlieren, die alles erklärt und nichts ändert. Wer aber nie nach seiner Herkunft fragt, stößt sich an Grenzen, die er nicht sieht.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:4}{\mycombination[0.5em]{Holz}{Wasser}{Metall}~4}} \hfill \mbox{\hyperlink{spruch:16}{\mycombination[0.5em]{Feuer}{Holz}{Wasser}~16}} \hfill \mbox{\hyperlink{spruch:28}{\mycombination[0.5em]{Erde}{Feuer}{Holz}~28}} \hfill \mbox{\hyperlink{spruch:40}{\mycombination[0.5em]{Metall}{Erde}{Feuer}~40}} \hfill \mbox{\hyperlink{spruch:52}{\mycombination[0.5em]{Wasser}{Metall}{Erde}~52}}\par
 \end{orakelblock}
@@ -1594,9 +1710,9 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{V \quad Ausholen}
 \begin{orakelblock}
 \musterkopf{V}{Ausholen}{4}{2}{Annehmen}{Bändigen}{Nähren}
-\textbf{Ein Schritt zurück zur Quelle, dann ein kräftiger nach vorn. Was so Schwung geholt hat, kann nähren.}\par
+\textbf{Ein Schritt zurück zur Mutter, dann ein kräftiger nach vorn: Aus dem Rückhalt kommt die Kraft zum Handeln.}\par
 \smallskip
-\lichtschatten{Ausholen heißt, sich zurückzunehmen, um Kraft zu sammeln. Wer zur Quelle zurückkehrt, findet dort Ruhe und Maß, und mit ihnen gelingt der nächste Schritt umso sicherer. Der Rückschritt ist kein Verlust, sondern Anlauf.}
+\lichtschatten{Ausholen heißt, sich zurückzunehmen, um Kraft zu sammeln. Wer zur Mutter zurückkehrt, findet dort Rückhalt und Zuspruch, und mit ihnen gelingt der nächste Schritt umso sicherer. Der Rückschritt ist kein Verlust, sondern Anlauf.}
   {Ausholen kann zum ewigen Anlauf werden, dem nie der Sprung folgt. Oder es wird ganz ausgelassen, und der Schritt nach vorn bleibt kraftlos.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:5}{\mycombination[0.5em]{Holz}{Wasser}{Feuer}~5}} \hfill \mbox{\hyperlink{spruch:17}{\mycombination[0.5em]{Feuer}{Holz}{Erde}~17}} \hfill \mbox{\hyperlink{spruch:29}{\mycombination[0.5em]{Erde}{Feuer}{Metall}~29}} \hfill \mbox{\hyperlink{spruch:41}{\mycombination[0.5em]{Metall}{Erde}{Wasser}~41}} \hfill \mbox{\hyperlink{spruch:53}{\mycombination[0.5em]{Wasser}{Metall}{Holz}~53}}\par
@@ -1606,9 +1722,9 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{VI \quad Beistehen}
 \begin{orakelblock}
 \musterkopf{VI}{Beistehen}{4}{3}{Annehmen}{Sich stellen}{Bändigen}
-\textbf{Wo einer bedrängt wird, stellt sich die Kraft, aus der er lebt, vor ihn. So gestützt, wird er Herr der Lage.}\par
+\textbf{Wer Beistand annimmt, steht nicht allein; wer beisteht, trägt die Verantwortung mit.}\par
 \smallskip
-\lichtschatten{Beistehen heißt, sich vor einen anderen zu stellen, wenn er allein nicht standhält. Der Beistand nimmt ihm den Kampf nicht ab; er gibt ihm Rückhalt, bis er selbst ordnen kann, was ihn bedrängt hat. Aus Abwehr wird so Gestaltung.}
+\lichtschatten{Beistehen heißt, die Verantwortung eines anderen mitzutragen, wenn er allein nicht standhält. Beistand wirkt aber nur, wenn er angenommen wird: Wer sich helfen lässt, kann sich dem stellen, was ihn bedrängt.}
   {Beistehen kann zum Schutz werden, hinter dem der andere sich auf Dauer versteckt. Wer aber jeden Beistand ablehnt, kämpft allein und reibt sich auf.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:6}{\mycombination[0.5em]{Holz}{Wasser}{Erde}~6}} \hfill \mbox{\hyperlink{spruch:18}{\mycombination[0.5em]{Feuer}{Holz}{Metall}~18}} \hfill \mbox{\hyperlink{spruch:30}{\mycombination[0.5em]{Erde}{Feuer}{Wasser}~30}} \hfill \mbox{\hyperlink{spruch:42}{\mycombination[0.5em]{Metall}{Erde}{Holz}~42}} \hfill \mbox{\hyperlink{spruch:54}{\mycombination[0.5em]{Wasser}{Metall}{Feuer}~54}}\par
@@ -1618,34 +1734,34 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{VII \quad Pflegen}
 \begin{orakelblock}
 \musterkopf{VII}{Pflegen}{2}{1}{Bändigen}{Nähren}{Sich stellen}
-\textbf{Erst zurückschneiden, dann nähren: Was so gepflegt wird, wächst kräftig und stellt sich eines Tages dem, der es pflegt.}\par
+\textbf{Erst zurechtweisen, dann loben: Wer so erzogen wird, wird stark.}\par
 \smallskip
-\lichtschatten{Pflegen heißt, Grenzen zu setzen und zugleich zu nähren: zurückzuschneiden, was wuchert, damit das Übrige gedeihen kann. Was so gepflegt wird, wird stark genug, um seinem Pfleger eines Tages entgegenzutreten. Darin liegt kein Undank, sondern der Erfolg der Pflege.}
-  {Pflegen kann zum Gängeln werden, das nichts Eigenes zulässt. Oder die Pflege beschränkt sich aufs Nähren, und was wuchert, überwächst alles.}
+\lichtschatten{Pflegen heißt, Grenzen zu setzen und zugleich zu nähren: zurechtzuweisen, wo es nötig ist, und dann zu loben, was gelingt. Wer so erzogen wird, wird stärker, als er ohne Grenzen je geworden wäre.}
+  {Pflegen kann zum Gängeln werden, das nichts Eigenes zulässt. Oder es bleibt beim Loben, und nichts findet sein Maß.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:7}{\mycombination[0.5em]{Holz}{Erde}{Metall}~7}} \hfill \mbox{\hyperlink{spruch:19}{\mycombination[0.5em]{Feuer}{Metall}{Wasser}~19}} \hfill \mbox{\hyperlink{spruch:31}{\mycombination[0.5em]{Erde}{Wasser}{Holz}~31}} \hfill \mbox{\hyperlink{spruch:43}{\mycombination[0.5em]{Metall}{Holz}{Feuer}~43}} \hfill \mbox{\hyperlink{spruch:55}{\mycombination[0.5em]{Wasser}{Feuer}{Erde}~55}}\par
 \end{orakelblock}
 \newpage
 
-\markright{VIII \quad Abkürzen}
+\markright{VIII \quad Erschließen}
 \begin{orakelblock}
-\musterkopf{VIII}{Abkürzen}{2}{4}{Bändigen}{Annehmen}{Nähren}
-\textbf{Was im Weg steht, wird bezwungen; dahinter liegt, was genährt werden soll. Der kurze Weg führt geradewegs ans Ziel.}\par
+\musterkopf{VIII}{Erschließen}{2}{4}{Bändigen}{Annehmen}{Nähren}
+\textbf{Was in Besitz genommen ist, will bewirtschaftet werden.}\par
 \smallskip
-\lichtschatten{Abkürzen heißt, das Hindernis nicht zu umgehen, sondern zu bezwingen und dahinter ohne Umweg anzukommen. Oft liegt gerade dort, wo der Weg versperrt schien, das Nächste, was zu tun ist. Wer klar sieht, wohin er will, braucht keinen Umweg.}
-  {Abkürzen kann rücksichtslos werden und zerstören, was hätte bleiben dürfen. Oder jedes Hindernis gilt als Grund zum Umkehren, und das Ziel bleibt unerreicht.}
+\lichtschatten{Erschließen heißt, aus dem Gewonnenen etwas zu machen. Ein Amt, ein Recht, ein Vorsprung ist nicht schon gewonnen, wenn man es hat; erst wer es einrichtet und nutzt, kann daraus schöpfen.}
+  {Erschließen kann zur Ausbeutung werden, die nimmt, bis nichts mehr bleibt. Oder das Gewonnene bleibt ungenutzt, und der Gewinn ist vergebens.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:8}{\mycombination[0.5em]{Holz}{Erde}{Feuer}~8}} \hfill \mbox{\hyperlink{spruch:20}{\mycombination[0.5em]{Feuer}{Metall}{Erde}~20}} \hfill \mbox{\hyperlink{spruch:32}{\mycombination[0.5em]{Erde}{Wasser}{Metall}~32}} \hfill \mbox{\hyperlink{spruch:44}{\mycombination[0.5em]{Metall}{Holz}{Wasser}~44}} \hfill \mbox{\hyperlink{spruch:56}{\mycombination[0.5em]{Wasser}{Feuer}{Holz}~56}}\par
 \end{orakelblock}
 \newpage
 
-\markright{IX \quad Heimkehren}
+\markright{IX \quad Festigen}
 \begin{orakelblock}
-\musterkopf{IX}{Heimkehren}{2}{2}{Bändigen}{Bändigen}{Annehmen}
-\textbf{Zweimal mit aller Kraft voran, fast um den ganzen Kreis: Am Ende steht man vor der eigenen Quelle.}\par
+\musterkopf{IX}{Festigen}{2}{2}{Bändigen}{Bändigen}{Annehmen}
+\textbf{Was gebändigt wurde, bändigt weiter: So wird Ordnung fest.}\par
 \smallskip
-\lichtschatten{Heimkehren ist die Frucht des strengen Wegs. Wer Schritt für Schritt der Regel folgt und nichts auslässt, kommt nicht ins Unbekannte, sondern dorthin zurück, woraus er lebt. Die Strenge mündet in Stille.}
-  {Heimkehren misslingt, wenn die Strenge zum Selbstzweck wird und kein Ziel mehr kennt. Wer aber vor jeder Mühe zurückschreckt, kommt nie weit genug, um heimzukehren.}
+\lichtschatten{Festigen ist der strenge Weg: Wer geordnet wurde, ordnet selbst. Was einer gelernt hat, gibt er als Regel weiter, und aus vielen Händen wird eine Ordnung, auf die man sich verlassen kann.}
+  {Festigen misslingt, wenn die Strenge zum Selbstzweck wird und nichts mehr atmen lässt. Wer aber nichts fest werden lässt, dem zerfällt, was er begonnen hat.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:9}{\mycombination[0.5em]{Holz}{Erde}{Wasser}~9}} \hfill \mbox{\hyperlink{spruch:21}{\mycombination[0.5em]{Feuer}{Metall}{Holz}~21}} \hfill \mbox{\hyperlink{spruch:33}{\mycombination[0.5em]{Erde}{Wasser}{Feuer}~33}} \hfill \mbox{\hyperlink{spruch:45}{\mycombination[0.5em]{Metall}{Holz}{Erde}~45}} \hfill \mbox{\hyperlink{spruch:57}{\mycombination[0.5em]{Wasser}{Feuer}{Metall}~57}}\par
 \end{orakelblock}
@@ -1654,22 +1770,22 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{X \quad Umkehren}
 \begin{orakelblock}
 \musterkopf{X}{Umkehren}{3}{1}{Sich stellen}{Nähren}{Annehmen}
-\textbf{Wer sich dem stellt, was ihm zusetzt, findet in ihm einen Ursprung: Aus dem Widerstand wächst, was am Ende nährt.}\par
+\textbf{Wer sich dem Widrigen stellt, kann es zum Guten wenden: Aus Gegnern werden Verbündete.}\par
 \smallskip
-\lichtschatten{Umkehren heißt, sich dem Widrigen zuzuwenden, statt vor ihm zu fliehen. Was zusetzt, bringt etwas hervor, und das wird zur Quelle neuer Kraft. Die Umkehr verwandelt Abwehr in Empfangen.}
-  {Umkehren kann zur Selbstqual werden, die das Verletzende immer wieder aufsucht. Wer aber nie umkehrt, bleibt auf der Flucht vor dem, was ihn stärken könnte.}
+\lichtschatten{Umkehren heißt, die Haltung zu wechseln. Statt das Widrige weiter zu bekämpfen, wendest du dich ihm zu und suchst, was es Gutes hervorbringen kann. So wird aus dem Gegner ein Verbündeter.}
+  {Umkehren kann zur Unterwerfung werden, die jede eigene Haltung aufgibt. Wer aber nie umkehrt, bleibt im Kampf gegen das, was ihn stärken könnte.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:10}{\mycombination[0.5em]{Holz}{Metall}{Wasser}~10}} \hfill \mbox{\hyperlink{spruch:22}{\mycombination[0.5em]{Feuer}{Wasser}{Holz}~22}} \hfill \mbox{\hyperlink{spruch:34}{\mycombination[0.5em]{Erde}{Holz}{Feuer}~34}} \hfill \mbox{\hyperlink{spruch:46}{\mycombination[0.5em]{Metall}{Feuer}{Erde}~46}} \hfill \mbox{\hyperlink{spruch:58}{\mycombination[0.5em]{Wasser}{Erde}{Metall}~58}}\par
 \end{orakelblock}
 \newpage
 
-\markright{XI \quad Umgehen}
+\markright{XI \quad Standhalten}
 \begin{orakelblock}
-\musterkopf{XI}{Umgehen}{3}{4}{Sich stellen}{Annehmen}{Bändigen}
-\textbf{Dem Stärkeren standhalten, bis er sich zu seiner Quelle zurückzieht: Dort ist er zu bezwingen.}\par
+\musterkopf{XI}{Standhalten}{3}{4}{Sich stellen}{Annehmen}{Bändigen}
+\textbf{Wer trotzen muss, braucht Ausdauer.}\par
 \smallskip
-\lichtschatten{Umgehen heißt, die Kraft des Gegners nicht frontal zu messen, sondern ihren Ursprung zu suchen. Wer standhält und wartet, bis der Stärkere sich zurückzieht, findet ihn dort, wo er verwundbar ist. Die List siegt, ohne sich zu verausgaben.}
-  {Umgehen kann zur Hinterlist werden, der am Ende niemand mehr traut. Wer aber jeden Kampf offen sucht, reibt sich an der Stärke anderer auf.}
+\lichtschatten{Standhalten heißt, dem Widrigen beständig zu trotzen, nicht nur im ersten Ansturm. Dazu braucht es Ausdauer und Rückhalt. Es genügt nicht, die Zeichen zu bekämpfen; man muss die Ursache treffen.}
+  {Standhalten kann zur Starrheit werden, die nicht mehr weicht, wo Weichen klüger wäre. Wer aber nur die Zeichen bekämpft, steht bald wieder vor demselben Widerstand.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:11}{\mycombination[0.5em]{Holz}{Metall}{Erde}~11}} \hfill \mbox{\hyperlink{spruch:23}{\mycombination[0.5em]{Feuer}{Wasser}{Metall}~23}} \hfill \mbox{\hyperlink{spruch:35}{\mycombination[0.5em]{Erde}{Holz}{Wasser}~35}} \hfill \mbox{\hyperlink{spruch:47}{\mycombination[0.5em]{Metall}{Feuer}{Holz}~47}} \hfill \mbox{\hyperlink{spruch:59}{\mycombination[0.5em]{Wasser}{Erde}{Feuer}~59}}\par
 \end{orakelblock}
@@ -1678,9 +1794,9 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \markright{XII \quad Umwälzen}
 \begin{orakelblock}
 \musterkopf{XII}{Umwälzen}{3}{3}{Sich stellen}{Sich stellen}{Nähren}
-\textbf{Widerstand gegen Widerstand, fast um den ganzen Kreis: Am Ende nährt, was sich aufgelehnt hat.}\par
+\textbf{Druck erzeugt Gegendruck.}\par
 \smallskip
-\lichtschatten{Umwälzen ist der heftigste Weg: Einer widersetzt sich, und das Widersetzte widersetzt sich seinerseits. Alles gerät in Bewegung, und nichts bleibt, wie es war. Doch die Umwälzung endet nicht in Zerstörung, sondern nährt etwas Neues, wenn sie weiß, wofür sie geschieht.}
+\lichtschatten{Umwälzen ist der heftigste Weg: Auf jede Kraft folgt eine Gegenkraft, und die Initiative kann die Seite wechseln. Wer versteht, woher der Druck kommt, kann ihn umlenken, statt ihm nur zu begegnen.}
   {Umwälzen kann zum Aufruhr werden, der nur niederreißt und nichts aufbaut. Wer seinen Widerstand aber immer herunterschluckt, wird bitter.}
 \linkteil
 {\small Alle fünf Tripel:}\\*[0.5ex] \mbox{\hyperlink{spruch:12}{\mycombination[0.5em]{Holz}{Metall}{Feuer}~12}} \hfill \mbox{\hyperlink{spruch:24}{\mycombination[0.5em]{Feuer}{Wasser}{Erde}~24}} \hfill \mbox{\hyperlink{spruch:36}{\mycombination[0.5em]{Erde}{Holz}{Metall}~36}} \hfill \mbox{\hyperlink{spruch:48}{\mycombination[0.5em]{Metall}{Feuer}{Wasser}~48}} \hfill \mbox{\hyperlink{spruch:60}{\mycombination[0.5em]{Wasser}{Erde}{Holz}~60}}\par
@@ -1690,71 +1806,83 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 \addchap{Die 60 Tripel}\markboth{Die 60 Tripel}{\mbox{}}\label{kap:tripel}\verzkap{Die 60 Tripel}
 
 \begin{einleitung}
-Schließt an ein Paar ein zweites an, das mit dessen zweitem Element beginnt, entsteht ein Tripel: drei verschiedene Elemente in fester Reihenfolge. In ihm kommt alles zusammen, was die vorigen Kapitel beschreiben: Das erste und das zweite Element bilden ein Paar, das zweite und das dritte ein zweites. Die Richtungen dieser beiden Paare ergeben zusammen eine der zwölf Wendungen, und die Wendung verbindet auch Anfang und Ende durch eine Richtung. So steht zum Beispiel im Tripel Holz, Feuer, Erde zweimal das Nähren (\textit{Holz nährt Feuer}, \textit{Feuer nährt Erde}), und vom Holz zur Erde führt das Bändigen: Wendung I, Fortschreiten.
+Schließt an ein Paar ein zweites an, das mit dessen zweitem Element beginnt, entsteht ein Tripel: drei verschiedene Elemente in fester Reihenfolge. In ihm kommt alles zusammen, was die vorigen Kapitel beschreiben: Das erste und das zweite Element bilden ein Paar, das zweite und das dritte ein zweites. Die Richtungen dieser beiden Paare ergeben zusammen eine der zwölf Wendungen. So steht zum Beispiel im Tripel Holz, Feuer, Erde zweimal das Nähren (\textit{Holz nährt Feuer}, \textit{Feuer nährt Erde}): Wendung I, Fortschreiten.
 
 Fünf Elemente für den Anfang und zwölf Wendungen für den Weg ergeben die 60 Tripel. Jedes Element, jede Richtung, jedes Paar und jede Wendung kommt darin vor, und jeder Spruch zeigt das Ganze von einer anderen Seite, im Licht und im Schatten.
 
-Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ein Tripel fügt die Vorgänge seiner beiden Paare zu einer Szene zusammen. Wie im \textit{Buch der Wandlungen} steht vorn das Urteil, ein knapper Satz, und darunter das Bild, das ihn anschaulich macht. Im Bild handelt meist eine Gestalt: eine Frau, wenn die Wendung ein Yin-Dreieck bildet, und ein Mann beim Yang-Dreieck (siehe \hyperref[kap:muster]{„Die zwölf Wendungen“}). Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe folgen sie den Wendungen I bis XII.
+Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ein Tripel fügt die Geschehen seiner beiden Paare zu einer Szene zusammen. Vorn steht das Bild. Darunter nennt der Sinn, was die Szene in den Themen der drei Elemente bedeutet: zwei Sätze, einer für jeden Schritt der Wendung, verbunden durch das mittlere Element. Dann folgt das Urteil, ein knapper Satz, der den Sinn zusammenfasst. Im Bild handelt meist eine Gestalt: eine Frau, wenn die Wendung ein Yin-Dreieck bildet, und ein Mann beim Yang-Dreieck (siehe \hyperref[kap:muster]{„Die zwölf Wendungen“}). Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe folgen sie den Wendungen I bis XII.
 \end{einleitung}
 
 \newpage
 \markright{\element{Holz}}\verzgr{Holz}
 \tripelbild{Die Zieglerin heizt mit Holz und brennt Lehm zu Backstein. Aus den Ziegeln wächst ein Haus.}
+\tripelvorgang{Der Plan bringt Begegnung hervor; die Begegnung stiftet Halt.}
 \spruch{1}{Holz}{Feuer}{Erde}{I Fortschreiten}{Das Haus}{Was viele Hände tragen, wird ein Haus.}
   {Gib dem Ganzen einen Rahmen. Was du angestoßen hast, haben andere aufgenommen und weitergetragen, und nun wird ein gemeinsamer Ort daraus. Du musst nicht jeden Stein selbst setzen. Aber deine ursprüngliche Absicht hält das Ganze zusammen, und man wird dich fragen, wie es gemeint war.}
   {Wer alles allein tragen will, lässt anderen keinen Platz im eigenen Haus. Wer sich zurückzieht, sobald andere mitbauen, sieht sein Vorhaben in fremde Formen zerfallen.}
 \newpage
 \tripelbild{Der Schmied facht die Esse mit Holzkohle an und schmiedet ein Schwert. In der Klinge sieht er sein Gesicht.}
+\tripelvorgang{Der Plan nährt den Ausdruck; der Ausdruck formt die Klarheit.}
 \spruch{2}{Holz}{Feuer}{Metall}{II Prüfen}{Die Schmiede}{Im Werk erkennt sich sein Schöpfer.}
   {Steh zu dem, was du geschaffen hast. Dein Werk ist stark geworden und hat eine eigene Schärfe; es kann für dich sprechen und sich gegen dich kehren. Das ist die Prüfung jedes Schöpfers. Wer sein Werk mit Achtung behandelt, kann es führen.}
   {Wer vor seinem Werk zurückschreckt und es verstößt, macht es erst zum Feind, wie Viktor Frankenstein sein Geschöpf. Wer sich in sein Werk verliebt wie Pygmalion in seine Statue, sieht nicht, wo es schneidet.}
 \newpage
 \tripelbild{Die Köchin schürt das Herdfeuer und setzt Eintopf auf. Erst nach Stunden ist er gar und bekömmlich.}
+\tripelvorgang{Der Plan entfacht die Begeisterung; die Begeisterung stellt sich der Geduld.}
 \spruch{3}{Holz}{Feuer}{Wasser}{III Begleiten}{Der Herd}{Gut Ding will Weile haben.}
   {Gib dem Lernen Zeit. Was dir noch fremd und schwer ist, wird nicht mit einem Schlag dein Eigen; es braucht Geduld und beständige Zuwendung. Bleib dabei, auch wenn lange nichts zu geschehen scheint.}
   {Wer drängt, bekommt nur Halbgares. Wer immer weiter wartet, versäumt den Augenblick, in dem es gut ist.}
 \newpage
 \tripelbild{Die Winzerin füllt das ausgetrocknete Fass mit Wasser. Die Dauben quellen gegen die Reifen, bis es dicht ist.}
+\tripelvorgang{Das Wachstum schöpft aus der Tiefe; die Tiefe findet Rückhalt in der Form.}
 \spruch{4}{Holz}{Wasser}{Metall}{IV Ergründen}{Der Reif}{Erst die Grenze macht dicht.}
   {Lass dich von deinen Grenzen halten. Was dich nährt, kann nur wirken, wenn etwas dich zusammenhält: eine Regel, eine Verpflichtung, ein fester Rahmen. Unter seinem Druck wirst du nicht kleiner, sondern fest.}
   {Wer jede Grenze sprengt, verliert, was in ihm ist. Wer sich zu eng fassen lässt, zerspringt.}
 \newpage
 \tripelbild{Grünes Holz brennt nicht. Die Försterin lässt es ein Jahr trocknen; dann wärmt es den ganzen Winter.}
+\tripelvorgang{Der Plan findet Rückhalt in der Ruhe; die Ruhe zügelt die Begeisterung.}
 \spruch{5}{Holz}{Wasser}{Feuer}{V Ausholen}{Die Geduld}{Gut Brennholz muss lagern.}
   {Lass dir Zeit, bevor du dich verschenkst. Deine Begeisterung drängt nach außen, aber sie ist noch nicht reif. Kehr zuerst zu dem zurück, was dich nährt, und lass die Ungeduld abklingen. Was du danach gibst, hält länger vor.}
   {Wer immer nur reifen lässt, verpasst den Winter, in dem er gebraucht würde. Wer sich zu früh verschenkt, gibt Rauch statt Wärme.}
 \newpage
 \tripelbild{Der Fischer pflanzt Weiden ans Ufer, wo der Bach nagt. Ihre Wurzeln ziehen Wasser und halten das Land.}
+\tripelvorgang{Das Wachstum schöpft aus der Tiefe; die Tiefe trotzt dem festen Halt.}
 \spruch{6}{Holz}{Wasser}{Erde}{VI Beistehen}{Das Ufer}{Was Wurzeln hat, hält auch anderes fest.}
   {Halte fest, was dich hält. Deine Herkunft nährt dich, und doch bröckelt es an ihren Rändern: Gewissheiten gehen verloren, alte Bindungen lösen sich. Gerade weil du so tief darin verwurzelt bist, kannst du bewahren, was bleiben soll, und bestimmen, was sich wandeln darf.}
   {Wer jede Veränderung seiner Herkunft abwehrt, erstarrt mit ihr. Wer sich gar nicht für sie einsetzt, sieht sie Stück für Stück fortgespült.}
 \newpage
 \tripelbild{Der Steinmetz setzt Holzkeile in den Fels und wässert sie. Sie quellen, der Fels bricht, und aus der rohen Masse wird ein Block.}
+\tripelvorgang{Der Plan ordnet die Sammlung; die Sammlung bringt die Form hervor.}
 \spruch{7}{Holz}{Erde}{Metall}{VII Pflegen}{Der Quader}{Feines wird aus Rohem.}
   {Setz mit Geduld an der richtigen Stelle an. Wer Ungeformtes ordnen will, braucht keine Gewalt, sondern Umsicht und Zeit. Aus einem gut gebrochenen Block kann vieles werden; ein guter Meister sieht schon im Rohen, was darin steckt.}
   {Wer mit Gewalt ordnen will, zerschlägt, was er formen wollte. Wer nie ansetzt, bleibt vor einer ungeformten Masse stehen.}
 \newpage
 \tripelbild{Die Glasmacherin mischt Sand mit Holzasche. Nur damit wird er in der Glut flüssig.}
-\spruch{8}{Holz}{Erde}{Feuer}{VIII Abkürzen}{Das Glas}{Die rechte Zutat macht das Schwere leicht.}
+\tripelvorgang{Der Aufbruch durchbricht den Halt; der Halt schöpft aus der Begeisterung.}
+\spruch{8}{Holz}{Erde}{Feuer}{VIII Erschließen}{Das Glas}{Die rechte Zutat macht das Schwere leicht.}
   {Nimm, was dir den Weg leichter macht. Manches gelingt allein nur mit großer Mühe, mit der richtigen Beigabe aber fast von selbst. Suche das, was den Widerstand löst.}
   {Wer immer nach dem leichteren Weg sucht, lernt nie, Härte auszuhalten. Wer jede Hilfe verschmäht, verschwendet seine Kraft am Unmöglichen.}
 \newpage
 \tripelbild{Der Biber baut Nacht für Nacht aus Ästen und Schlamm einen Damm. Dahinter steigt der Teich, und er hat sein Zuhause.}
-\spruch{9}{Holz}{Erde}{Wasser}{IX Heimkehren}{Der Damm}{Wer beharrlich baut, gewinnt ein Zuhause.}
+\tripelvorgang{Der Plan gibt dem Halt Form; der Halt fasst die Ruhe.}
+\spruch{9}{Holz}{Erde}{Wasser}{IX Festigen}{Der Damm}{Wer beharrlich baut, gewinnt ein Zuhause.}
   {Bleib bei der Sache. Gute Arbeit verlangt Genauigkeit, und keine Nachlässigkeit bleibt ohne Folgen. Das fühlt sich vielleicht eng an. Aber die strenge Ordnung hat einen Sinn: Am Ende führt sie dir zu, was dich nährt.}
   {Wer alles in Regeln zwingt, hat bald mehr Vorschriften als Leben. Wer alles laufen lässt, verliert, was er hätte nutzen können.}
 \newpage
 \tripelbild{Die Schifferin liegt vor Anker. Kippt die Tide, dreht sich das Boot, und der Anker hält es in der neuen Strömung.}
+\tripelvorgang{Der Aufbruch misst sich an der Klarheit; die Klarheit bringt Ruhe hervor.}
 \spruch{10}{Holz}{Metall}{Wasser}{X Umkehren}{Der Anker}{Wer fest verankert ist, kann sich drehen.}
   {Lass deinem Halt etwas Spiel. Wer zu straff festhält, reißt sich los, wenn die Lage umschlägt. Wer Spielraum lässt, kann sich der neuen Richtung zuwenden und bleibt doch, wo er hingehört.}
   {Wer nirgends festmacht, treibt mit jeder Strömung davon. Wer keinen Spielraum lässt, reißt sich beim ersten Gegenstrom los.}
 \newpage
 \tripelbild{Der Ahorn am Feldrain umwächst die Kette, die man um ihn gelegt hat. Das Eisen rostet und fällt zur Erde.}
-\spruch{11}{Holz}{Metall}{Erde}{XI Umgehen}{Die Überwallung}{Alle Wunden heilt die Zeit.}
+\tripelvorgang{Das Wachstum trotzt dem Abschied; der Abschied sucht Halt.}
+\spruch{11}{Holz}{Metall}{Erde}{XI Standhalten}{Die Überwallung}{Alle Wunden heilt die Zeit.}
   {Kämpfe nicht, wachse. Gegen eine harte Vorschrift oder einen starken Gegner richtest du mit Gewalt nichts aus. Nimm ihn in dein Leben auf, ohne dich ihm zu unterwerfen, und wachse weiter. Mit der Zeit verliert er seine Macht, und der Raum, um den gestritten wurde, gehört dir. Geduld ist hier die klügste List.}
   {Wer jedes Hindernis in sich aufnimmt, trägt am Ende viel Fremdes mit sich herum. Wer sich dagegen sperrt, statt es zu umfassen, schnürt sich selbst die Luft ab.}
 \newpage
 \tripelbild{Als im Dorf ein Feuer ausbricht, schließt der Müller seinen Speicher und schiebt den Riegel vor. Die beschlagene Tür hält der Hitze stand, und kein Plünderer kommt hinein.}
+\tripelvorgang{Der Plan bewährt sich an der Ernte; die Ernte widersteht der Leidenschaft.}
 \spruch{12}{Holz}{Metall}{Feuer}{XII Umwälzen}{Der Riegel}{Ein guter Riegel schließt das Böse aus.}
   {Schließ ab, was geschützt werden muss. Nicht jeder Aufruhr, der draußen tobt, muss zu dir herein.}
   {Wer alles verriegelt, erstickt hinter den eigenen Türen. Wer nichts verschließt, sieht sein Haus geplündert.}
@@ -1762,61 +1890,73 @@ Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ei
 \newpage
 \markright{\element{Feuer}}\verzgr{Feuer}
 \tripelbild{Die Lehmform wird gebrannt und Bronze hineingegossen. Zerschlägt man die Form, steht die Glocke da.}
+\tripelvorgang{Die Begeisterung nährt die Sammlung; die Sammlung bringt die Form hervor.}
 \spruch{13}{Feuer}{Erde}{Metall}{I Fortschreiten}{Der Guss}{Aus Bewegung wird Form.}
   {Lass dein Werk eine feste Gestalt annehmen. Was du mit Leidenschaft begonnen hast, ist durch andere Hände gegangen und wird nun zu etwas Bleibendem. Das gelingt nicht nebenbei; ein Fehler zeigt sich oft erst am Schluss. Doch du stehst am Anfang und am Ende, und von dir hängt ab, ob es gelingt.}
   {Wer zu hastig vollenden will, bekommt ein Werk mit Sprung. Wer die Form nicht loslassen kann, bekommt sein Werk nie zu sehen.}
 \newpage
 \tripelbild{Der Händler schnippt an jedes Glas, bevor er kauft. Klingt es klar, wird es halten.}
+\tripelvorgang{Der Ausdruck stiftet Vertrauen; das Vertrauen bändigt die Furcht.}
 \spruch{14}{Feuer}{Erde}{Wasser}{II Prüfen}{Die Klangprobe}{Was heil ist, klingt klar.}
   {Stell dich der Probe. Das durchs Feuer Gegangene muss zeigen, ob es nun auch Flüssiges hält. Oft genügt ein kleiner Anstoß, um es zu erkennen; man muss nur genau hören.}
   {Wer alles immer wieder auf die Probe stellt, zerbricht am Ende, was er prüft. Wer nie prüft, nimmt Minderwertiges in Kauf.}
 \newpage
 \tripelbild{Die Köhlerin deckt den Holzstoß mit Erde ab, damit er glimmt und nicht brennt. Tag und Nacht wacht sie, bis Kohle daraus wird.}
+\tripelvorgang{Die Begeisterung nährt die Sammlung; die Sammlung widersteht dem Wachstum.}
 \spruch{15}{Feuer}{Erde}{Holz}{III Begleiten}{Der Meiler}{Durch Verminderung gewinnen.}
   {Nimm etwas weg, damit das Wesentliche bleibt. Nicht jede Glut muss auflodern; gedämpft und geduldig bewacht, wird sie dichter und stärker. Was du jetzt zurückhältst, trägt später weiter.}
   {Wer zu viel wegnimmt, erstickt, was er bewahren wollte. Wer nichts zurückhält, sieht alles in einem Strohfeuer vergehen.}
 \newpage
 \tripelbild{Die Großmutter legt ein Scheit aufs Feuer und liest die Jahresringe: breite aus nassen Jahren, schmale aus trockenen.}
+\tripelvorgang{Der Ausdruck schöpft aus dem Wachstum; das Wachstum schöpft aus dem Ursprung.}
 \spruch{16}{Feuer}{Holz}{Wasser}{IV Ergründen}{Die Jahresringe}{Alles hinterlässt Spuren.}
   {Nimm das Auf und Ab deines Lebens an. Fette und magere Jahre wechseln sich ab, und beide formen dich. Wer zurückblickt, kann daraus lernen, dass auch das Kommende offen ist.}
   {Wer nur zurückblickt, versäumt, was kommt. Wer seine Geschichte nicht kennt, wiederholt sie.}
 \newpage
 \tripelbild{Die Bäuerin heizt mit Holz. Im Frühjahr streut sie die Herdasche aufs Beet, wo der Keim durch die Kruste bricht.}
+\tripelvorgang{Die Begeisterung zehrt vom Wachstum; das Wachstum durchbricht den Halt.}
 \spruch{17}{Feuer}{Holz}{Erde}{V Ausholen}{Die Asche}{Loslassen gibt Kraft.}
   {Sammle dich, bevor du gibst. Nimm auf, was dich nährt, und lass zu, dass es lockert, was in dir hart und fest geworden ist. Erst dann gib weiter. Deine Wärme fällt jetzt auf vorbereiteten Boden und macht ihn fruchtbar.}
   {Wer seine Asche auf harten Grund streut, sieht sie vom Wind verweht. Wer sie im Herd lässt, düngt nichts.}
 \newpage
 \tripelbild{Der Amboss steht auf einem Eichenklotz. Glühender Zunder fällt darauf und versengt ihn, doch der Klotz trägt das Eisen und fängt jeden Schlag ab.}
+\tripelvorgang{Die Begeisterung schöpft aus dem Wachstum; das Wachstum trotzt dem strengen Urteil.}
 \spruch{18}{Feuer}{Holz}{Metall}{VI Beistehen}{Der Amboss}{Widerstand ist Stärke.}
   {Verlass dich auf die, die hinter dir stehen. Wenn du strauchelst, fangen sie dich auf. So hältst du stand, auch wenn die Schläge hart werden, und an deiner Festigkeit kann vieles Gestalt annehmen.}
   {Wer nur aushält, wird zermürbt. Wer nur zuschlägt, findet bald niemanden mehr, der ihm standhält.}
 \newpage
 \tripelbild{Der Hirte hängt den Kessel über das Feuer. Kocht er über, hängt er ihn höher.}
+\tripelvorgang{Die Leidenschaft formt die Klarheit; die Klarheit bringt Ruhe hervor.}
 \spruch{19}{Feuer}{Metall}{Wasser}{VII Pflegen}{Der Kessel}{Das rechte Maß findet sich im Tun.}
   {Finde das rechte Maß, indem du hinsiehst. Was zu heftig wird, zwingst du nicht mit Gewalt nieder; gib ihm etwas mehr Abstand. Kleine Korrekturen zur rechten Zeit erhalten, was sonst überliefe.}
   {Wer ständig nachregelt, kommt nie zur Ruhe. Wer nie nachregelt, löscht am Ende das eigene Feuer.}
 \newpage
 \tripelbild{Die Bäuerin sammelt alte Hufeisen und bringt sie zum Schmied. Er schweißt daraus eine Pflugschar, und das Eisen dient dem Acker.}
-\spruch{20}{Feuer}{Metall}{Erde}{VIII Abkürzen}{Die Pflugschar}{Manches taugt zu Besserem, als es gedacht war.}
+\tripelvorgang{Die Begeisterung formt den Abschied um; der Abschied kehrt zur Fürsorge zurück.}
+\spruch{20}{Feuer}{Metall}{Erde}{VIII Erschließen}{Die Pflugschar}{Manches taugt zu Besserem, als es gedacht war.}
   {Gib dem Ausgedienten eine neue Aufgabe. Was abgenutzt scheint, trägt noch Wert in sich. Bring es dorthin, wo es neu geformt wird, und es dient besser als zuvor.}
   {Wer alles Alte aufhebt, erstickt im Gerümpel. Wer alles Alte wegwirft, verschwendet, was ihm nutzen könnte.}
 \newpage
 \tripelbild{Der Wagner zieht den glühenden Reifen auf das Rad. Beim Abkühlen schrumpft das Eisen fest.}
-\spruch{21}{Feuer}{Metall}{Holz}{IX Heimkehren}{Die Gemeinschaft}{Zusammenhalt macht stark.}
+\tripelvorgang{Die Begegnung formt die Klarheit; die Klarheit hält das Wachstum zusammen.}
+\spruch{21}{Feuer}{Metall}{Holz}{IX Festigen}{Die Gemeinschaft}{Zusammenhalt macht stark.}
   {Füg dich ein, ohne dich aufzugeben. Eine Gemeinschaft hält nicht, weil alle gleich sind, sondern weil jeder an seinem Platz trägt und ein gemeinsames Band sie umfasst. So wird aus Verschiedenem etwas, das einen langen Weg aushält.}
   {Wer sich nur in Zwänge fügt, verliert das Eigene. Wer jede feste Form scheut, fällt bei der ersten Last auseinander.}
 \newpage
 \tripelbild{Die Baderin schürt das Feuer unter dem Kessel und füllt den Zuber mit heißem Wasser. Wer erschöpft kam, steigt gestärkt heraus.}
+\tripelvorgang{Die Wärme misst sich an der Ruhe; die Ruhe nährt den Aufbruch.}
 \spruch{22}{Feuer}{Wasser}{Holz}{X Umkehren}{Das Bad}{Was den Leib reinigt, erfrischt auch die Seele.}
   {Lass etwas mit dir geschehen. Nicht nur der Leib, auch das Innere will heilen, und dazu musst du dich in andere Hände begeben. Sie sorgen jetzt für dich, wie du für andere gesorgt hast.}
   {Wer sich nie helfen lässt, trägt seine Last allein, bis sie ihn niederdrückt. Wer sich nur noch umsorgen lässt, findet nicht zur eigenen Kraft zurück.}
 \newpage
 \tripelbild{Der Bergmann erhitzt den Fels mit Feuer und gießt Wasser darauf. Der Fels springt, und das Erz liegt offen.}
-\spruch{23}{Feuer}{Wasser}{Metall}{XI Umgehen}{Der Bruch}{Was fest schien, wird formbar.}
+\tripelvorgang{Die Glut stellt sich der Kälte; die Kälte findet Rückhalt in der Klarheit.}
+\spruch{23}{Feuer}{Wasser}{Metall}{XI Standhalten}{Der Bruch}{Was fest schien, wird formbar.}
   {Nutze, was dir entgegenschlägt. Gegen eine verhärtete Lage kommst du mit Eifer allein nicht an. Doch wo Leidenschaft und Nüchternheit zusammenwirken, bekommt selbst das Starrste Risse. So erreichst du, was dir verschlossen schien, nicht gegen den Widerstand, sondern mit ihm.}
   {Wer immer nur Druck macht, bringt nichts zum Aufbrechen. Wer zu früh nüchtern wird, erstickt den eigenen Eifer.}
 \newpage
 \tripelbild{Lava fließt zischend ins Meer und erstarrt zu Stein. Gegen die Brandung wächst die Küste Jahr um Jahr hinaus.}
+\tripelvorgang{Der Ausdruck stellt sich der Tiefe; die Tiefe misst sich am Halt.}
 \spruch{24}{Feuer}{Wasser}{Erde}{XII Umwälzen}{Das Land}{Wo nichts war, kann vieles werden.}
   {Lass das Alte bersten, wenn es sein muss. Du lehnst dich auf, und was dir entgegensteht, lehnt sich ebenfalls auf. Es wird laut, und nichts bleibt, wie es war. Doch aus diesem Aufruhr kann Neues entstehen. Wer danach Geduld hat, erntet reicher als zuvor.}
   {Ein Aufruhr ohne Ende begräbt alles unter sich, auch die eigenen Leute. Wer seine Glut immer zurückhält, verhärtet sich.}
@@ -1824,61 +1964,73 @@ Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ei
 \newpage
 \markright{\element{Erde}}\verzgr{Erde}
 \tripelbild{Die Bäuerin lässt den Brunnen tiefer graben, durch die erzhaltige Schicht hindurch. Darunter sammelt sich kaltes, klares Wasser, das nach Eisen schmeckt.}
+\tripelvorgang{Die Sammlung bringt Klarheit hervor; die Klarheit nährt die Tiefe.}
 \spruch{25}{Erde}{Metall}{Wasser}{I Fortschreiten}{Der Schacht}{In der Tiefe ist Klarheit.}
   {Geh in die Tiefe, wenn du Klarheit suchst. Was nah an der Oberfläche liegt, ist vermischt mit allem, was von oben hineinsickert. Weiter unten ist es durch viele Schichten gegangen und rein geworden; daraus kannst du schöpfen.}
   {Wer sich mit dem Erstbesten begnügt, schöpft, was gerade hineingesickert ist. Wer immer tiefer gräbt, kommt nicht mehr herauf.}
 \newpage
 \tripelbild{Der Gärtner jätet das Beet, doch bevor er die Hacke ansetzt, besieht er jedes Kraut genau: Es könnte ein Heilkraut sein.}
+\tripelvorgang{Die Fürsorge bringt Klarheit hervor; die Klarheit ordnet das Wachstum.}
 \spruch{26}{Erde}{Metall}{Holz}{II Prüfen}{Das Kraut}{Nicht jedes Kraut ist Unkraut.}
   {Prüfe, bevor du urteilst. Was dir lästig erscheint, kann heilsam sein; was du ausreißen willst, hat vielleicht seinen Platz. Nur wer genau hinsieht, kann entscheiden, was bleibt und was geht.}
   {Wer alles stehen lässt, hat bald nur noch Wildwuchs. Wer ungeprüft ausreißt, verliert, was ihn geheilt hätte.}
 \newpage
 \tripelbild{Die Magd schlägt den Feuerstahl gegen den Feuerstein. Die Funken fallen in den Zunder, und sie bläst sie zur Flamme.}
+\tripelvorgang{Die Sammlung bringt Klarheit hervor; die Klarheit stellt sich der Begeisterung.}
 \spruch{27}{Erde}{Metall}{Feuer}{III Begleiten}{Das Feuerzeug}{Vor dem Funken ist das Feuerzeug.}
   {Bereite vor, was zünden soll. Ein Funke allein entfacht nichts; er braucht etwas, das ihn aufnimmt, und jemanden, der ihn behutsam anbläst. Wer einen Anfang begleitet, sorgt für den Zunder und für den langen Atem.}
   {Wer nur Funken schlägt, sieht sie verglimmen. Wer zu hastig bläst, gerät außer Atem, bevor es brennt.}
 \newpage
 \tripelbild{Im Frühjahr wärmt die Sonne das Beet. Die Gärtnerin freut sich über das junge Grün, das sich ihr entgegenstreckt.}
+\tripelvorgang{Die Fürsorge wärmt sich an der Freude; die Freude schöpft aus dem Wachstum.}
 \spruch{28}{Erde}{Feuer}{Holz}{IV Ergründen}{Das Gestirn}{Alles Leben strebt zum Licht.}
   {Wende dich dem zu, was dich wärmt. Wer seinem Ursprung nachgeht, findet nicht nur Grenzen, sondern auch das, woraus er lebt: Wärme, Zuwendung, Sinn. Richte dich danach aus, auch wenn der Weg durch harten Boden führt.}
   {Wer nur nach dem Licht strebt, verliert den Grund unter den Füßen. Wer im Dunkeln bleibt, verkümmert.}
 \newpage
 \tripelbild{Die Töpferin brennt einen Tiegel aus Ton, bis er feuerfest ist. Darin schmilzt der Gießer Bronze.}
+\tripelvorgang{Der Halt schöpft aus der Begeisterung; die Begeisterung formt den Ertrag.}
 \spruch{29}{Erde}{Feuer}{Metall}{V Ausholen}{Der Tiegel}{Wer die Form bereit hat, kann das Werk beginnen.}
   {Bereite den Grund, bevor du dich dem Schwierigen aussetzt. Was gut vorbereitet ist, hält große Hitze aus. Du gibst dann aus der Fülle, nicht aus der Erschöpfung.}
   {Wer ohne Rückhalt das Schwierige versucht, zerbricht beim ersten Mal. Wer zu oft für andere die Hitze aushält, bekommt Risse.}
 \newpage
 \tripelbild{Der Ziegler brennt Ton zu Klinker, dem kein Regen mehr schadet. Damit mauert er die Wetterseite seines Hauses.}
+\tripelvorgang{Der Halt schöpft aus der Wärme; die Wärme trotzt der Kälte.}
 \spruch{30}{Erde}{Feuer}{Wasser}{VI Beistehen}{Die Wetterseite}{Gegen kleine Unbill helfen feste Wände.}
   {Lass dich stärken, damit du Halt geben kannst. Es gibt Menschen, die an dich glauben, und ihre Zuversicht hält der Ernüchterung stand, die dich sonst aufweichen würde. So gestützt, kannst du Grenzen ziehen und anderen Richtung geben.}
   {Wer sich nie bestärken lässt, weicht beim ersten Gegenwind auf. Wer sich zu sehr verhärtet, passt in keine gemeinsame Mauer mehr.}
 \newpage
 \tripelbild{Der Kräuterkundige legt seinen Garten in Beeten mit festem Rand an. Sie halten den Regen, und jedes Kraut bekommt sein Wasser.}
+\tripelvorgang{Die Fürsorge fasst die Tiefe; die Tiefe nährt das Wachstum.}
 \spruch{31}{Erde}{Wasser}{Holz}{VII Pflegen}{Die Vielfalt}{Ein guter Garten bedarf mancher Pflege.}
   {Gib dem Lebendigen einen Rahmen. Wo du Grenzen ziehst, bleibt, was nährt, an seinem Ort. Dann bekommt jedes, was es braucht, und vieles Verschiedene kann nebeneinander gedeihen.}
   {Wer alles einfasst, hat bald mehr Ränder als Beete. Wer gar keine Grenzen zieht, sieht das Gute ungenutzt versickern.}
 \newpage
 \tripelbild{Die Goldwäscherin schwenkt Sand und Wasser aus dem Flussbett in der Pfanne. Der leichte Sand wird fortgespült, das schwere Gold bleibt.}
-\spruch{32}{Erde}{Wasser}{Metall}{VIII Abkürzen}{Der Fund}{Am Grunde liegt das Gold.}
+\tripelvorgang{Die Sammlung fasst die Tiefe; die Tiefe findet Rückhalt in der Ernte.}
+\spruch{32}{Erde}{Wasser}{Metall}{VIII Erschließen}{Der Fund}{Am Grunde liegt das Gold.}
   {Greif ein und lass dann los. Du bremst das Fließende und lässt es arbeiten: Es trägt fort, was leicht ist, und lässt liegen, was Gewicht hat. Was übrig bleibt, ist das Wertvolle, das immer schon in dir lag. Der kürzeste Weg dorthin führt mitten durch das Unbeständige.}
   {Wer zu heftig sortiert, verliert mit dem Unwichtigen auch das Kostbare. Wer zu zaghaft ist, behält nur Sand.}
 \newpage
 \tripelbild{Der Töpfer formt nassen Ton auf der Scheibe. Erst getrocknet darf das Gefäß ins Feuer.}
-\spruch{33}{Erde}{Wasser}{Feuer}{IX Heimkehren}{Der Ton}{Was trocknen durfte, besteht das Feuer.}
+\tripelvorgang{Die Sammlung fasst die Ruhe; die Ruhe zügelt die Begeisterung.}
+\spruch{33}{Erde}{Wasser}{Feuer}{IX Festigen}{Der Ton}{Was trocknen durfte, besteht das Feuer.}
   {Sorgfalt geht jetzt vor Begeisterung. Formen, trocknen lassen, warten: Schritt für Schritt, und jede Abkürzung würde sich rächen. Das ist mühsam. Doch wenn alles bereit ist, kommt die Wärme zu dir, und du wirst, was du werden sollst.}
   {Wer sich zu früh der Hitze einer Sache aussetzt, zerbricht daran. Wer es nie wagt, bleibt ungeformt.}
 \newpage
 \tripelbild{Die Bäuerin rodet Gestrüpp am Feldrand und bündelt das Reisig. Zum Heizen taugt es wenig; muss aber ein Feuer neu entfacht werden, ist sie froh darum.}
+\tripelvorgang{Die Fürsorge stellt sich dem Wildwuchs; der Wildwuchs entfacht die Begeisterung.}
 \spruch{34}{Erde}{Holz}{Feuer}{X Umkehren}{Das Reisig}{Alles hat seine Verwendung.}
   {Mach aus der Last eine Kraft. Etwas Fremdes drängt in dein Leben, zerrt an deiner Ordnung, nimmt dir die Ruhe. Stell dich ihm. Das, was dich bedrängt hat, kann zum Feuer werden, das dich härtet.}
   {Wer jedes Eindringen fürchtet, bleibt weich und ungeprüft. Wer alles wuchern lässt, verliert sich selbst darunter.}
 \newpage
 \tripelbild{Der Burgherr lässt vor dem Wall einen Graben fluten. Der Belagerungsturm des Feindes versinkt.}
-\spruch{35}{Erde}{Holz}{Wasser}{XI Umgehen}{Die Burg}{Sicherheit ist Friede.}
+\tripelvorgang{Der Halt widersteht dem Aufbruch; der Aufbruch kehrt zur Ruhe zurück.}
+\spruch{35}{Erde}{Holz}{Wasser}{XI Standhalten}{Die Burg}{Sicherheit ist Friede.}
   {Miss dich nicht unvorbereitet mit der Wucht des Feindes. Empfange ihn so, dass seine Wut ihm zum Verhängnis wird.}
   {Wer nur noch Fallen stellt, dem traut niemand mehr. Wer sich jedem Angriff in offener Schlacht stellt, erleidet große Verluste.}
 \newpage
 \tripelbild{Der Mäher schlägt seine Sense an Wurzelstöcken stumpf. Er lässt sie gerade schmieden und zieht damit los: Der Acker hat eine Waffe hervorgebracht.}
+\tripelvorgang{Die Fürsorge stellt sich dem Wildwuchs; der Wildwuchs trotzt dem strengen Urteil.}
 \spruch{36}{Erde}{Holz}{Metall}{XII Umwälzen}{Der Behelf}{Not macht erfinderisch.}
   {Steh auf, wenn das Tragen zur Last wird. Lange hast du getragen und ausgehalten. Nun stößt die Härte, die über dich hinwegfahren will, auf Widerstand, und er ist zäher als sie. Aus dem, was du immer schon hattest, machst du das Werkzeug deines Aufstands.}
   {Wer jede Sense zur Waffe schmiedet, hat am Ende nichts mehr, womit er ernten kann. Wer sich nie widersetzt, wird gemäht wie Gras.}
@@ -1886,122 +2038,146 @@ Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ei
 \newpage
 \markright{\element{Metall}}\verzgr{Metall}
 \tripelbild{Im Herbst schneidet die Bäuerin das Korn mit der Sichel und bewahrt einen Teil als Saat. Über den Winter liegt es trocken im Speicher; im Frühjahr sät sie es in den feuchten Acker.}
+\tripelvorgang{Die Ernte nährt den Ursprung; der Ursprung bringt Wachstum hervor.}
 \spruch{37}{Metall}{Wasser}{Holz}{I Fortschreiten}{Der Speicher}{Gute Arbeit trägt mehrfach Frucht.}
   {Gib weiter, was dich genährt hat, aber verbrauche nicht alles. Was du heute zurücklegst, trägt die, die nach dir kommen. Maß zu halten ist kein Geiz, sondern Fürsorge.}
   {Wer alles aufbraucht, hat im nächsten Frühjahr nichts zu säen. Wer nur hortet, lässt die Seinen heute hungern.}
 \newpage
 \tripelbild{Der Messerschmied bringt die Klinge zum Glühen und schreckt sie im Wasser ab. Zischend wird sie hart.}
+\tripelvorgang{Die Klarheit bringt Ruhe hervor; die Ruhe zügelt die Begeisterung.}
 \spruch{38}{Metall}{Wasser}{Feuer}{II Prüfen}{Das Härten}{Abkühlung stählt.}
   {Übe, bis es sitzt. Es ist eine Zeit strenger Übung: Anspannung und Ruhe wechseln, jeder Schritt verlangt Genauigkeit. Das ist anstrengend und lässt wenig Raum für Träume. Doch daraus werden Grundsätze, auf die du dich stützen kannst.}
   {Wer zu schroff mit sich ist, bekommt Risse. Wer sich nie fordert, bleibt weich.}
 \newpage
 \tripelbild{Der Regen wäscht Gold aus dem Gebirge. Der Fluss trägt es mit sich, bis es sich absetzt.}
+\tripelvorgang{Der Abschied bringt Ruhe hervor; die Ruhe trotzt jedem Halt.}
 \spruch{39}{Metall}{Wasser}{Erde}{III Begleiten}{Der Strom}{Gutes wie Schlechtes spült der Regen fort.}
   {Lass dich tragen und gib weiter, was dir anvertraut ist. Manches Wertvolle findet nicht dort Ruhe, wo es entstanden ist, sondern weit davon entfernt. Wer begleitet, muss nicht festhalten.}
   {Wer sich von allem forttragen lässt, behält nichts. Wer nichts loslässt, wird nie leicht genug, um zu fließen.}
 \newpage
 \tripelbild{Die Suchende folgt dem Erz hinab in den Stollen. Je tiefer sie kommt, desto wärmer wird das Gestein.}
+\tripelvorgang{Die Klarheit schöpft aus dem Grund; der Grund zehrt von der Glut.}
 \spruch{40}{Metall}{Erde}{Feuer}{IV Ergründen}{Die Suche}{Wer zu tief schürft, dem droht Gefahr.}
   {Suche, aber kenne deine Grenze. Was du suchst, liegt tiefer, als du dachtest, und je weiter du gehst, desto heißer wird es. Nimm mit, was du gefunden hast, und kehr um, bevor es dich verbrennt.}
   {Wer immer tiefer gräbt, findet am Ende nur noch Hitze. Wer gleich umkehrt, lässt das Erz im Berg.}
 \newpage
 \tripelbild{Über Nacht staut die Müllerin den Mühlteich. Dann zieht sie das eisenbeschlagene Schütz, und mit Wucht treibt das Wasser das Rad.}
+\tripelvorgang{Die Klarheit findet Rückhalt in der Sammlung; die Sammlung fasst die Tiefe.}
 \spruch{41}{Metall}{Erde}{Wasser}{V Ausholen}{Die Mühle}{Klug ist, wer alle Kräfte nutzt.}
   {Sammle dich, bevor du handelst. Was in der Ruhe zusammenkommt, entfaltet später eine Kraft, die kein hastiger Anlauf hätte. Halte zurück, bis es genug ist; dann lass es mit einem Mal los.}
   {Wer immer nur zurückhält, staut, bis der Damm bricht. Wer alles sofort verausgabt, hat nie die Kraft für den großen Schritt.}
 \newpage
 \tripelbild{Der Holzfäller schlägt die Fallkerbe. So stürzt die Fichte dorthin, wo sie nichts zerschlägt.}
+\tripelvorgang{Die Klarheit schöpft aus der Fürsorge; die Fürsorge stellt sich dem Wachstum.}
 \spruch{42}{Metall}{Erde}{Holz}{VI Beistehen}{Der Fall}{Auch Fallen will gelernt sein.}
   {Wenn etwas enden muss, bestimme, wie. Ein Fall lässt sich nicht immer verhindern, wohl aber lenken: dorthin, wo er niemanden verletzt. Wer fest steht, kann auch einen Abschied gestalten.}
   {Wer jeden Fall verhindern will, wird vom Unvermeidlichen überrollt. Wer alles fallen lässt, wie es fällt, richtet Schaden an.}
 \newpage
 \tripelbild{Am Morgen schürt der Bergbauer mit dem Haken die Glut zusammen und legt Scheite auf. Bald lodert das Herdfeuer wieder.}
+\tripelvorgang{Die Klarheit ordnet den Plan; der Plan entfacht die Begeisterung.}
 \spruch{43}{Metall}{Holz}{Feuer}{VII Pflegen}{Das Schüren}{Aus der Sammlung kommt Wachstum.}
   {Sammle, was noch glimmt. Oft ist mehr Wärme übrig, als es scheint; sie liegt nur verstreut. Zusammengeführt und genährt, wird sie wieder zur Flamme. Bewahren ist leichter als neu beginnen.}
   {Wer ständig im Feuer stochert, zerstreut die Glut. Wer nie schürt, lässt ausgehen, was lange gebrannt hat.}
 \newpage
 \tripelbild{Die Fischerin dechselt einen Lindenstamm zum Einbaum. Im Wasser gelagert, reißt er nicht, und er trägt sie geradewegs ans andere Ufer.}
-\spruch{44}{Metall}{Holz}{Wasser}{VIII Abkürzen}{Das Boot}{Was schwierig schien, wird einmal federleicht.}
+\tripelvorgang{Die Klarheit formt den Plan; der Plan findet Rückhalt in der Tiefe.}
+\spruch{44}{Metall}{Holz}{Wasser}{VIII Erschließen}{Das Boot}{Was schwierig schien, wird einmal federleicht.}
   {Geh mitten hindurch. Etwas Sperriges lag dir im Weg. Mit klaren Entscheidungen hast du daraus etwas gemacht, das dich trägt, ans andere Ufer. Der kürzeste Weg führte nicht um das Hindernis herum, sondern durch es hindurch.}
   {Wer zu viel wegnimmt, um schnell ans Ziel zu kommen, verliert, was ihn trägt. Wer eine Sache zu lange liegen lässt, dem trocknet sie aus und reißt.}
 \newpage
 \tripelbild{Der Zimmermann sägt Bretter für die Schalung; Schicht um Schicht wird Lehm dazwischen gestampft. Fällt die Schalung, steht eine Wand aus Erde.}
-\spruch{45}{Metall}{Holz}{Erde}{IX Heimkehren}{Die Wand}{Wo Heimat ist, herrscht Ordnung.}
+\tripelvorgang{Die Klarheit formt den Plan; der Plan gibt dem Halt Form.}
+\spruch{45}{Metall}{Holz}{Erde}{IX Festigen}{Die Wand}{Wo Heimat ist, herrscht Ordnung.}
   {Bau Schicht für Schicht. Eine Ordnung folgt auf die andere, Tag für Tag, und für Eigenes bleibt wenig Raum. Doch was so entsteht, trägt und schützt dich, und du bist heimgekehrt zu dem, woraus du kommst.}
   {Wer zu viel auf einmal will, bekommt Risse. Wer zu wenig hineingibt, bekommt nichts, was zusammenhält.}
 \newpage
 \tripelbild{Das Erz liegt in der Glut, bis sich das Metall von der Schlacke trennt. Die Schlacke schüttet man in den Weg.}
+\tripelvorgang{Die Klarheit bewährt sich in der Leidenschaft; die Leidenschaft hinterlässt festen Halt.}
 \spruch{46}{Metall}{Feuer}{Erde}{X Umkehren}{Die Läuterung}{Gutes ist noch besser ohne Schlechtes.}
   {Lass fallen, was nicht zu dir gehört. Du bist durch eine harte Zeit gegangen, in der vieles an dir verbrannt ist. Jetzt merkst du: Was abgefallen ist, war nicht das Wertvolle. Es wird anderswo nützlich, als fester Grund für andere Wege. Und du stehst klarer da als vorher.}
   {Wer jedem Verlust nachtrauert, sieht nicht, wie klar er geworden ist. Wer jede Krise meidet, trägt seinen Ballast weiter mit sich.}
 \newpage
 \tripelbild{Vor der Stadtmauer lässt der Hauptmann alle Bäume schlagen. Sobald es dunkelt, brennen auf dem freien Feld Wachfeuer, und niemand kommt ungesehen heran.}
-\spruch{47}{Metall}{Feuer}{Holz}{XI Umgehen}{Die Obacht}{Manche Trennung bedarf der Bewachung.}
+\tripelvorgang{Der Abschied trotzt der Begegnung; die Begegnung zehrt vom Plan.}
+\spruch{47}{Metall}{Feuer}{Holz}{XI Standhalten}{Die Obacht}{Manche Trennung bedarf der Bewachung.}
   {Halte den Raum um dich frei und sei wach. Wo nichts Deckung bietet, kann sich nichts unbemerkt nähern. Eine Grenze schützt nur, wenn jemand auf sie achtet.}
   {Wer alles um sich kahl schlägt, steht am Ende allein. Wer seine Grenze nie bewacht, merkt zu spät, wer schon darüber ist.}
 \newpage
 \tripelbild{Im Torturm heizt der Wächter einen Kessel. Wenn Belagerer das Tor berennen, gießt er den Sud hinab.}
+\tripelvorgang{Die Klarheit stellt sich dem Übermut; der Übermut trotzt der Furcht.}
 \spruch{48}{Metall}{Feuer}{Wasser}{XII Umwälzen}{Die Abschreckung}{Was angreift, kann zurückgeworfen werden.}
   {Antworte nicht mit denselben Waffen. Gegen einen harten Angriff hilft oft gerade das, was nachgibt und doch trifft. Wer seine eigenen Mittel kennt, braucht die des Gegners nicht.}
   {Wer nur noch abwehrt, wird hart und einsam. Wer sich nie wehrt, wird überrannt.}
 \newpage
 \markright{\element{Wasser}}\verzgr{Wasser}
 \tripelbild{Flöße treiben den Strom hinab zur Stadt. Dort werden die Stämme zu Brennholz, und den ganzen Winter brennen die Herdfeuer.}
+\tripelvorgang{Der Ursprung bringt Wachstum hervor; das Wachstum entfacht die Freude.}
 \spruch{49}{Wasser}{Holz}{Feuer}{I Fortschreiten}{Die Lieferung}{Aus der Ferne kommt das Glück.}
   {Nimm an, was von weit her zu dir kommt. Was andernorts gewachsen ist, wärmt jetzt dein Haus, und du schöpfst aus dem Vollen. Vergiss nicht, woher es kommt.}
   {Wer alles von fern erwartet, verlernt, selbst vorzusorgen. Wer nichts Fremdes annimmt, friert am eigenen Herd.}
 \newpage
 \tripelbild{Das Hochwasser reißt einen Weidenzweig mit. Wo er strandet, schlägt er Wurzeln.}
+\tripelvorgang{Der Ursprung nährt den Aufbruch; der Aufbruch erobert sich Halt.}
 \spruch{50}{Wasser}{Holz}{Erde}{II Prüfen}{Der Aufbruch}{Wer gehen kann, der findet einen Ort.}
   {Lass dich mitnehmen, wenn es dich losreißt. Was dich bisher hielt, ist fort, doch die Kraft, Wurzeln zu schlagen, trägst du in dir. Wo du ankommst, kannst du neu beginnen.}
   {Wer sich an jedes Ufer klammert, kommt nie an. Wer überall nur kurz strandet, schlägt nirgends Wurzeln.}
 \newpage
 \tripelbild{Der Bach treibt das Rad des Hammerwerks. Schlag um Schlag nimmt das Eisen Form an.}
+\tripelvorgang{Die Geduld nährt den Plan; der Plan misst sich an der Form.}
 \spruch{51}{Wasser}{Holz}{Metall}{III Begleiten}{Die Ausdauer}{Steter Schlag formt das Eisen.}
   {Bleib dran, und such dir Hilfe. Manches übersteigt die Kraft eines Einzelnen; im Wechsel mit anderen, Stück für Stück, gelingt, was allein unmöglich wäre.}
   {Wer alles selbst erzwingen will, erschöpft sich. Wer nur die fremde Kraft walten lässt, verliert die Form aus der Hand.}
 \newpage
 \tripelbild{Die Geldwechslerin streicht eine fremde Münze über den Probierstein und tropft Scheidewasser auf den Strich. Nur echtes Gold bleibt stehen.}
+\tripelvorgang{Die Besinnung schöpft aus der Klarheit; die Klarheit sucht festen Halt.}
 \spruch{52}{Wasser}{Metall}{Erde}{IV Ergründen}{Die Probe}{Es ist nicht alles Gold, was glänzt.}
   {Frag, woher deine Gewissheiten kommen. Was man dir als wertvoll übergeben hat, ist nicht schon deshalb echt. Prüf es, bevor du darauf baust, und prüf ebenso, was du selbst weitergibst.}
   {Wer alles prüft, kann nichts mehr annehmen. Wer nichts prüft, wird mit falscher Münze bezahlt.}
 \newpage
 \tripelbild{In klarer Mondnacht gefriert der Tau auf der Apfelblüte. Viele Blüten erfrieren; die übrigen trägt der Baum umso kräftiger aus.}
+\tripelvorgang{Die Ruhe schöpft aus der Klarheit; die Klarheit beschneidet das Wachstum.}
 \spruch{53}{Wasser}{Metall}{Holz}{V Ausholen}{Die Auswahl}{Weniger trägt manchmal mehr.}
   {Nimm hin, was dir genommen wird. Ein Rückschlag zur Unzeit trifft dich, und manches, das du begonnen hast, geht verloren. Sammle deine Kraft auf das, was bleibt; es wird dafür umso besser gedeihen.}
   {Wer dem Verlust nachtrauert, übersieht manchmal, was ihm geblieben ist. Wer nichts verlieren will, verzettelt sich in allem.}
 \newpage
 \tripelbild{Der Burgvogt lässt einen Brunnen in den Fels schlagen und das Tor beschlagen. Schießt der Feind Brandpfeile, hält das Tor stand.}
+\tripelvorgang{Die Ruhe schöpft aus der Klarheit; die Klarheit widersteht der Leidenschaft.}
 \spruch{54}{Wasser}{Metall}{Feuer}{VI Beistehen}{Der Brunnen}{Wer sich selbst genügt, braucht Feinde nicht zu fürchten.}
   {Lehn dich an das Feste in dir. Du hast Grundsätze, die sich bewährt haben, und Menschen mit klarem Urteil an deiner Seite. Sie halten stand, wo es am heißesten zugeht. In ihrem Schutz behältst du die Ruhe.}
   {Wer sich nur hinter Grundsätzen verschanzt, hilft niemandem. Wer ohne sie in einen Streit geht, verdampft.}
 \newpage
 \tripelbild{Der Regen löscht das brennende Feld; die Asche düngt den Boden.}
+\tripelvorgang{Die Ruhe löscht die Leidenschaft; die Leidenschaft hinterlässt fruchtbaren Halt.}
 \spruch{55}{Wasser}{Feuer}{Erde}{VII Pflegen}{Der Neubeginn}{Wer alles verloren hat, hat die Chance auf einen echten Neubeginn.}
   {Fang dort an, wo es gebrannt hat. Was verloren ist, lässt sich nicht zurückholen; aber der Boden, der bleibt, ist fruchtbarer, als er scheint. Warte den rechten Augenblick ab, dann säe.}
   {Wer festhält, was ohnehin verbrennt, verbrennt mit. Wer schon beim ersten Funken flieht, lässt zurück, was zu retten gewesen wäre.}
 \newpage
 \tripelbild{Der Blitz fährt in eine Fichte und setzt sie in Brand. Der Wolkenbruch, der ihm folgt, löscht ihn.}
-\spruch{56}{Wasser}{Feuer}{Holz}{VIII Abkürzen}{Der Blitz}{Unverhofft kommt oft.}
+\tripelvorgang{Die Ruhe zügelt den Übermut; der Übermut zehrt vom Wachstum.}
+\spruch{56}{Wasser}{Feuer}{Holz}{VIII Erschließen}{Der Blitz}{Unverhofft kommt oft.}
   {Rechne mit dem Unerwarteten. Was dich plötzlich trifft, kann heftig sein. Doch oft kommt die Hilfe ebenso unverhofft wie der Schlag. Bleib ruhig, bis sich die Lage wendet.}
   {Wer nur auf den Schlag starrt, übersieht die Rettung. Wer sich auf glückliche Wendungen verlässt, sorgt selbst nicht vor.}
 \newpage
 \tripelbild{Der Silberbrenner treibt das Silber im Feuer, bis die letzte trübe Haut aufreißt und es rein aufscheint. Dann löscht er es mit Wasser ab.}
-\spruch{57}{Wasser}{Feuer}{Metall}{IX Heimkehren}{Das Aufscheinen}{Einsicht in die Wahrheit ist stets ein Gewinn.}
+\tripelvorgang{Die Tiefe zügelt die Begeisterung; die Begeisterung läutert die Klarheit.}
+\spruch{57}{Wasser}{Feuer}{Metall}{IX Festigen}{Das Aufscheinen}{Einsicht in die Wahrheit ist stets ein Gewinn.}
   {Bleib dabei, bis das Wahre sichtbar wird. Lange verdeckt eine trübe Schicht, worum es eigentlich geht; Geduld und Hitze lösen sie. Wenn es aufscheint, ist der Augenblick kurz: Halte fest, was du erkannt hast.}
   {Wer zu früh abbricht, behält nur Trübes in der Hand. Wer das Erkannte nicht festhält, sieht es bald wieder anlaufen.}
 \newpage
 \tripelbild{Der Bach trägt Erde ab, bis er auf Fels stößt. Über Jahrtausende gräbt er die Klamm, und sein Wasser wird klar.}
+\tripelvorgang{Die Geduld misst sich am Halt; der Halt bringt Klarheit hervor.}
 \spruch{58}{Wasser}{Erde}{Metall}{X Umkehren}{Die Klärung}{Mit der Zeit wird trübes Wasser klar.}
   {Arbeite dich durch das Trübe. Lange hast du gegen etwas Schweres angekämpft, das dich trübte und bremste. Du hast dich ihm gestellt. Jetzt stößt du auf festen Grund, auf etwas Klares, das dir niemand mehr nehmen kann. Aus der Mühsal wird ein Neubeginn.}
   {Wer sich immer tiefer in ein Problem gräbt, sieht nur noch dessen Wände. Wer jeder Mühe ausweicht, bleibt trüb.}
 \newpage
 \tripelbild{Der Bach nagt am Ufer und legt Ton frei. Der Töpfer brennt daraus Krüge für das ganze Dorf.}
-\spruch{59}{Wasser}{Erde}{Feuer}{XI Umgehen}{Die Hilfe}{Niemand kann allein bestehen.}
+\tripelvorgang{Die Geduld misst sich am Halt; der Halt schöpft aus der Begegnung.}
+\spruch{59}{Wasser}{Erde}{Feuer}{XI Standhalten}{Die Hilfe}{Niemand kann allein bestehen.}
   {Arbeite geduldig an dem, was fest scheint. Gegen das Feste kommst du nicht direkt an, aber stetes Wirken legt frei, was darin steckt. Ein anderer gibt ihm Form, und am Ende ist vielen geholfen.}
   {Wer sich immer tragen lässt, vergisst, dass er selbst fließen kann. Wer jede Hilfe der Gegenseite zurückweist, kommt nie ans Ziel.}
 \newpage
 \tripelbild{Der Strom tritt über die Ufer und lässt fetten Schlamm zurück. Sinkt das Wasser, grünt das Land fruchtbarer als zuvor.}
+\tripelvorgang{Die Tiefe trotzt dem festen Halt; der Halt misst sich am neuen Wachstum.}
 \spruch{60}{Wasser}{Erde}{Holz}{XII Umwälzen}{Die Schwemme}{Erneuerung kommt von außen.}
   {Lass zu, dass etwas über dich hinweggeht. Was dich überschwemmt, scheint zunächst nur Unordnung zu bringen. Doch es lässt etwas zurück, das du allein nicht hättest schaffen können, und daraus wächst Neues.}
   {Wer sich gegen jeden Einfluss abdämmt, bleibt auf magerem Boden. Wer sich von allem fortreißen lässt, behält nichts, worin etwas wurzeln kann.}
@@ -2029,25 +2205,105 @@ Mit diesen Tafeln findest du jede Kombination, ohne zu blättern. Suche die erst
 \addsec*{Wendungen}\markright{Wendungen}
 \begin{center}
 \footnotesize\renewcommand{\arraystretch}{1.15}\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}rlccll@{}}
+\begin{tabular}{@{}rlcll@{}}
 \toprule
-\multicolumn{2}{c}{\textbf{Wendung}} & \textbf{Richtungen} & \textbf{Ergebnis} & \textbf{Familie} & \textbf{Dreieck} \\
+\multicolumn{2}{c}{\textbf{Wendung}} & \textbf{Richtungen} & \textbf{Familie} & \textbf{Dreieck} \\
 \midrule
-I    & \hyperlink{muster:I}{\csname mustername I\endcsname} & +1, +1 & +2 & Gleichlauf & stumpf, Yin \\
-II   & \hyperlink{muster:II}{\csname mustername II\endcsname} & +1, +2 & −2 & Umlauf & spitz, Yang \\
-III  & \hyperlink{muster:III}{\csname mustername III\endcsname} & +1, −2 & −1 & Gegenlauf & stumpf, Yin \\
-IV   & \hyperlink{muster:IV}{\csname mustername IV\endcsname} & −1, −1 & −2 & Gleichlauf & stumpf, Yin \\
-V    & \hyperlink{muster:V}{\csname mustername V\endcsname} & −1, +2 & +1 & Gegenlauf & stumpf, Yin \\
-VI   & \hyperlink{muster:VI}{\csname mustername VI\endcsname} & −1, −2 & +2 & Umlauf & spitz, Yang \\
-VII  & \hyperlink{muster:VII}{\csname mustername VII\endcsname} & +2, +1 & −2 & Umlauf & spitz, Yang \\
-VIII & \hyperlink{muster:VIII}{\csname mustername VIII\endcsname} & +2, −1 & +1 & Gegenlauf & stumpf, Yin \\
-IX   & \hyperlink{muster:IX}{\csname mustername IX\endcsname} & +2, +2 & −1 & Umlauf & spitz, Yang \\
-X    & \hyperlink{muster:X}{\csname mustername X\endcsname} & −2, +1 & −1 & Gegenlauf & stumpf, Yin \\
-XI   & \hyperlink{muster:XI}{\csname mustername XI\endcsname} & −2, −1 & +2 & Umlauf & spitz, Yang \\
-XII  & \hyperlink{muster:XII}{\csname mustername XII\endcsname} & −2, −2 & +1 & Umlauf & spitz, Yang \\
+I    & \hyperlink{muster:I}{\csname mustername I\endcsname} & +1, +1 & Gleichschritt & stumpf, Yin \\
+II   & \hyperlink{muster:II}{\csname mustername II\endcsname} & +1, +2 & Wechselschritt & spitz, Yang \\
+III  & \hyperlink{muster:III}{\csname mustername III\endcsname} & +1, −2 & Gegenschritt & stumpf, Yin \\
+IV   & \hyperlink{muster:IV}{\csname mustername IV\endcsname} & −1, −1 & Gleichschritt & stumpf, Yin \\
+V    & \hyperlink{muster:V}{\csname mustername V\endcsname} & −1, +2 & Gegenschritt & stumpf, Yin \\
+VI   & \hyperlink{muster:VI}{\csname mustername VI\endcsname} & −1, −2 & Wechselschritt & spitz, Yang \\
+VII  & \hyperlink{muster:VII}{\csname mustername VII\endcsname} & +2, +1 & Wechselschritt & spitz, Yang \\
+VIII & \hyperlink{muster:VIII}{\csname mustername VIII\endcsname} & +2, −1 & Gegenschritt & stumpf, Yin \\
+IX   & \hyperlink{muster:IX}{\csname mustername IX\endcsname} & +2, +2 & Gleichschritt & spitz, Yang \\
+X    & \hyperlink{muster:X}{\csname mustername X\endcsname} & −2, +1 & Gegenschritt & stumpf, Yin \\
+XI   & \hyperlink{muster:XI}{\csname mustername XI\endcsname} & −2, −1 & Wechselschritt & spitz, Yang \\
+XII  & \hyperlink{muster:XII}{\csname mustername XII\endcsname} & −2, −2 & Gleichschritt & spitz, Yang \\
 \bottomrule
 \end{tabular}
 \end{center}
+
+\newpage
+\addsec*{Die Wendungen im Bild}\markright{Die Wendungen im Bild}
+\begin{center}
+{\newsavebox{\wrbox}%
+\sbox{\wrbox}{\resizebox{1.95cm}{!}{\musterbrett{1}{1}}}\expandafter\newsavebox\csname wrI\endcsname\expandafter\sbox\csname wrI\endcsname{\usebox{\wrbox}}%
+\sbox{\wrbox}{\resizebox{1.95cm}{!}{\musterbrett{1}{2}}}\expandafter\newsavebox\csname wrII\endcsname\expandafter\sbox\csname wrII\endcsname{\usebox{\wrbox}}%
+\sbox{\wrbox}{\resizebox{1.95cm}{!}{\musterbrett{1}{3}}}\expandafter\newsavebox\csname wrIII\endcsname\expandafter\sbox\csname wrIII\endcsname{\usebox{\wrbox}}%
+\sbox{\wrbox}{\resizebox{1.95cm}{!}{\musterbrett{4}{4}}}\expandafter\newsavebox\csname wrIV\endcsname\expandafter\sbox\csname wrIV\endcsname{\usebox{\wrbox}}%
+\sbox{\wrbox}{\resizebox{1.95cm}{!}{\musterbrett{4}{2}}}\expandafter\newsavebox\csname wrV\endcsname\expandafter\sbox\csname wrV\endcsname{\usebox{\wrbox}}%
+\sbox{\wrbox}{\resizebox{1.95cm}{!}{\musterbrett{4}{3}}}\expandafter\newsavebox\csname wrVI\endcsname\expandafter\sbox\csname wrVI\endcsname{\usebox{\wrbox}}%
+\sbox{\wrbox}{\resizebox{1.95cm}{!}{\musterbrett{2}{1}}}\expandafter\newsavebox\csname wrVII\endcsname\expandafter\sbox\csname wrVII\endcsname{\usebox{\wrbox}}%
+\sbox{\wrbox}{\resizebox{1.95cm}{!}{\musterbrett{2}{4}}}\expandafter\newsavebox\csname wrVIII\endcsname\expandafter\sbox\csname wrVIII\endcsname{\usebox{\wrbox}}%
+\sbox{\wrbox}{\resizebox{1.95cm}{!}{\musterbrett{2}{2}}}\expandafter\newsavebox\csname wrIX\endcsname\expandafter\sbox\csname wrIX\endcsname{\usebox{\wrbox}}%
+\sbox{\wrbox}{\resizebox{1.95cm}{!}{\musterbrett{3}{1}}}\expandafter\newsavebox\csname wrX\endcsname\expandafter\sbox\csname wrX\endcsname{\usebox{\wrbox}}%
+\sbox{\wrbox}{\resizebox{1.95cm}{!}{\musterbrett{3}{4}}}\expandafter\newsavebox\csname wrXI\endcsname\expandafter\sbox\csname wrXI\endcsname{\usebox{\wrbox}}%
+\sbox{\wrbox}{\resizebox{1.95cm}{!}{\musterbrett{3}{3}}}\expandafter\newsavebox\csname wrXII\endcsname\expandafter\sbox\csname wrXII\endcsname{\usebox{\wrbox}}%
+\colorlet{wtgleich}{black!16}\colorlet{wtgegen}{black!7}\colorlet{wtwechsel}{white}%
+\tikzset{wtlinie/.style={draw=black!60, line width=0.4pt}}%
+\begin{tikzpicture}[x=2.2cm, y=2.2cm]
+  \path[use as bounding box] (-0.57,0.62) rectangle (4.57,-4.35);
+  \foreach \s/\z [count=\k from 0] in {+1/生,−1/泄,+2/克,−2/侮} {
+    \node[font=\cjk] at (\k+0.5, 0.22) {\z};
+    \node[font=\cjk] at (-0.22, -\k-0.5) {\z};
+    \node[font=\small\bfseries] at (\k+0.5, -4.2) {\s};
+    \node[font=\small\bfseries] at (4.22, -\k-0.5) {\s};
+  }
+  \node[font=\footnotesize, anchor=south] at (2, 0.38) {zweiter Schritt};
+  \node[font=\footnotesize, rotate=90, anchor=south] at (-0.45, -2) {erster Schritt};
+  \draw[wtlinie, fill=wtgleich] (0,0) rectangle ++(1,-1);
+  \draw[wtlinie, fill=white] (1,0) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtwechsel] (2,0) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtgegen] (3,0) rectangle ++(1,-1);
+  \draw[wtlinie, fill=white] (0,-1) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtgleich] (1,-1) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtgegen] (2,-1) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtwechsel] (3,-1) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtwechsel] (0,-2) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtgegen] (1,-2) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtgleich] (2,-2) rectangle ++(1,-1);
+  \draw[wtlinie, fill=white] (3,-2) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtgegen] (0,-3) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtwechsel] (1,-3) rectangle ++(1,-1);
+  \draw[wtlinie, fill=white] (2,-3) rectangle ++(1,-1);
+  \draw[wtlinie, fill=wtgleich] (3,-3) rectangle ++(1,-1);
+  \node at (0.50,-0.50) {\expandafter\usebox\csname wrI\endcsname};
+  \node[font=\scriptsize\bfseries, fill=white, fill opacity=0.85, text opacity=1, inner sep=1pt, rounded corners=1pt] at (0.50,-0.50) {\hyperlink{muster:I}{I}};
+  \node[font=\footnotesize, text=black!50] at (1.5,-0.5) {–};
+  \node at (2.50,-0.50) {\expandafter\usebox\csname wrII\endcsname};
+  \node[font=\scriptsize\bfseries, fill=white, fill opacity=0.85, text opacity=1, inner sep=1pt, rounded corners=1pt] at (2.50,-0.50) {\hyperlink{muster:II}{II}};
+  \node at (3.50,-0.50) {\expandafter\usebox\csname wrIII\endcsname};
+  \node[font=\scriptsize\bfseries, fill=white, fill opacity=0.85, text opacity=1, inner sep=1pt, rounded corners=1pt] at (3.50,-0.50) {\hyperlink{muster:III}{III}};
+  \node[font=\footnotesize, text=black!50] at (0.5,-1.5) {–};
+  \node at (1.50,-1.50) {\expandafter\usebox\csname wrIV\endcsname};
+  \node[font=\scriptsize\bfseries, fill=white, fill opacity=0.85, text opacity=1, inner sep=1pt, rounded corners=1pt] at (1.50,-1.50) {\hyperlink{muster:IV}{IV}};
+  \node at (2.50,-1.50) {\expandafter\usebox\csname wrV\endcsname};
+  \node[font=\scriptsize\bfseries, fill=white, fill opacity=0.85, text opacity=1, inner sep=1pt, rounded corners=1pt] at (2.50,-1.50) {\hyperlink{muster:V}{V}};
+  \node at (3.50,-1.50) {\expandafter\usebox\csname wrVI\endcsname};
+  \node[font=\scriptsize\bfseries, fill=white, fill opacity=0.85, text opacity=1, inner sep=1pt, rounded corners=1pt] at (3.50,-1.50) {\hyperlink{muster:VI}{VI}};
+  \node at (0.50,-2.50) {\expandafter\usebox\csname wrVII\endcsname};
+  \node[font=\scriptsize\bfseries, fill=white, fill opacity=0.85, text opacity=1, inner sep=1pt, rounded corners=1pt] at (0.50,-2.50) {\hyperlink{muster:VII}{VII}};
+  \node at (1.50,-2.50) {\expandafter\usebox\csname wrVIII\endcsname};
+  \node[font=\scriptsize\bfseries, fill=white, fill opacity=0.85, text opacity=1, inner sep=1pt, rounded corners=1pt] at (1.50,-2.50) {\hyperlink{muster:VIII}{VIII}};
+  \node at (2.50,-2.50) {\expandafter\usebox\csname wrIX\endcsname};
+  \node[font=\scriptsize\bfseries, fill=white, fill opacity=0.85, text opacity=1, inner sep=1pt, rounded corners=1pt] at (2.50,-2.50) {\hyperlink{muster:IX}{IX}};
+  \node[font=\footnotesize, text=black!50] at (3.5,-2.5) {–};
+  \node at (0.50,-3.50) {\expandafter\usebox\csname wrX\endcsname};
+  \node[font=\scriptsize\bfseries, fill=white, fill opacity=0.85, text opacity=1, inner sep=1pt, rounded corners=1pt] at (0.50,-3.50) {\hyperlink{muster:X}{X}};
+  \node at (1.50,-3.50) {\expandafter\usebox\csname wrXI\endcsname};
+  \node[font=\scriptsize\bfseries, fill=white, fill opacity=0.85, text opacity=1, inner sep=1pt, rounded corners=1pt] at (1.50,-3.50) {\hyperlink{muster:XI}{XI}};
+  \node[font=\footnotesize, text=black!50] at (2.5,-3.5) {–};
+  \node at (3.50,-3.50) {\expandafter\usebox\csname wrXII\endcsname};
+  \node[font=\scriptsize\bfseries, fill=white, fill opacity=0.85, text opacity=1, inner sep=1pt, rounded corners=1pt] at (3.50,-3.50) {\hyperlink{muster:XII}{XII}};
+\end{tikzpicture}}\par\smallskip
+{\footnotesize
+\tikz[baseline=-0.6ex]\draw[draw=black!60, line width=0.4pt, fill=black!16] (0,-0.15) rectangle (0.3,0.15); Gleichschritt\quad
+\tikz[baseline=-0.6ex]\draw[draw=black!60, line width=0.4pt, fill=black!7] (0,-0.15) rectangle (0.3,0.15); Gegenschritt\quad
+\tikz[baseline=-0.6ex]\draw[draw=black!60, line width=0.4pt, fill=white] (0,-0.15) rectangle (0.3,0.15); Wechselschritt\par}
+\end{center}
+
 
 \newpage
 \addsec*{Tripel}\markright{Tripel}

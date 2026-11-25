@@ -174,12 +174,12 @@
   \renewcommand{\mygreen}{\mustergrau}\renewcommand{\myred}{\mustergrau}%
   \renewcommand{\myyellow}{\mustergrau}%
   \begin{pentdiag}[stops=100, radius=0.15\textwidth, background=white]
-    \renewcommand{\pfeilfarbe}{pfeilaussen}%
-    \gdef\musterpos{0}\gdef\mustertyp{c}%   von der Ecke oben
-    \musterschritt{#1}{}
-    \renewcommand{\pfeilfarbe}{pfeilinnen}%
-    \gdef\musterpos{0}\gdef\mustertyp{j}%   von der Kreuzung unten
-    \musterschritt{#1}{}
+    \renewcommand{\pfeilfarbe}{pfeilaussen}%   von allen fünf Ecken
+    \foreach \k in {0,...,4}{\xdef\musterpos{\k}\gdef\mustertyp{c}\musterschritt{#1}{}}
+    \renewcommand{\pfeilfarbe}{pfeilinnen}%    von allen fünf Kreuzungen
+    \foreach \k in {0,...,4}{\xdef\musterpos{\k}\gdef\mustertyp{j}\musterschritt{#1}{}}
+    \pgfmathsetmacro{\zs}{0.21*\kvar/1em}%
+    \node[scale=\zs, inner sep=0pt, text=black!80] at (0,0) {\cjk\ifcase#1\or 生\or 克\or 侮\or 泄\fi};
   \end{pentdiag}}}
 
 % \paarbrett{A}{B}{Schritte}: graues Brett (Geometrie 100, Farbfolge 50), nur Ecke und Kreuzung von A und B in ihren Farben;
@@ -498,6 +498,8 @@
       \fi}
   \end{tikzpicture}}}
 
+% \rzeichen{生}{shēng}: Zeichen groß, Umschrift klein darunter (erste Spalte der Richtungstabellen)
+\newcommand{\rzeichen}[2]{\begin{tabular}[t]{@{}c@{}}\raisebox{-0.35ex}{\Large\cjk #1}\\[-0.1ex]{\scriptsize #2}\end{tabular}}
 \newcommand{\diagbox}[1]{\resizebox{0.4\textwidth}{!}{#1}}
 % \richtungskreis{1..4}: Wandlungskreis mit allen fünf Pfeilen einer Richtung (s = 1 nährt, 2 bändigt, 3 stellt sich, 4 nimmt an)
 \newcommand{\richtungskreis}[1]{{%
@@ -520,7 +522,10 @@
     \foreach \e [count=\i from 0] in {Holz,Feuer,Erde,Metall,Wasser}{%
       \filldraw[fill=\e, draw=black!60, line width=0.5pt] (r\i) circle (\rk);
       \node[text=\e Zeichen, scale=1.25, inner sep=0pt] at (r\i) {\cjk\csname zeichen\e\endcsname};}
+    \node[scale=2.2, inner sep=0pt, text=black!80] at (0,0) {\cjk\ifcase#1\or 生\or 克\or 侮\or 泄\fi};
   \end{tikzpicture}}}
+% \wkpfeil: Stil der Pfeile im Wandlungskreis; im Kapitel „Die vier Richtungen“ so dick wie auf den Brettern
+\tikzset{wkpfeil/.style={thick}}
 \newcommand{\wandlungskreis}[1][]{%
   \begin{tikzpicture}[>=latex]
     \pgfmathsetmacro{\R}{3*\wkscale}\pgfmathsetmacro{\RN}{\R+1.25}\pgfmathsetmacro{\RL}{\R+0.55}%
@@ -533,21 +538,21 @@
         {{\Large\cjk\zeichen}\\[-1pt]{\scriptsize\py}};
       \node at (\w:\RN cm) {\scriptsize\e};
       \ifx\art\artgegen
-        \draw[<-, thick] ({\w-\d}:\myradius) arc[start angle={\w-\d}, end angle={\w-72+\d}, radius=\myradius];
+        \draw[<-, wkpfeil] ({\w-\d}:\myradius) arc[start angle={\w-\d}, end angle={\w-72+\d}, radius=\myradius];
         \ifnum\i=1 \node[font=\scriptsize, fill=white, inner sep=1pt] at ({\w-36}:\RL cm) {{\cjk 泄} xiè};\fi
       \else
-        \draw[->, thick] ({\w-\d}:\myradius) arc[start angle={\w-\d}, end angle={\w-72+\d}, radius=\myradius];
+        \draw[->, wkpfeil] ({\w-\d}:\myradius) arc[start angle={\w-\d}, end angle={\w-72+\d}, radius=\myradius];
         \ifnum\i=1 \node[font=\scriptsize, fill=white, inner sep=1pt] at ({\w-36}:\RL cm) {{\cjk 生} shēng};\fi
       \fi
     }
     \ifx\art\artke
       \foreach \i/\ii in {1/3,2/4,3/5,4/1,5/2}
-        \draw[->, red!75!black] (w\i) -- (w\ii);
+        \draw[->, wkpfeil, red!75!black] (w\i) -- (w\ii);
       \node[inner sep=1pt, font=\scriptsize] at (0,0) {{\cjk 克} kè};
     \fi
     \ifx\art\artgegen
       \foreach \i/\ii in {3/1,4/2,5/3,1/4,2/5}
-        \draw[->, red!75!black] (w\i) -- (w\ii);
+        \draw[->, wkpfeil, red!75!black] (w\i) -- (w\ii);
       \node[inner sep=1pt, font=\scriptsize] at (0,0) {{\cjk 侮} wǔ};
     \fi
   \end{tikzpicture}}
@@ -585,6 +590,10 @@
   \boardcoloured
   \pentcolours[50]{green,red,yellow,white,blue}% Holz oben
   \begin{pentdiag}[stops=50, radius=0.18\textwidth, background=white]
+    \pgfmathsetmacro{\zsc}{1.15*\cvar/1em}\pgfmathsetmacro{\zsj}{1.15*\jvar/1em}%
+    \foreach \pos/\el in {0/Holz,1/Wasser,2/Metall,3/Erde,4/Feuer}{
+      \node[text=\el Zeichen, scale=\zsc, inner sep=0pt] at (\pos) {\cjk\csname zeichen\el\endcsname};
+      \node[text=\el Zeichen, scale=\zsj, inner sep=0pt] at (\pos a) {\cjk\csname zeichen\el\endcsname};}
     \foreach \pos/\el in {0/Holz,1/Wasser,2/Metall,3/Erde,4/Feuer}{
       \node[inner sep=0pt] at (\pos) {\hyperlink{element:\el}{\XeTeXLinkBox{\hbox to 2\cvar{\vrule height\cvar depth\cvar width0pt\hfil}}}};
       \node[inner sep=0pt] at (\pos a) {\hyperlink{element:\el}{\XeTeXLinkBox{\hbox to 2\jvar{\vrule height\jvar depth\jvar width0pt\hfil}}}};}
@@ -598,6 +607,33 @@
     \draw[overlay, -{Stealth[scale=0.7]}, black!60, thin, shorten >=0.3cm] (kreuzwort.east) -- (4a);
     % jede Farbe liegt sich gegenüber: von der grünen Ecke zur grünen Kreuzung
     \draw[-{Stealth[scale=1.1]}, line width=1pt, dashed, green!45!black] ($(0)!0.13!(0a)$) -- ($(0)!0.9!(0a)$);
+  \end{pentdiag}}}
+
+% \brettwechsel{plus|minus}: das farbige Brett wie in \brettbild; schwarz der gebogene Weg über zwei Schritte
+% auf dem Ring (2 x Nähren bzw. 2 x Annehmen), rot der direkte Weg über die Wechselstrecke (Bändigen bzw. Sich stellen)
+\newcommand{\brettwechsel}[1]{{%
+  \boardcoloured
+  \pentcolours[50]{green,red,yellow,white,blue}% Holz oben
+  \def\bwart{#1}\def\bwplus{plus}%
+  \begin{pentdiag}[stops=50, radius=0.18\textwidth, background=white]
+    \pgfmathsetmacro{\zsc}{1.15*\cvar/1em}\pgfmathsetmacro{\zsj}{1.15*\jvar/1em}%
+    \foreach \pos/\el in {0/Holz,1/Wasser,2/Metall,3/Erde,4/Feuer}{
+      \node[text=\el Zeichen, scale=\zsc, inner sep=0pt] at (\pos) {\cjk\csname zeichen\el\endcsname};
+      \node[text=\el Zeichen, scale=\zsj, inner sep=0pt] at (\pos a) {\cjk\csname zeichen\el\endcsname};}
+    \pgfmathsetmacro{\bwr}{\kvar+\cvar+3pt}%
+    % symmetrischer Rahmen: die Mitte des Pentagramms liegt in der Mitte der Zeile
+    \path (-\bwr pt-1.9cm,0) -- (\bwr pt+1.9cm,0);
+    \ifx\bwart\bwplus
+      \draw[-{Stealth[scale=1.2]}, line width=1.3pt, pfeilaussen] (84:\bwr pt) arc[start angle=84, end angle=-48, radius=\bwr pt]
+        node[pos=0.5, right=2pt, font=\footnotesize, fill=white, inner sep=1pt] {+1 +1 {\cjk 生生}};
+      \plinie{0}{3a}{-{Stealth[scale=1.2]}, line width=1.3pt, pfeilaussen, shorten <=\cvar, shorten >=\jvar}
+        node[pos=0.5, left=2pt, font=\footnotesize, fill=white, inner sep=1pt] {+2 {\cjk 克}};
+    \else
+      \draw[-{Stealth[scale=1.2]}, line width=1.3pt, pfeilaussen] (96:\bwr pt) arc[start angle=96, end angle=228, radius=\bwr pt]
+        node[pos=0.5, left=2pt, font=\footnotesize, fill=white, inner sep=1pt] {−1 −1 {\cjk 泄泄}};
+      \plinie{0}{2a}{-{Stealth[scale=1.2]}, line width=1.3pt, pfeilaussen, shorten <=\cvar, shorten >=\jvar}
+        node[pos=0.5, right=2pt, font=\footnotesize, fill=white, inner sep=1pt] {−2 {\cjk 侮}};
+    \fi
   \end{pentdiag}}}
 
 % \richtungspaar{plus} bzw. {minus}: zwei kleine Bretter nebeneinander; plus = +1 und +2, minus = -1 und -2,
@@ -622,36 +658,47 @@
   \def\pp@lw{1.3pt}%
   \def\rpart{#2}\def\rplus{plus}%
   \renewcommand{\bezabstand}{2.5pt}%
+  % wie im Wandlungskreis: alle fünf Pfeile jeder Richtung, schwarz ±1, rot ±2; beschriftet sind die von Holz aus
   \begin{pentdiag}[stops=50, radius=#1, background=white, fieldscale=0.72]
     \pgfmathsetmacro{\rj}{0.381966*\kvar}%
-    \ifx\rpzeige\rpinnen\else
-    \renewcommand{\pfeilfarbe}{pfeilaussen}%
-    \ifx\rpart\rplus
-      \pbogen{4}{bezpfeilrueck, shorten >=\bezabstand}
-        node[rplabel, pos=0.45, above right=1pt, text=black] {\hyperlink{beziehung:1}{\XeTeXLinkBox{+1 {\cjk 生}}}};
-      \plinie{0}{3a}{bezpfeil, shorten <=\bezabstand}
-        node[rplabel, pos=0.55, left=2pt, text=black] {\hyperlink{beziehung:2}{\XeTeXLinkBox{+2 {\cjk 克}}}};
-    \else
-      \pbogen{0}{bezpfeil, shorten <=\bezabstand}
-        node[rplabel, pos=0.55, above left=1pt, text=black] {\hyperlink{beziehung:4}{\XeTeXLinkBox{−1 {\cjk 泄}}}};
-      \plinie{0}{2a}{bezpfeil, shorten <=\bezabstand}
-        node[rplabel, pos=0.55, right=2pt, text=black] {\hyperlink{beziehung:3}{\XeTeXLinkBox{−2 {\cjk 侮}}}};
-    \fi
-    \fi
-    \ifx\rpzeige\rpaussen\else
-    \renewcommand{\pfeilfarbe}{pfeilinnen!75!black}%
-    \ifx\rpart\rplus
-      \draw[bezpfeil, shorten <=\bezabstand] (270:\rj pt) arc[start angle=270, end angle=198, radius=\rj pt]
-        node[rplabel, pos=0.5, below left=1pt, text=pfeilinnen] {\hyperlink{beziehung:1}{\XeTeXLinkBox{+1 {\cjk 生}}}};
-      \plinie{0a}{3}{bezpfeil, shorten <=\bezabstand}
-        node[rplabel, pos=0.62, below left=2pt, text=pfeilinnen] {\hyperlink{beziehung:2}{\XeTeXLinkBox{+2 {\cjk 克}}}};
-    \else
-      \draw[bezpfeil, shorten <=\bezabstand] (270:\rj pt) arc[start angle=270, end angle=342, radius=\rj pt]
-        node[rplabel, pos=0.5, below right=1pt, text=pfeilinnen] {\hyperlink{beziehung:4}{\XeTeXLinkBox{−1 {\cjk 泄}}}};
-      \plinie{0a}{2}{bezpfeil, shorten <=\bezabstand}
-        node[rplabel, pos=0.62, below right=2pt, text=pfeilinnen] {\hyperlink{beziehung:3}{\XeTeXLinkBox{−2 {\cjk 侮}}}};
-    \fi
-      \fi
+    \foreach \k in {0,...,4}{%
+      \pgfmathtruncatemacro{\kv}{mod(\k+4,5)}\pgfmathtruncatemacro{\kp}{mod(\k+3,5)}\pgfmathtruncatemacro{\km}{mod(\k+2,5)}%
+      \pgfmathsetmacro{\wj}{270+72*\k}%
+      \ifx\rpzeige\rpinnen
+        \renewcommand{\pfeilfarbe}{pfeilaussen}%
+        \ifx\rpart\rplus
+          \draw[bezpfeil, shorten <=\bezabstand, shorten >=\jvar] (\wj:\rj pt) arc[start angle=\wj, end angle=\wj-72, radius=\rj pt]
+            ;\ifnum\k=0 \node[rplabel, text=black] at (0,0) {\hyperlink{beziehung:1}{\XeTeXLinkBox{+1 {\cjk 生}}}};\fi
+        \else
+          \draw[bezpfeil, shorten <=\bezabstand, shorten >=\jvar] (\wj:\rj pt) arc[start angle=\wj, end angle=\wj+72, radius=\rj pt]
+            ;\ifnum\k=0 \node[rplabel, text=black] at (0,0) {\hyperlink{beziehung:4}{\XeTeXLinkBox{−1 {\cjk 泄}}}};\fi
+        \fi
+        \renewcommand{\pfeilfarbe}{pfeilinnen!75!black}%
+        \ifx\rpart\rplus
+          \plinie{\k a}{\kp}{bezpfeil, shorten <=\bezabstand, shorten >=\cvar}
+            \ifnum\k=0 node[rplabel, pos=0.62, below left=2pt, text=pfeilinnen] {\hyperlink{beziehung:2}{\XeTeXLinkBox{+2 {\cjk 克}}}}\fi;
+        \else
+          \plinie{\k a}{\km}{bezpfeil, shorten <=\bezabstand, shorten >=\cvar}
+            \ifnum\k=0 node[rplabel, pos=0.62, below right=2pt, text=pfeilinnen] {\hyperlink{beziehung:3}{\XeTeXLinkBox{−2 {\cjk 侮}}}}\fi;
+        \fi
+      \else
+        \renewcommand{\pfeilfarbe}{pfeilaussen}%
+        \ifx\rpart\rplus
+          \pbogen{\kv}{bezpfeilrueck, shorten >=\bezabstand, shorten <=\cvar}
+            \ifnum\k=0 node[rplabel, pos=0.45, above right=1pt, text=black] {\hyperlink{beziehung:1}{\XeTeXLinkBox{+1 {\cjk 生}}}}\fi;
+        \else
+          \pbogen{\k}{bezpfeil, shorten <=\bezabstand, shorten >=\cvar}
+            \ifnum\k=0 node[rplabel, pos=0.55, above left=1pt, text=black] {\hyperlink{beziehung:4}{\XeTeXLinkBox{−1 {\cjk 泄}}}}\fi;
+        \fi
+        \renewcommand{\pfeilfarbe}{pfeilinnen!75!black}%
+        \ifx\rpart\rplus
+          \plinie{\k}{\kp a}{bezpfeil, shorten <=\bezabstand, shorten >=\jvar}
+            \ifnum\k=0 node[rplabel, pos=0.55, left=2pt, text=pfeilinnen] {\hyperlink{beziehung:2}{\XeTeXLinkBox{+2 {\cjk 克}}}}\fi;
+        \else
+          \plinie{\k}{\km a}{bezpfeil, shorten <=\bezabstand, shorten >=\jvar}
+            \ifnum\k=0 node[rplabel, pos=0.55, right=2pt, text=pfeilinnen] {\hyperlink{beziehung:3}{\XeTeXLinkBox{−2 {\cjk 侮}}}}\fi;
+        \fi
+      \fi}
   \end{pentdiag}}}
 \newcommand{\beziehungsuebersicht}{{%
   \boardcoloured
@@ -683,6 +730,14 @@
   \end{pentdiag}}}
 \makeatother
 
+
+% Kopf der Nachschlagetafeln: Name senkrecht über dem Kreis; der Kreis sitzt unten auf der Grundlinie,
+% die Zelle hat keine Tiefe. \kopfende schließt die Kopfzeile so, dass der Abstand vom Kreis zur Linie
+% genau \tabcolsep beträgt, wie links zwischen Kreis und senkrechter Linie.
+\newcommand{\kopfel}[1]{\sbox0{\kreis{#1}}\raisebox{\dp0}{\vbox{\halign{\hfil##\hfil\cr\rotatebox{90}{\small #1}\cr\noalign{\kern2pt}\usebox0\cr}}}}
+\newcommand{\kopfende}{\\[\dimexpr\tabcolsep-\arraystretch\dp\strutbox\relax]}
+\newcommand{\zeilel}[1]{{\small #1}~\kreis{#1}}
+\newcommand{\zeilepaar}[2]{{\small #1, #2}~\mypair[0.5em]{#1}{#2}}
 \begin{document}
 \frontmatter
 \maketitle
@@ -705,7 +760,7 @@
 \clearpage\ifodd\value{page}\else\hbox{}\thispagestyle{empty}\clearpage\fi
 \mainmatter
 
-\addchap{Einführung}\markboth{Einführung}{\mbox{}}
+\addchap{Einführung}\markboth{Einführung}{\mbox{}}\label{kap:einfuehrung}
 
 \addsec{Über dieses Buch}\markright{Über dieses Buch}
 
@@ -720,7 +775,7 @@ Wer Pentagame spielt, kennt diesen Moment: Die dritte Figur erreicht ihr Ziel un
   \item[Die vier Richtungen.] Jede Bewegung von einem Element zu einem anderen geht in eine von vier Richtungen: \emph{Nähren} (+1), \emph{Annehmen} (−1), \emph{Bändigen} (+2) oder \emph{Sich stellen} (−2). Welche es ist, hängt nur davon ab, ob man in der Reihenfolge der Elemente einen oder zwei Schritte vor- oder zurückgeht.
   \item[Die 20 Paare.] Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfolge und die Bewegung zwischen ihnen, zum Beispiel \element*{Holz}\verbpfeil{Holz}{Feuer}\element*{Feuer}. Zu jedem der fünf Elemente gibt es vier Paare: $5 \times 4 = 20$.
   \item[Die zwölf Wendungen.] Zwei Richtungen hintereinander ergeben eine Wendung. Für die erste Richtung gibt es vier Möglichkeiten, für die zweite drei, denn sie darf die erste nicht aufheben: Auf +1 folgt nie −1, auf +2 nie −2. Das ergibt $4 \times 3 = 12$.
-  \item[Die 60 Tripel.] Ein Element und eine Wendung ergeben ein Tripel, eine Folge aus drei verschiedenen Elementen, etwa \element*{Holz}\verbpfeil{Holz}{Feuer}\element*{Feuer}\verbpfeil{Feuer}{Erde}\element*{Erde}. Das sind $5 \times 12 = 60$, genau die Folgen, mit denen man beim Pentagame traditionell gewinnt. Jedes Tripel besteht aus zwei Paaren, hier \textit{Holz nährt Feuer} und \textit{Feuer nährt Erde}.
+  \item[Die 60 Tripel.] Ein Element und eine Wendung ergeben ein Tripel, eine Folge aus drei verschiedenen Elementen, etwa \element*{Holz}\verbpfeil{Holz}{Feuer}\element*{Feuer}\verbpfeil{Feuer}{Erde}\element*{Erde}. Das sind $5 \times 12 = 60$, genau die Folgen, mit denen man beim Pentagame gewinnt. Jedes Tripel besteht aus zwei Paaren, hier \textit{Holz nährt Feuer} und \textit{Feuer nährt Erde}.
 \end{description}
 
 \begin{center}
@@ -754,8 +809,8 @@ Die Sprüche sind keine Übersetzung eines alten Textes, sondern eine moderne De
 Am einfachsten befragst du das Orakel mit einem Beutel. Lege je eine Figur jeder Farbe hinein, etwa eine ganze Mannschaft, formuliere deine Frage und ziehe, ohne hinzusehen:
 
 \begin{enumerate}[leftmargin=*]
-  \item \textbf{Zwei Figuren:} Schlag das Paar nach (\hyperref[kap:paare]{„Die 20 Paare“}). Jedes Paar ist gleich wahrscheinlich (1 zu 20).
-  \item \textbf{Drei Figuren:} Schlag das Tripel nach (\hyperref[kap:tripel]{„Die 60 Tripel“}). Jedes Tripel ist gleich wahrscheinlich (1 zu 60).
+  \item \textbf{Zwei Figuren:} Schlag das Paar im \hyperref[sec:paarschluessel]{Schlüssel} nach. Jedes Paar ist gleich wahrscheinlich (1 von 20).
+  \item \textbf{Drei Figuren:} Schlag das Tripel im \hyperref[sec:tripelschluessel]{Schlüssel} nach. Jedes Tripel ist gleich wahrscheinlich (1 von 60).
 \end{enumerate}
 
 Die Reihenfolge, in der du die Figuren ziehst, ist wichtig, denn jede Position hat ihre eigene Bedeutung:
@@ -783,9 +838,58 @@ Der Beutel ist aber nur der kürzeste Weg. Brett und Buch beruhen auf denselben 
   \item \textbf{Tripel:} Die drei Figuren, mit denen eine Partie gewonnen wird, ergeben in der Reihenfolge, in der sie herausgezogen wurden, ein \hyperref[kap:tripel]{Tripel}. So wird jede Partie zu einem Spruch. Ebenso lassen sich die ersten drei geschlagenen Blöcke lesen, nach der Farbe der Felder, auf denen sie standen: Sie zeigen, unter welchem Zeichen das Spiel beginnt.
 \end{itemize}
 
-Zum Deuten lies zuerst den Spruch. Von dort aus kannst du auf jeder Stufe weitergehen, denn jeder Eintrag verweist auf die verwandten Einträge der anderen Stufen: das Tripel auf seine Wendung und seine beiden Paare, das Paar auf seine Elemente, seine Richtung und seine Tripel. Am schnellsten findest du eine Kombination über den \hyperref[kap:register]{Schlüssel} am Ende des Buches.
+Zum Deuten lies zuerst den Spruch. Von dort aus kannst du auf jeder Stufe weitergehen, denn jeder Eintrag verweist auf die verwandten Einträge der anderen Stufen: das Tripel auf seine Wendung und seine beiden Paare, das Paar auf seine Elemente, seine Richtung und seine Tripel. Am schnellsten findest du eine Kombination über den \hyperref[kap:schluessel]{Schlüssel} gleich im Anschluss.
 
 Die Sprüche geben Orientierung, keine Vorhersage.
+
+\newpage
+\addsec{Schlüssel}\markright{Schlüssel}\label{kap:schluessel}
+
+Mit diesen beiden Tafeln findest du jede Kombination, ohne zu blättern. Suche die erste Farbe in der linken Spalte und die nächste in der Kopfzeile; die Nummer im Schnittpunkt führt zum Paar oder zum Tripel.
+
+\addsec*{Paare nachschlagen}\label{sec:paarschluessel}
+\begin{center}\renewcommand{\arraystretch}{1.6}\setlength{\tabcolsep}{5pt}
+\begin{tabular}{r|ccccc}
+{\footnotesize 1.\ \textbackslash\ 2.} & \kopfel{Holz} & \kopfel{Feuer} & \kopfel{Erde} & \kopfel{Metall} & \kopfel{Wasser} \kopfende \hline
+\zeilel{Holz} & -- & \hyperlink{paar:Holz-Feuer}{\textcolor{ueberschriftfarbe}{\textbf{1}}} & \hyperlink{paar:Holz-Erde}{\textcolor{ueberschriftfarbe}{\textbf{3}}} & \hyperlink{paar:Holz-Metall}{\textcolor{ueberschriftfarbe}{\textbf{4}}} & \hyperlink{paar:Holz-Wasser}{\textcolor{ueberschriftfarbe}{\textbf{2}}} \\
+\zeilel{Feuer} & \hyperlink{paar:Feuer-Holz}{\textcolor{ueberschriftfarbe}{\textbf{6}}} & -- & \hyperlink{paar:Feuer-Erde}{\textcolor{ueberschriftfarbe}{\textbf{5}}} & \hyperlink{paar:Feuer-Metall}{\textcolor{ueberschriftfarbe}{\textbf{7}}} & \hyperlink{paar:Feuer-Wasser}{\textcolor{ueberschriftfarbe}{\textbf{8}}} \\
+\zeilel{Erde} & \hyperlink{paar:Erde-Holz}{\textcolor{ueberschriftfarbe}{\textbf{12}}} & \hyperlink{paar:Erde-Feuer}{\textcolor{ueberschriftfarbe}{\textbf{10}}} & -- & \hyperlink{paar:Erde-Metall}{\textcolor{ueberschriftfarbe}{\textbf{9}}} & \hyperlink{paar:Erde-Wasser}{\textcolor{ueberschriftfarbe}{\textbf{11}}} \\
+\zeilel{Metall} & \hyperlink{paar:Metall-Holz}{\textcolor{ueberschriftfarbe}{\textbf{15}}} & \hyperlink{paar:Metall-Feuer}{\textcolor{ueberschriftfarbe}{\textbf{16}}} & \hyperlink{paar:Metall-Erde}{\textcolor{ueberschriftfarbe}{\textbf{14}}} & -- & \hyperlink{paar:Metall-Wasser}{\textcolor{ueberschriftfarbe}{\textbf{13}}} \\
+\zeilel{Wasser} & \hyperlink{paar:Wasser-Holz}{\textcolor{ueberschriftfarbe}{\textbf{17}}} & \hyperlink{paar:Wasser-Feuer}{\textcolor{ueberschriftfarbe}{\textbf{19}}} & \hyperlink{paar:Wasser-Erde}{\textcolor{ueberschriftfarbe}{\textbf{20}}} & \hyperlink{paar:Wasser-Metall}{\textcolor{ueberschriftfarbe}{\textbf{18}}} & -- \\
+\end{tabular}
+\end{center}
+
+\newpage
+\addsec*{Tripel nachschlagen}\label{sec:tripelschluessel}
+\begin{center}\renewcommand{\arraystretch}{1.25}\setlength{\tabcolsep}{6pt}
+\begin{tabular}{r|ccccc}
+{\footnotesize 1.\,2.\ \textbackslash\ 3.} & \kopfel{Holz} & \kopfel{Feuer} & \kopfel{Erde} & \kopfel{Metall} & \kopfel{Wasser} \kopfende \hline
+\zeilepaar{Holz}{Feuer} &  &  & \hyperlink{spruch:1}{\textbf{1}} & \hyperlink{spruch:2}{\textbf{2}} & \hyperlink{spruch:3}{\textbf{3}} \\
+\zeilepaar{Holz}{Erde} &  & \hyperlink{spruch:8}{\textbf{8}} &  & \hyperlink{spruch:7}{\textbf{7}} & \hyperlink{spruch:9}{\textbf{9}} \\
+\zeilepaar{Holz}{Metall} &  & \hyperlink{spruch:12}{\textbf{12}} & \hyperlink{spruch:11}{\textbf{11}} &  & \hyperlink{spruch:10}{\textbf{10}} \\
+\zeilepaar{Holz}{Wasser} &  & \hyperlink{spruch:5}{\textbf{5}} & \hyperlink{spruch:6}{\textbf{6}} & \hyperlink{spruch:4}{\textbf{4}} &  \\
+\hline
+\zeilepaar{Feuer}{Holz} &  &  & \hyperlink{spruch:17}{\textbf{17}} & \hyperlink{spruch:18}{\textbf{18}} & \hyperlink{spruch:16}{\textbf{16}} \\
+\zeilepaar{Feuer}{Erde} & \hyperlink{spruch:15}{\textbf{15}} &  &  & \hyperlink{spruch:13}{\textbf{13}} & \hyperlink{spruch:14}{\textbf{14}} \\
+\zeilepaar{Feuer}{Metall} & \hyperlink{spruch:21}{\textbf{21}} &  & \hyperlink{spruch:20}{\textbf{20}} &  & \hyperlink{spruch:19}{\textbf{19}} \\
+\zeilepaar{Feuer}{Wasser} & \hyperlink{spruch:22}{\textbf{22}} &  & \hyperlink{spruch:24}{\textbf{24}} & \hyperlink{spruch:23}{\textbf{23}} &  \\
+\hline
+\zeilepaar{Erde}{Holz} &  & \hyperlink{spruch:34}{\textbf{34}} &  & \hyperlink{spruch:36}{\textbf{36}} & \hyperlink{spruch:35}{\textbf{35}} \\
+\zeilepaar{Erde}{Feuer} & \hyperlink{spruch:28}{\textbf{28}} &  &  & \hyperlink{spruch:29}{\textbf{29}} & \hyperlink{spruch:30}{\textbf{30}} \\
+\zeilepaar{Erde}{Metall} & \hyperlink{spruch:26}{\textbf{26}} & \hyperlink{spruch:27}{\textbf{27}} &  &  & \hyperlink{spruch:25}{\textbf{25}} \\
+\zeilepaar{Erde}{Wasser} & \hyperlink{spruch:31}{\textbf{31}} & \hyperlink{spruch:33}{\textbf{33}} &  & \hyperlink{spruch:32}{\textbf{32}} &  \\
+\hline
+\zeilepaar{Metall}{Holz} &  & \hyperlink{spruch:43}{\textbf{43}} & \hyperlink{spruch:45}{\textbf{45}} &  & \hyperlink{spruch:44}{\textbf{44}} \\
+\zeilepaar{Metall}{Feuer} & \hyperlink{spruch:47}{\textbf{47}} &  & \hyperlink{spruch:46}{\textbf{46}} &  & \hyperlink{spruch:48}{\textbf{48}} \\
+\zeilepaar{Metall}{Erde} & \hyperlink{spruch:42}{\textbf{42}} & \hyperlink{spruch:40}{\textbf{40}} &  &  & \hyperlink{spruch:41}{\textbf{41}} \\
+\zeilepaar{Metall}{Wasser} & \hyperlink{spruch:37}{\textbf{37}} & \hyperlink{spruch:38}{\textbf{38}} & \hyperlink{spruch:39}{\textbf{39}} &  &  \\
+\hline
+\zeilepaar{Wasser}{Holz} &  & \hyperlink{spruch:49}{\textbf{49}} & \hyperlink{spruch:50}{\textbf{50}} & \hyperlink{spruch:51}{\textbf{51}} &  \\
+\zeilepaar{Wasser}{Feuer} & \hyperlink{spruch:56}{\textbf{56}} &  & \hyperlink{spruch:55}{\textbf{55}} & \hyperlink{spruch:57}{\textbf{57}} &  \\
+\zeilepaar{Wasser}{Erde} & \hyperlink{spruch:60}{\textbf{60}} & \hyperlink{spruch:59}{\textbf{59}} &  & \hyperlink{spruch:58}{\textbf{58}} &  \\
+\zeilepaar{Wasser}{Metall} & \hyperlink{spruch:53}{\textbf{53}} & \hyperlink{spruch:54}{\textbf{54}} & \hyperlink{spruch:52}{\textbf{52}} &  &  \\
+\end{tabular}
+\end{center}
 
 \newpage
 \begingroup
@@ -799,7 +903,7 @@ Die Sprüche geben Orientierung, keine Vorhersage.
 \begin{einleitung}
 Die Lehre von den fünf Elementen heißt auf Chinesisch Wu Xing ({\cjk 五行} wǔxíng). Wörtlich bedeutet das „fünf Gänge“: \textit{Xing} heißt gehen, sich wandeln. Gemeint sind deshalb weniger fünf Stoffe als fünf Phasen oder Kräfte, die einander ablösen. Holz, Feuer, Erde, Metall und Wasser sind Bilder für diese Wandlungen.
 
-Die Lehre ist mehr als zwei Jahrtausende alt, ihre Wurzeln reichen noch weiter zurück. Die erste ausführliche Aufzählung steht im Kapitel „Der große Plan“ (\textit{Hongfan}, {\cjk 洪範}) des \textit{Buchs der Urkunden} (\textit{Shujing}). Dort hat jedes Element seine Natur: Wasser befeuchtet und fließt abwärts, Feuer lodert und steigt, Holz biegt sich und richtet sich auf, Metall folgt und wandelt sich, die Erde nimmt die Saat auf und gibt die Ernte. Im 3.~Jahrhundert v.\,Chr. baute der Gelehrte Zou Yan daraus eine Lehre von den Kreisläufen der Natur und der Geschichte; spätere Dynastien beriefen sich auf sie, um ihre Herrschaft zu begründen.
+Die Lehre ist mehr als zwei Jahrtausende alt, ihre Wurzeln reichen noch weiter zurück. Die erste ausführliche Aufzählung steht im Kapitel „Der große Plan“ (\textit{Hongfan}, {\cjk 洪範}) des \textit{Buchs der Urkunden} (\textit{Shujing}). Dort hat jedes Element seine eigene Natur; die Seiten der einzelnen Elemente zitieren sie. Im 3.~Jahrhundert v.\,Chr. baute der Gelehrte Zou Yan daraus eine Lehre von den Kreisläufen der Natur und der Geschichte; spätere Dynastien beriefen sich auf sie, um ihre Herrschaft zu begründen.
 
 In der Han-Zeit (202 v.\,Chr.\ bis 220 n.\,Chr.) wurde Wu Xing zu einem umfassenden Weltsystem. Das \textit{Huainanzi} ordnet den Kosmos nach den fünf Phasen, das \textit{Chunqiu fanlu}, das Dong Zhongshu zugeschrieben wird, verbindet sie mit der konfuzianischen Ethik, und der \textit{Innere Klassiker des Gelben Kaisers} (\textit{Huangdi neijing}) legt sie der Medizin zugrunde: Organe, Gefühle und Geschmäcker gehören je einem Element. Bis heute prägt Wu Xing die chinesische Medizin, den Kalender, die Kampfkünste und das Feng Shui.
 
@@ -822,15 +926,15 @@ Den fünf Elementen ordnet die Überlieferung beinahe alles zu: Himmelsrichtunge
 \noindent{\large\bfseries Zeit und Thema}\par\smallskip
 \begin{center}
 \small\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1}
-\begin{tabularx}{\textwidth}{@{}m{0.22\textwidth}>{\raggedright\arraybackslash}m{0.3\textwidth}>{\raggedright\arraybackslash}X@{}}
+\begin{tabularx}{\textwidth}{@{}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.3\textwidth}>{\raggedright\arraybackslash}X@{}}
 \toprule
 \textbf{Element} & \textbf{Zeit, Lage} & \textbf{Thema} \\
 \midrule
-\rule[-1.1em]{0pt}{2.9em}\elementmitfarbe{Holz}{Grün} & Frühling, Osten & Aufbruch, Plan, Wachstum \\
-\rule[-1.1em]{0pt}{2.9em}\elementmitfarbe{Feuer}{Rot} & Sommer, Süden & Ausdruck, Begeisterung, Begegnung \\
-\rule[-1.1em]{0pt}{2.9em}\elementmitfarbe{Erde}{Gelb} & Spätsommer, Übergänge, Mitte & Sammlung, Fürsorge, Halt \\
-\rule[-1.1em]{0pt}{2.9em}\elementmitfarbe{Metall}{Weiß} & Herbst, Westen & Ernte, Klarheit, Abschied \\
-\rule[-1.1em]{0pt}{2.9em}\elementmitfarbe{Wasser}{Blau} & Winter, Norden & Ruhe, Tiefe, Ursprung \\
+\elementmitfarbe{Holz}{Grün} & Frühling, Osten & Aufbruch, Plan, Wachstum \\[1.2em]
+\elementmitfarbe{Feuer}{Rot} & Sommer, Süden & Ausdruck, Begeisterung, Begegnung \\[1.2em]
+\elementmitfarbe{Erde}{Gelb} & Spätsommer, Übergänge, Mitte & Sammlung, Fürsorge, Halt \\[1.2em]
+\elementmitfarbe{Metall}{Weiß} & Herbst, Westen & Ernte, Klarheit, Abschied \\[1.2em]
+\elementmitfarbe{Wasser}{Blau} & Winter, Norden & Ruhe, Tiefe, Ursprung \\[1.2em]
 \bottomrule
 \end{tabularx}
 \end{center}
@@ -845,15 +949,15 @@ Zur Gedankenwelt des Wu Xing gehört das Paar Yin und Yang ({\cjk 陰陽} yīn y
 \noindent{\large\bfseries Licht und Schatten}\par\smallskip
 \begin{center}
 \small\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1}
-\begin{tabularx}{\textwidth}{@{}m{0.22\textwidth}>{\raggedright\arraybackslash}m{0.33\textwidth}>{\raggedright\arraybackslash}X@{}}
+\begin{tabularx}{\textwidth}{@{}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.33\textwidth}>{\raggedright\arraybackslash}X@{}}
 \toprule
 \textbf{Element} & \textbf{Licht} & \textbf{Schatten} \\
 \midrule
-\rule[-1.1em]{0pt}{2.9em}\elementmitfarbe{Holz}{Grün} & Güte ({\cjk 仁} rén) & Zorn ({\cjk 怒} nù) \\
-\rule[-1.1em]{0pt}{2.9em}\elementmitfarbe{Feuer}{Rot} & Anstand ({\cjk 禮} lǐ) & Übermut ({\cjk 喜} xǐ) \\
-\rule[-1.1em]{0pt}{2.9em}\elementmitfarbe{Erde}{Gelb} & Vertrauen ({\cjk 信} xìn) & Grübeln ({\cjk 思} sī) \\
-\rule[-1.1em]{0pt}{2.9em}\elementmitfarbe{Metall}{Weiß} & Gerechtigkeit ({\cjk 義} yì) & Trauer ({\cjk 憂} yōu) \\
-\rule[-1.1em]{0pt}{2.9em}\elementmitfarbe{Wasser}{Blau} & Weisheit ({\cjk 智} zhì) & Furcht ({\cjk 恐} kǒng) \\
+\elementmitfarbe{Holz}{Grün} & Güte & Zorn \\[1.2em]
+\elementmitfarbe{Feuer}{Rot} & Anstand & Übermut \\[1.2em]
+\elementmitfarbe{Erde}{Gelb} & Vertrauen & Grübeln \\[1.2em]
+\elementmitfarbe{Metall}{Weiß} & Gerechtigkeit & Trauer \\[1.2em]
+\elementmitfarbe{Wasser}{Blau} & Weisheit & Furcht \\[1.2em]
 \bottomrule
 \end{tabularx}
 \end{center}
@@ -1075,20 +1179,52 @@ Zwischen diesen Punkten gibt es zwei Arten von Strecken. Kurze Strecken führen 
 \begin{center}\begin{minipage}{\linewidth}\centering
 \brettbild\par
 \smallskip
-{\small\itshape Außen die Ecken auf dem Ring, innen die Kreuzungen auf dem Pentagon: beide im Uhrzeigersinn, jede Kreuzung ihrer Ecke gegenüber.\par}
+{\small\itshape Außen die Ecken auf dem Ring, innen die Kreuzungen auf dem Pentagon.\par}
 \end{minipage}\end{center}
 
 \begin{einleitung}
 Die Ecken tragen die fünf Farben in der Reihenfolge des Wandlungskreises: im Uhrzeigersinn Holz (grün), Feuer (rot), Erde (gelb), Metall (weiß) und Wasser (blau). Die Farben des heutigen Bretts sind bewusst nach dem Wu Xing gewählt; nur das Wasser ist blau statt, wie in der Überlieferung, schwarz. Die Kreuzungen tragen dieselben Farben, jeweils gegenüber ihrer Ecke. So erscheint der Wandlungskreis zweimal, außen groß und innen klein, und beide laufen im selben Drehsinn.
 
-Die Figur ist vom Goldenen Schnitt durchzogen. Die Kreuzungen teilen jede Linie des Sterns in drei Stücke, und das äußere Stück ist rund 1,618-mal so lang wie das innere: das Verhältnis des Goldenen Schnitts. Auf dem Brett kehrt es wieder, denn eine Wechselstrecke ist um genau dieses Maß länger als eine Strecke auf dem Pentagon.
+Die Figur ist vom Goldenen Schnitt durchzogen. Die Kreuzungen teilen jede Linie des Sterns in drei Stücke, und das äußere Stück ist rund 1,618-mal so lang wie das innere: das Verhältnis des Goldenen Schnitts. Das äußere Stück ist eine Wechselstrecke, das innere eine Seite des Pentagons.
 
 Man kann das Pentagame auch räumlich sehen: als Blick von oben auf ein fünfseitiges Antiprisma, zwei gegeneinander verdrehte Fünfecke übereinander, verbunden durch Dreiecke. Das nähere Fünfeck erscheint groß als Ring, das fernere klein als Pentagon, und die Wechselstrecken sind die Kanten dazwischen.
 \end{einleitung}
 
 \newpage
 \begin{center}\begin{minipage}{\linewidth}\centering
-\input{work/antiprisma}\par
+% Antiprisma (früher work/antiprisma.tex, jetzt hier eingebettet)
+\begin{tikzpicture}[scale=0.6]
+\draw[black!50, dashed, line width=0.8pt, shorten <=0.617cm, shorten >=0.617cm] (-2.431,-0.421) -- (-1.980,0.623);
+\draw[black!50, dashed, line width=0.8pt, shorten <=0.617cm, shorten >=0.617cm] (-2.726,4.807) -- (-1.980,0.623);
+\draw[black!50, dashed, line width=0.8pt, shorten <=0.617cm, shorten >=0.617cm] (-0.478,5.565) -- (-1.980,0.623);
+\draw[black!50, dashed, line width=0.8pt, shorten <=0.617cm, shorten >=0.617cm] (-0.478,5.565) -- (1.207,0.806);
+\draw[black!50, dashed, line width=0.8pt, shorten <=0.617cm, shorten >=0.617cm] (2.431,5.103) -- (1.207,0.806);
+\draw[black!50, dashed, line width=0.8pt, shorten <=0.617cm, shorten >=0.617cm] (1.207,0.806) -- (2.726,-0.125);
+\draw[black!50, dashed, line width=0.8pt, shorten <=0.617cm, shorten >=0.617cm] (-1.980,0.623) -- (1.207,0.806);
+\fill[black!8, fill opacity=0.8] (0.478,-0.883) -- (-2.431,-0.421) -- (-1.980,0.623) -- (1.207,0.806) -- (2.726,-0.125) -- cycle;
+\draw[black!60, line width=1.1pt] (0.478,-0.883) -- (-2.431,-0.421) -- (-1.980,0.623) -- (1.207,0.806) -- (2.726,-0.125) -- cycle;
+\shade[ball color=my_white!88!black] (1.207,0.806) circle (1.118);\draw[black!35, line width=0.3pt] (1.207,0.806) circle (1.118);\node[text=black, scale=1.9, inner sep=0pt] at (1.207,0.806) {\cjk 金};
+\shade[ball color=my_yellow] (-1.980,0.623) circle (1.118);\node[text=black, scale=1.9, inner sep=0pt] at (-1.980,0.623) {\cjk 土};
+\shade[ball color=my_blue] (2.726,-0.125) circle (1.118);\node[text=white, scale=1.9, inner sep=0pt] at (2.726,-0.125) {\cjk 水};
+\shade[ball color=my_red] (-2.431,-0.421) circle (1.118);\node[text=white, scale=1.9, inner sep=0pt] at (-2.431,-0.421) {\cjk 火};
+\shade[ball color=my_green] (0.478,-0.883) circle (1.118);\node[text=white, scale=1.9, inner sep=0pt] at (0.478,-0.883) {\cjk 木};
+\draw[black!80, line width=1.3pt, shorten <=0.617cm, shorten >=0.617cm] (1.980,4.060) -- (0.478,-0.883);
+\draw[black!80, line width=1.3pt, shorten <=0.617cm, shorten >=0.617cm] (1.980,4.060) -- (2.726,-0.125);
+\draw[black!80, line width=1.3pt, shorten <=0.617cm, shorten >=0.617cm] (2.431,5.103) -- (2.726,-0.125);
+\draw[black!80, line width=1.3pt, shorten <=0.617cm, shorten >=0.617cm] (-2.726,4.807) -- (-2.431,-0.421);
+\draw[black!80, line width=1.3pt, shorten <=0.617cm, shorten >=0.617cm] (-1.207,3.877) -- (0.478,-0.883);
+\draw[black!80, line width=1.3pt, shorten <=0.617cm, shorten >=0.617cm] (-1.207,3.877) -- (-2.431,-0.421);
+\fill[black!6, fill opacity=0.55] (-0.478,5.565) -- (2.431,5.103) -- (1.980,4.060) -- (-1.207,3.877) -- (-2.726,4.807) -- cycle;
+\draw[black!70, line width=1.1pt] (-0.478,5.565) -- (2.431,5.103) -- (1.980,4.060) -- (-1.207,3.877) -- (-2.726,4.807) -- cycle;
+\shade[ball color=my_green] (-0.478,5.565) circle (1.118);\node[text=white, scale=1.9, inner sep=0pt] at (-0.478,5.565) {\cjk 木};
+\shade[ball color=my_red] (2.431,5.103) circle (1.118);\node[text=white, scale=1.9, inner sep=0pt] at (2.431,5.103) {\cjk 火};
+\shade[ball color=my_blue] (-2.726,4.807) circle (1.118);\node[text=white, scale=1.9, inner sep=0pt] at (-2.726,4.807) {\cjk 水};
+\shade[ball color=my_yellow] (1.980,4.060) circle (1.118);\node[text=black, scale=1.9, inner sep=0pt] at (1.980,4.060) {\cjk 土};
+\shade[ball color=my_white!88!black] (-1.207,3.877) circle (1.118);\draw[black!35, line width=0.3pt] (-1.207,3.877) circle (1.118);\node[text=black, scale=1.9, inner sep=0pt] at (-1.207,3.877) {\cjk 金};
+\node[font=\footnotesize\itshape, anchor=west, align=left, overlay] at (4.444,4.682) {oben:\\Ring mit Ecken};
+\node[font=\footnotesize\itshape, anchor=west, align=left, overlay] at (4.444,0.000) {unten:\\Pentagon mit\\Kreuzungen};
+\draw[-{Stealth[scale=1.1]}, black!60, line width=0.8pt] (0,8.583) -- (0,6.983) node[pos=0, above, font=\footnotesize\itshape] {Blick von oben};
+\end{tikzpicture}\par
 \smallskip
 {\small\itshape Das fünfseitige Antiprisma. Von oben gesehen erscheint das nähere Fünfeck groß als Ring, das fernere klein als Pentagon.\par}
 \end{minipage}\end{center}
@@ -1096,7 +1232,7 @@ Man kann das Pentagame auch räumlich sehen: als Blick von oben auf ein fünfsei
 \begin{einleitung}
 Die beiden Fünfecke des Antiprismas sind um 36 Grad gegeneinander verdreht. Ein Fünfeck, um diesen Winkel gedreht, gleicht einem, das auf dem Kopf steht. Darum liegt im Pentagame jede Kreuzung ihrer Ecke gegenüber, und doch laufen beide Kreise im selben Drehsinn.
 
-Von jeder Ecke führen zwei Kanten hinunter, zu den Kreuzungen der beiden Elemente, die im Wandlungskreis zwei Schritte entfernt liegen: von der Holz-Ecke zur Erde- und zur Metall-Kreuzung. Die Ringe oben und unten verbinden die Elemente, die einander nähren; die Kanten dazwischen verbinden die, die einander bändigen. So wird der Fünferkreis des Wu Xing in eine weitere Dimension gehoben.
+Die Ringe oben und unten verbinden die Elemente, die einander nähren; die Kanten dazwischen verbinden die, die einander bändigen (mehr dazu im Kapitel \hyperref[kap:beziehungen]{„Die vier Richtungen“}). So wird der Fünferkreis des Wu Xing in eine weitere Dimension gehoben.
 
 Dieses Buch folgt dem Pentagame: Es nimmt das überlieferte Schema, verdoppelt es und gelangt so von den fünf Elementen und vier Richtungen zu den reicheren Erscheinungen der Paare, Wendungen und Tripel.
 \end{einleitung}
@@ -1112,73 +1248,51 @@ Ein Schritt vorwärts (+1) ist das Nähren ({\cjk 生} shēng), zwei Schritte vo
 
 \begin{center}
 \begin{minipage}[t]{0.48\linewidth}\centering
-\scalebox{\richtungsfaktor}{\wandlungskreis[ke]}\par
+{\tikzset{wkpfeil/.style={line width=\fpeval{1.3/\richtungsfaktor}pt, >={Stealth[scale=1.25]}}}\scalebox{\richtungsfaktor}{\wandlungskreis[ke]}}\par
 \smallskip
-{\small\itshape +1 Nähren und +2 Bändigen\par}
+{\small\itshape +1 Nähren ({\cjk 生} shēng)\\und +2 Bändigen ({\cjk 克} kè)\par}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.48\linewidth}\centering
-\scalebox{\richtungsfaktor}{\wandlungskreis[gegen]}\par
+{\tikzset{wkpfeil/.style={line width=\fpeval{1.3/\richtungsfaktor}pt, >={Stealth[scale=1.25]}}}\scalebox{\richtungsfaktor}{\wandlungskreis[gegen]}}\par
 \smallskip
-{\small\itshape −1 Annehmen und −2 Sich stellen\par}
+{\small\itshape −1 Annehmen ({\cjk 泄} xiè)\\und −2 Sich stellen ({\cjk 侮} wǔ)\par}
 \end{minipage}
 \end{center}
 
 \newpage
-\addsec*{Die Richtungen im Pentagame}\markright{Die Richtungen im Pentagame}
-
 \begin{einleitung}
 Im Pentagame erscheint der Wandlungskreis zweimal, außen auf dem Ring und innen auf dem Pentagon (siehe \hyperref[kap:brett]{„Die Elemente im Pentagame“}). Jeder Zug von einem farbigen Feld zu einem andersfarbigen ist eine Bewegung in eine der vier Richtungen. Die einfachen Richtungen, Nähren und Annehmen, bleiben auf ihrem Kreis. Die doppelten, Bändigen und Sich stellen, wechseln die Ebene: Sie führen über eine Wechselstrecke von der Ecke zur Kreuzung oder von der Kreuzung zur Ecke. Die Diagonale des Wandlungskreises wird so zum Übergang zwischen außen und innen.
-
-\textbf{Nähren und Bändigen.} Nähren (+1) ist ein kurzer Schritt im Uhrzeigersinn, von Holz zu Feuer: außen von Ecke zu Ecke, innen von Kreuzung zu Kreuzung. Bändigen (+2) erreicht die Erde. Auf dem Ring läge sie zwei Schritte im Uhrzeigersinn. Ihre Kreuzung aber liegt auf der anderen Seite der Mitte, von der Holz-Ecke aus gesehen links. Die Wechselstrecke führt deshalb gegen den Uhrzeigersinn: von der Holz-Ecke zur Erde-Kreuzung und ebenso von der Holz-Kreuzung zur Erde-Ecke.
 \end{einleitung}
 
-\begin{center}
-\begin{minipage}{\linewidth}\centering
-\begin{minipage}[t]{0.48\linewidth}\centering
-{\renewcommand{\rpfont}{\tiny}\def\rpzeige{aussen}\richtungspaar[\richtungsradius]{plus}}\par
-{\small\itshape Nähren und Bändigen von der Ecke\par}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.48\linewidth}\centering
-{\renewcommand{\rpfont}{\tiny}\def\rpzeige{innen}\richtungspaar[\richtungsradius]{plus}}\par
-{\small\itshape Nähren und Bändigen von der Kreuzung\par}
-\end{minipage}
-\end{minipage}
-\end{center}
+\begin{center}\begin{minipage}{\linewidth}\centering
+\brettwechsel{plus}\par
+\smallskip
+{\small\itshape Nähren und Bändigen: Zwei Schritte im Wandlungskreis entsprechen einem Wechsel zwischen außen und innen im Pentagame. Der Bogen zeigt zweimal Nähren auf dem Ring, der gerade Pfeil das Bändigen über die Wechselstrecke, beide von Holz zu Erde.\par}
+\end{minipage}\end{center}
 
 \newpage
-\begin{einleitung}
-\textbf{Annehmen und Sich stellen.} Annehmen (−1) ist ein kurzer Schritt gegen den Uhrzeigersinn, von Holz zu Wasser. Sich stellen (−2) erreicht das Metall. Auf dem Ring läge es zwei Schritte gegen den Uhrzeigersinn. Seine Kreuzung aber liegt auf der anderen Seite der Mitte, von der Holz-Ecke aus gesehen rechts. Die Wechselstrecke führt deshalb im Uhrzeigersinn: von der Holz-Ecke zur Metall-Kreuzung und ebenso von der Holz-Kreuzung zur Metall-Ecke.
-\end{einleitung}
-
-\begin{center}
-\begin{minipage}{\linewidth}\centering
-\begin{minipage}[t]{0.48\linewidth}\centering
-{\renewcommand{\rpfont}{\tiny}\def\rpzeige{aussen}\richtungspaar[\richtungsradius]{minus}}\par
-{\small\itshape Annehmen und Sich stellen von der Ecke\par}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.48\linewidth}\centering
-{\renewcommand{\rpfont}{\tiny}\def\rpzeige{innen}\richtungspaar[\richtungsradius]{minus}}\par
-{\small\itshape Annehmen und Sich stellen von der Kreuzung\par}
-\end{minipage}
-\end{minipage}
-\end{center}
+\begin{center}\begin{minipage}{\linewidth}\centering
+\brettwechsel{minus}\par
+\smallskip
+{\small\itshape Annehmen und Sich stellen: Zwei Schritte zurück im Wandlungskreis entsprechen ebenso einem Wechsel zwischen außen und innen. Der Bogen zeigt zweimal Annehmen auf dem Ring, der gerade Pfeil das Sich-Stellen über die Wechselstrecke, beide von Holz zu Metall.\par}
+\end{minipage}\end{center}
 
 \begin{einleitung}
-Bändigen führt also gegen den Uhrzeigersinn, Sich stellen im Uhrzeigersinn: Das Vorzeichen bezieht sich auf den Wandlungskreis, nicht auf den Drehsinn im Pentagame. Die Wechselstrecke ist dabei nur der direkte Weg. Wer auf dem Ring zwei Schritte vorwärts geht, kommt ebenfalls beim übernächsten Element an; diese beiden Schritte bilden die Wendung \hyperlink{muster:I}{I, Fortschreiten}. Dieselbe Zählung verwendet das \textit{Pentagame Compendium} für die Züge: ±1 auf Ring oder Pentagon, ±2 entlang des Sterns.
+Die Wechselstrecke führt dabei scheinbar in die Gegenrichtung: zur Erde-Kreuzung gegen den Uhrzeigersinn, zur Metall-Kreuzung im Uhrzeigersinn. Das Vorzeichen bezieht sich auf den Wandlungskreis, nicht auf den Drehsinn im Pentagame. Wer stattdessen auf dem Ring zwei Schritte geht, kommt ebenfalls beim übernächsten Element an; diese beiden Schritte bilden die Wendung \hyperlink{muster:I}{I, Fortschreiten}, zurück die Wendung \hyperlink{muster:IV}{IV, Ergründen}.
 \end{einleitung}
 
-\newpage\markright{Weg und Bedeutung}
+\linkeseite\markright{Weg und Bedeutung}
 \noindent{\large\bfseries Weg und Bedeutung}\par\smallskip
 \begin{center}
 \small\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.15}
-\begin{tabularx}{\textwidth}{@{}>{\raggedright}p{0.25\textwidth}>{\raggedright}p{0.2\textwidth}>{\raggedright\arraybackslash}X@{}}
+\begin{tabularx}{\textwidth}{@{}c@{\hspace{6pt}}>{\raggedright}p{0.235\textwidth}>{\raggedright}p{0.175\textwidth}>{\raggedright\arraybackslash}X@{}}
 \toprule
-\textbf{Richtung} & \textbf{Weg} & \textbf{Bedeutungen} \\
+& \textbf{Richtung} & \textbf{Weg} & \textbf{Bedeutungen} \\
 \midrule
-\hyperlink{beziehung:1}{\textbf{+1} Nähren}\newline {\cjk 生} shēng & 1 vor\newline kurz \uzs & hervorbringen, wachsen lassen, fördern, weitergeben, zum Ausdruck bringen \\
-\hyperlink{beziehung:4}{\textbf{−1} Annehmen}\newline {\cjk 泄} xiè & 1 zurück\newline kurz \guzs & schöpfen, sich nähren lassen, zehren, ablassen, sich entlasten \\
-\hyperlink{beziehung:2}{\textbf{+2} Bändigen}\newline {\cjk 克} kè & 2 vor\newline Wechsel \guzs & zügeln, ordnen, formen, tragen, meistern \\
-\hyperlink{beziehung:3}{\textbf{−2} Sich stellen}\newline {\cjk 侮} wǔ & 2 zurück\newline Wechsel \uzs & widerstehen, trotzen, sich messen, sich auflehnen, sich bewähren \\
+\rzeichen{生}{shēng} & \hyperlink{beziehung:1}{\textbf{+1} Nähren} & 1 vor\newline kurz \uzs & hervorbringen, wachsen lassen, fördern, weitergeben, zum Ausdruck bringen \\
+\rzeichen{泄}{xiè} & \hyperlink{beziehung:4}{\textbf{−1} Annehmen} & 1 zurück\newline kurz \guzs & schöpfen, sich nähren lassen, zehren, ablassen, sich entlasten \\
+\rzeichen{克}{kè} & \hyperlink{beziehung:2}{\textbf{+2} Bändigen} & 2 vor\newline Wechsel \guzs & zügeln, ordnen, formen, tragen, meistern \\
+\rzeichen{侮}{wǔ} & \hyperlink{beziehung:3}{\textbf{−2} Sich stellen} & 2 zurück\newline Wechsel \uzs & widerstehen, trotzen, sich messen, sich auflehnen, sich bewähren \\
 \bottomrule
 \end{tabularx}
 \end{center}
@@ -1193,14 +1307,14 @@ Die chinesische Schicksalskunde (Bazi) liest die Richtungen von dem Element aus,
 \noindent{\large\bfseries Licht und Schatten}\par\smallskip
 \begin{center}
 \small\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.15}
-\begin{tabularx}{\textwidth}{@{}>{\raggedright}p{0.25\textwidth}>{\raggedright}X>{\raggedright\arraybackslash}X@{}}
+\begin{tabularx}{\textwidth}{@{}c@{\hspace{6pt}}>{\raggedright}p{0.27\textwidth}>{\raggedright}X>{\raggedright\arraybackslash}X@{}}
 \toprule
-\textbf{Richtung} & \textbf{Licht} & \textbf{Schatten} \\
+& \textbf{Richtung} & \textbf{Licht} & \textbf{Schatten} \\
 \midrule
-\hyperlink{beziehung:1}{\textbf{+1} Nähren} & Fürsorge, Weitergabe & Erschöpfung, Verwöhnen \\
-\hyperlink{beziehung:4}{\textbf{−1} Annehmen} & Entlastung\newline ({\cjk 實者瀉其子}) & Auszehrung\newline ({\cjk 子盜母氣}) \\
-\hyperlink{beziehung:2}{\textbf{+2} Bändigen} & Ordnung, Maß\newline ({\cjk 制} zhì) & Überwältigen\newline ({\cjk 乘} chéng) \\
-\hyperlink{beziehung:3}{\textbf{−2} Sich stellen} & Bewährung, Mut & Verhöhnen\newline ({\cjk 侮} wǔ) \\
+\rzeichen{生}{shēng} & \hyperlink{beziehung:1}{\textbf{+1} Nähren} & Fürsorge, Weitergabe & Erschöpfung, Verwöhnen \\
+\rzeichen{泄}{xiè} & \hyperlink{beziehung:4}{\textbf{−1} Annehmen} & Entlastung\newline ({\cjk 實者瀉其子}) & Auszehrung\newline ({\cjk 子盜母氣}) \\
+\rzeichen{克}{kè} & \hyperlink{beziehung:2}{\textbf{+2} Bändigen} & Ordnung, Maß\newline ({\cjk 制} zhì) & Überwältigen\newline ({\cjk 乘} chéng) \\
+\rzeichen{侮}{wǔ} & \hyperlink{beziehung:3}{\textbf{−2} Sich stellen} & Bewährung, Mut & Verhöhnen\newline ({\cjk 侮} wǔ) \\
 \bottomrule
 \end{tabularx}
 \end{center}
@@ -1208,7 +1322,7 @@ Die chinesische Schicksalskunde (Bazi) liest die Richtungen von dem Element aus,
 \begin{einleitung}
 {\small Die Medizin unterscheidet bei jeder Richtung das gesunde Maß von der Störung. Fülle leitet man über das Kind ab; ist das Kind aber selbst geschwächt, stiehlt es der Mutter die Kraft. Bändigen hält in Schranken; wird es maßlos, überwältigt es. Das Sich stellen gilt der Tradition vor allem als Störung; dieses Buch liest es auch als Bewährung.
 
-Jede Richtung hat im Folgenden zwei Seiten. Die erste zeigt sie im Wandlungskreis, die zweite im Pentagame: schwarz von der Ecke oben, rot von der Kreuzung unten in der Mitte. Die Bilder sind bewusst grau: Die Ecke oben kann jedes der fünf Elemente sein, und die Richtung sieht für alle gleich aus.\par}
+Jede Richtung hat im Folgenden zwei Seiten. Die erste zeigt sie im Wandlungskreis, die zweite im Pentagame: schwarz die fünf Pfeile von den Ecken, rot die fünf von den Kreuzungen. Die Felder sind bewusst grau, denn die Richtung sieht von jedem Element aus gleich aus.\par}
 \end{einleitung}
 
 \linkeseite
@@ -1228,9 +1342,7 @@ Jede Richtung hat im Folgenden zwei Seiten. Die erste zeigt sie im Wandlungskrei
 \begin{minipage}{\textwidth}\small\setlength{\parindent}{0pt}\setlength{\parskip}{0.5ex}
 Das Zeichen {\cjk 生} zeigt einen Spross, der aus der Erde treibt; es bedeutet wachsen, hervorbringen, leben. Die Reihe des Hervorbringens folgt dem Lauf der Jahreszeiten: Holz nährt das Feuer, Feuer die Erde, Erde das Metall, Metall das Wasser und Wasser das Holz. Dong Zhongshu, der einflussreichste Gelehrte der Han-Zeit, nennt dieses Verhältnis das von Vater und Sohn (\textit{Chunqiu fanlu}, „Die Bedeutung der fünf Elemente“).
 
-Die Medizin spricht von Mutter und Kind ({\cjk 母子} mǔ zǐ): Das nährende Element ist die Mutter, das genährte das Kind. Daraus folgt einer ihrer bekanntesten Grundsätze: „Bei Leere stärke die Mutter“ ({\cjk 虛者補其母} xū zhě bǔ qí mǔ; \textit{Nanjing} 69). Was schwach ist, wird nicht unmittelbar gestärkt, sondern über das, was es nährt.
-
-Hervorbringen allein wäre maßloses Wachstum. Erst zusammen mit dem Bändigen ergibt es einen Kreislauf, der sich selbst im Gleichgewicht hält.
+Die Medizin spricht von Mutter und Kind ({\cjk 母子} mǔ zǐ): Das nährende Element ist die Mutter, das genährte das Kind. Daraus folgt einer ihrer bekanntesten Grundsätze: „Bei Leere stärke die Mutter“ ({\cjk 虛者補其母} xū zhě bǔ qí mǔ; \textit{Nanjing} 69). Was schwach ist, wird nicht unmittelbar gestärkt, sondern über das, wovon es genährt wird.
 \end{minipage}
 \end{orakelblock}
 \newpage
@@ -1273,7 +1385,7 @@ Ist das Kind aber selbst geschwächt, nimmt es der Mutter mehr, als sie geben ka
 \medskip
 \textbf{Das Kind nimmt von der Mutter. Wer annimmt, wird genährt.}\par
 \smallskip
-\lichtschatten{Annehmen heißt, sich nähren zu lassen: von der eigenen Herkunft, von Menschen, Orten, Erinnerungen, von der Stille. Zugleich nimmt das Kind der Mutter etwas von ihrer Fülle ab: In der Tradition ist das der sanfteste Weg, ein Übermaß auszugleichen.}
+\lichtschatten{Annehmen heißt, sich nähren zu lassen: von der eigenen Herkunft, von Menschen, Orten, Erinnerungen, von der Stille. Zugleich nimmt das Kind der Mutter etwas von ihrer Fülle ab und hilft ihr so, ihr Maß zu finden.}
   {Das Kind zehrt an der Mutter: Wer immer nur nimmt, erschöpft die Quelle. Wer gar nichts annehmen kann, verdurstet neben ihr.}
 \linkteil
 {\small Alle fünf Paare:}\\*[0.5ex] \mbox{\hyperlink{paar:Holz-Wasser}{\mypair{Holz}{Wasser}}} \hfill \mbox{\hyperlink{paar:Feuer-Holz}{\mypair{Feuer}{Holz}}} \hfill \mbox{\hyperlink{paar:Erde-Feuer}{\mypair{Erde}{Feuer}}} \hfill \mbox{\hyperlink{paar:Metall-Erde}{\mypair{Metall}{Erde}}} \hfill \mbox{\hyperlink{paar:Wasser-Metall}{\mypair{Wasser}{Metall}}}\par
@@ -1328,7 +1440,7 @@ Wird das Bändigen selbst maßlos, spricht die Tradition von {\cjk 乘} chéng, 
 \textit{Im Pentagame: im Uhrzeigersinn vom Ring nach innen oder von innen zum Ring.}\par
 \medskip
 \begin{minipage}{\textwidth}\small\setlength{\parindent}{0pt}\setlength{\parskip}{0.5ex}
-{\cjk 侮} wǔ bedeutet verhöhnen, missachten. Die Richtung kehrt das Bändigen um: Das gebändigte Element wendet sich gegen das, was es bändigt. Kapitel 67 des \textit{Suwen} beschreibt beides zusammen: Ist ein Element im Übermaß, so beherrscht es, was es bändigt, und verhöhnt, wovon es gebändigt wird ({\cjk 氣有餘則制己所勝而侮所不勝}). Ein klassisches Beispiel: Wird das Feuer übermächtig, trocknet es das Wasser aus, das es sonst löscht.
+{\cjk 侮} wǔ bedeutet verhöhnen, missachten. Die Richtung kehrt das Bändigen um: Das gebändigte Element wendet sich gegen das, wovon es gebändigt wird. Kapitel 67 des \textit{Suwen} beschreibt beides zusammen: Ist ein Element im Übermaß, so beherrscht es, was es bändigt, und verhöhnt, wovon es gebändigt wird ({\cjk 氣有餘則制己所勝而侮所不勝}). Ein klassisches Beispiel: Wird das Feuer übermächtig, trocknet es das Wasser aus, das es sonst löscht.
 
 Die Tradition sieht in dieser Richtung vor allem eine Störung der Ordnung. Dieses Buch liest sie auch als Mut: sich dem zu stellen, was einen begrenzt, und daran geprüft zu werden. Ob daraus Auflehnung oder Bewährung wird, hängt vom Maß ab.
 \end{minipage}
@@ -1353,11 +1465,11 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
 
 \textbf{Zehn Verbindungen, zwanzig Paare.} Im Wandlungskreis gibt es zehn Verbindungen: fünf Bögen des Hervorbringens und fünf Linien des Bändigens. Jede lässt sich von beiden Enden aus lesen, und so werden daraus 20 Paare. \textit{Holz nährt Feuer} (+1) und \textit{Feuer nimmt Holz an} (−1) sind dieselbe Verbindung, einmal von der Mutter und einmal vom Kind aus gesehen. So hat jedes Paar sein Gegenstück. Ein Gegensatz wie Hell und Dunkel ist ein Paar trotzdem nicht, sondern eine gerichtete Beziehung zwischen zwei verschiedenen Kräften.
 
-\textbf{Mutter und Kind.} Die Tradition beschreibt jedes Element über seine Beziehungen zu den anderen. Das \textit{Nanjing}, ein Klassiker der Medizin, vergleicht das Hervorbringen mit Mutter und Kind (\textit{Nanjing} 69 und 75): Was mich hervorbringt, ist meine Mutter, was ich hervorbringe, mein Kind. Beim Bändigen nennt der \textit{Neijing} (\textit{Suwen} 67) das, was ich bändige, „das von mir Besiegte“ ({\cjk 所勝} suǒ shèng), und das, was mich bändigt, „das von mir nicht Besiegte“ ({\cjk 所不勝} suǒ bù shèng). Ein Paar ist darum nie gleichrangig: Einer gibt, der andere empfängt; einer formt, der andere wird geformt. Die chinesische Schicksalskunde liest diese Beziehungen sogar als Rollen im menschlichen Leben, etwa als Eltern und Kinder oder als Obrigkeit.
+\textbf{Wer gibt, wer empfängt.} Beim Hervorbringen spricht die Medizin von Mutter und Kind (\textit{Nanjing} 69 und 75). Beim Bändigen nennt der \textit{Neijing} (\textit{Suwen} 67) das, was ich bändige, „das von mir Besiegte“ ({\cjk 所勝} suǒ shèng), und das, was mich bändigt, „das von mir nicht Besiegte“ ({\cjk 所不勝} suǒ bù shèng). Ein Paar ist darum nie gleichrangig: Einer gibt, der andere empfängt; einer formt, der andere wird geformt.
 
-\textbf{Gleichgewicht.} Hervorbringen und Bändigen brauchen einander. Dong Zhongshu fasst das Schema in einen Satz: „Benachbarte bringen einander hervor, übernächste besiegen einander“ ({\cjk 比相生而間相勝}; \textit{Chunqiu fanlu} 58). Der \textit{Neijing} ergänzt: „Übermaß schadet; was folgt, setzt ihm eine Grenze; durch die Grenze entstehen Wachsen und Wandlung“ ({\cjk 亢則害，承乃制，制則生化}; \textit{Suwen} 68). Auch das Nähren kann zu viel sein: Zu viel Wasser lässt das Holz faulen. Und das Bändigen ist nicht nur Zwang: Erst im Feuer wird das Eisen formbar, erst unter der Axt der Baum zum Balken. Darum zeigt sich in jedem Paar beides, das Gelingen und die Gefahr.
+\textbf{Gleichgewicht.} Dong Zhongshu fasst das Schema in einen Satz: „Benachbarte bringen einander hervor, übernächste besiegen einander“ ({\cjk 比相生而間相勝}; \textit{Chunqiu fanlu} 58). Der \textit{Neijing} ergänzt: „Übermaß schadet; was folgt, setzt ihm eine Grenze; durch die Grenze entstehen Wachsen und Wandlung“ ({\cjk 亢則害，承乃制，制則生化}; \textit{Suwen} 68). Auch das Nähren kann zu viel sein: Zu viel Wasser lässt das Holz faulen. Und das Bändigen ist nicht nur Zwang: Erst im Feuer wird das Eisen formbar, erst unter der Axt der Baum zum Balken. Darum zeigt sich in jedem Paar beides, das Gelingen und die Gefahr.
 
-\textbf{Bilder.} Jedes Paar hat ein eigenes Bild: ein Geschehen aus Natur oder Handwerk, wie es tatsächlich vorkommt. Holz brennt, der Keim bricht durch die Erde, hartes Holz macht die Klinge stumpf. Das Urteil nennt nur dieses Geschehen. Der Satz darunter nennt seinen Sinn in den Themen der beiden Elemente, etwa: Der Plan entfacht die Begeisterung. Was es für dich bedeutet, sagen Licht und Schatten. Dieselben Bilder kehren in den Tripeln wieder.
+\textbf{Bilder.} Das Urteil eines Paares ist sein Bild (siehe \hyperref[kap:einfuehrung]{Einführung}): Holz brennt, der Keim bricht durch die Erde, hartes Holz macht die Klinge stumpf. Der Satz darunter nennt seinen Sinn in den Themen der beiden Elemente, etwa: Der Plan entfacht die Begeisterung. Was es für dich bedeutet, sagen Licht und Schatten. Dieselben Bilder kehren in den Tripeln wieder.
 \end{einleitung}
 
 \newpage
@@ -1640,9 +1752,9 @@ Die zwölf Wendungen sind nach ihrem ersten und dann nach ihrem zweiten Schritt 
 
 \begin{einleitung}
 
-Das Bild über jeder Wendung zeigt ihre zwei Richtungen als Pfeile im Pentagame, wie bei den Richtungen schwarz von außen und rot von innen; die Ecke oben kann jedes Element sein.
+Das Schaubild über jeder Wendung zeigt ihre zwei Richtungen als Pfeile im Pentagame, wie bei den Richtungen schwarz von außen und rot von innen; die Ecke oben kann jedes Element sein.
 
-\textbf{Dreiecke.} Die drei Elemente einer Wendung bilden ein Dreieck. Liegen sie im Wandlungskreis nebeneinander, ist das Dreieck stumpf: Zwei Seiten verbinden benachbarte Elemente (±1), eine Seite übernächste (±2). Es ist vom Hervorbringen geprägt, ein Stück vom Kreis. Ist zwischen ihnen ein Element ausgelassen, ist das Dreieck spitz, mit zwei Seiten ±2 und einer Seite ±1. Es ist vom Bändigen geprägt, ein Stück vom Stern. Im Bild über jeder Wendung ist ihr Dreieck hellgelb hinterlegt und blau umrandet.
+\textbf{Dreiecke.} Die drei Elemente einer Wendung bilden ein Dreieck. Liegen sie im Wandlungskreis nebeneinander, ist das Dreieck stumpf: Zwei Seiten verbinden benachbarte Elemente (±1), eine Seite übernächste (±2). Es ist vom Hervorbringen geprägt, ein Stück vom Kreis. Ist zwischen ihnen ein Element ausgelassen, ist das Dreieck spitz, mit zwei Seiten ±2 und einer Seite ±1. Es ist vom Bändigen geprägt, ein Stück vom Stern. Im Schaubild über jeder Wendung ist ihr Dreieck hellgelb hinterlegt und blau umrandet.
 
 \end{einleitung}
 
@@ -1811,7 +1923,7 @@ Schließt an ein Paar ein zweites an, das mit dessen zweitem Element beginnt, en
 
 Fünf Elemente für den Anfang und zwölf Wendungen für den Weg ergeben die 60 Tripel. Jedes Element, jede Richtung, jedes Paar und jede Wendung kommt darin vor, und jeder Spruch zeigt das Ganze von einer anderen Seite, im Licht und im Schatten.
 
-Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ein Tripel fügt die Geschehen seiner beiden Paare zu einer Szene zusammen. Vorn steht das Bild. Darunter nennt der Sinn, was die Szene in den Themen der drei Elemente bedeutet: zwei Sätze, einer für jeden Schritt der Wendung, verbunden durch das mittlere Element. Dann folgt das Urteil, ein knapper Satz, der den Sinn zusammenfasst. Im Bild handelt meist eine Gestalt: eine Frau, wenn die Wendung ein Yin-Dreieck bildet, und ein Mann beim Yang-Dreieck (siehe \hyperref[kap:muster]{„Die zwölf Wendungen“}). Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe folgen sie den Wendungen I bis XII.
+Vorn steht das Bild, die Szene aus den Geschehen der beiden Paare. Darunter nennt der Sinn, was die Szene in den Themen der drei Elemente bedeutet: zwei Sätze, einer für jeden Schritt der Wendung, verbunden durch das mittlere Element. Dann folgt das Urteil, ein knapper Satz, der den Sinn zusammenfasst. Im Bild handelt meist eine Gestalt: eine Frau, wenn die Wendung ein Yin-Dreieck bildet, und ein Mann beim Yang-Dreieck (siehe \hyperref[kap:muster]{„Die zwölf Wendungen“}). Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe folgen sie den Wendungen I bis XII.
 \end{einleitung}
 
 \newpage
@@ -2185,25 +2297,14 @@ Wie die Bilder der Sprüche aufeinander aufbauen, beschreibt die Einführung: Ei
 
 \endgroup
 
-\addchap{Schlüssel}\markboth{Schlüssel}{\mbox{}}\label{kap:register}
+\addchap{Übersicht der Wendungen}\markboth{Übersicht der Wendungen}{\mbox{}}\label{kap:register}
 
 \begin{einleitung}
-Mit diesen Tafeln findest du jede Kombination, ohne zu blättern. Suche die erste Farbe in der linken Spalte und die nächste in der Kopfzeile; die Nummer im Schnittpunkt verweist auf das Paar oder das Tripel. Die Übersicht der Wendungen nennt zu jeder ihre beiden Richtungen, die Richtung von Anfang zu Ende und ihr Dreieck.
+Die Tafel nennt zu jeder Wendung ihre beiden Richtungen, ihre Familie und ihr Dreieck. Das Schaubild danach zeigt alle zwölf im Pentagame, geordnet wie in der Einleitung zu den Wendungen.
 \end{einleitung}
 
-\addsec*{Paare}\markright{Paare}
-\begin{center}\renewcommand{\arraystretch}{1.6}\setlength{\tabcolsep}{5pt}
-\begin{tabular}{r|ccccc}
-{\footnotesize 1.\ \textbackslash\ 2.} & \kreis{Holz} & \kreis{Feuer} & \kreis{Erde} & \kreis{Metall} & \kreis{Wasser} \\ \hline
-\kreis{Holz} & -- & \hyperlink{paar:Holz-Feuer}{\textcolor{ueberschriftfarbe}{\textbf{1}}} & \hyperlink{paar:Holz-Erde}{\textcolor{ueberschriftfarbe}{\textbf{3}}} & \hyperlink{paar:Holz-Metall}{\textcolor{ueberschriftfarbe}{\textbf{4}}} & \hyperlink{paar:Holz-Wasser}{\textcolor{ueberschriftfarbe}{\textbf{2}}} \\
-\kreis{Feuer} & \hyperlink{paar:Feuer-Holz}{\textcolor{ueberschriftfarbe}{\textbf{6}}} & -- & \hyperlink{paar:Feuer-Erde}{\textcolor{ueberschriftfarbe}{\textbf{5}}} & \hyperlink{paar:Feuer-Metall}{\textcolor{ueberschriftfarbe}{\textbf{7}}} & \hyperlink{paar:Feuer-Wasser}{\textcolor{ueberschriftfarbe}{\textbf{8}}} \\
-\kreis{Erde} & \hyperlink{paar:Erde-Holz}{\textcolor{ueberschriftfarbe}{\textbf{12}}} & \hyperlink{paar:Erde-Feuer}{\textcolor{ueberschriftfarbe}{\textbf{10}}} & -- & \hyperlink{paar:Erde-Metall}{\textcolor{ueberschriftfarbe}{\textbf{9}}} & \hyperlink{paar:Erde-Wasser}{\textcolor{ueberschriftfarbe}{\textbf{11}}} \\
-\kreis{Metall} & \hyperlink{paar:Metall-Holz}{\textcolor{ueberschriftfarbe}{\textbf{15}}} & \hyperlink{paar:Metall-Feuer}{\textcolor{ueberschriftfarbe}{\textbf{16}}} & \hyperlink{paar:Metall-Erde}{\textcolor{ueberschriftfarbe}{\textbf{14}}} & -- & \hyperlink{paar:Metall-Wasser}{\textcolor{ueberschriftfarbe}{\textbf{13}}} \\
-\kreis{Wasser} & \hyperlink{paar:Wasser-Holz}{\textcolor{ueberschriftfarbe}{\textbf{17}}} & \hyperlink{paar:Wasser-Feuer}{\textcolor{ueberschriftfarbe}{\textbf{19}}} & \hyperlink{paar:Wasser-Erde}{\textcolor{ueberschriftfarbe}{\textbf{20}}} & \hyperlink{paar:Wasser-Metall}{\textcolor{ueberschriftfarbe}{\textbf{18}}} & -- \\
-\end{tabular}
-\end{center}
 
-\addsec*{Wendungen}\markright{Wendungen}
+
 \begin{center}
 \footnotesize\renewcommand{\arraystretch}{1.15}\setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}rlcll@{}}
@@ -2227,7 +2328,7 @@ XII  & \hyperlink{muster:XII}{\csname mustername XII\endcsname} & −2, −2 & G
 \end{center}
 
 \newpage
-\addsec*{Die Wendungen im Bild}\markright{Die Wendungen im Bild}
+\addsec*{Die Wendungen im Schaubild}\markright{Die Wendungen im Schaubild}
 \begin{center}
 {\newsavebox{\wrbox}%
 \sbox{\wrbox}{\resizebox{1.95cm}{!}{\musterbrett{1}{1}}}\expandafter\newsavebox\csname wrI\endcsname\expandafter\sbox\csname wrI\endcsname{\usebox{\wrbox}}%
@@ -2306,40 +2407,8 @@ XII  & \hyperlink{muster:XII}{\csname mustername XII\endcsname} & −2, −2 & G
 \end{center}
 
 
-\newpage
-\addsec*{Tripel}\markright{Tripel}
-\begin{center}\renewcommand{\arraystretch}{1.25}\setlength{\tabcolsep}{6pt}
-\begin{tabular}{r|ccccc}
-{\footnotesize 1.\,2.\ \textbackslash\ 3.} & \kreis{Holz} & \kreis{Feuer} & \kreis{Erde} & \kreis{Metall} & \kreis{Wasser} \\ \hline
-\mypair[0.5em]{Holz}{Feuer} &  &  & \hyperlink{spruch:1}{\textbf{1}} & \hyperlink{spruch:2}{\textbf{2}} & \hyperlink{spruch:3}{\textbf{3}} \\
-\mypair[0.5em]{Holz}{Erde} &  & \hyperlink{spruch:8}{\textbf{8}} &  & \hyperlink{spruch:7}{\textbf{7}} & \hyperlink{spruch:9}{\textbf{9}} \\
-\mypair[0.5em]{Holz}{Metall} &  & \hyperlink{spruch:12}{\textbf{12}} & \hyperlink{spruch:11}{\textbf{11}} &  & \hyperlink{spruch:10}{\textbf{10}} \\
-\mypair[0.5em]{Holz}{Wasser} &  & \hyperlink{spruch:5}{\textbf{5}} & \hyperlink{spruch:6}{\textbf{6}} & \hyperlink{spruch:4}{\textbf{4}} &  \\
-\hline
-\mypair[0.5em]{Feuer}{Holz} &  &  & \hyperlink{spruch:17}{\textbf{17}} & \hyperlink{spruch:18}{\textbf{18}} & \hyperlink{spruch:16}{\textbf{16}} \\
-\mypair[0.5em]{Feuer}{Erde} & \hyperlink{spruch:15}{\textbf{15}} &  &  & \hyperlink{spruch:13}{\textbf{13}} & \hyperlink{spruch:14}{\textbf{14}} \\
-\mypair[0.5em]{Feuer}{Metall} & \hyperlink{spruch:21}{\textbf{21}} &  & \hyperlink{spruch:20}{\textbf{20}} &  & \hyperlink{spruch:19}{\textbf{19}} \\
-\mypair[0.5em]{Feuer}{Wasser} & \hyperlink{spruch:22}{\textbf{22}} &  & \hyperlink{spruch:24}{\textbf{24}} & \hyperlink{spruch:23}{\textbf{23}} &  \\
-\hline
-\mypair[0.5em]{Erde}{Holz} &  & \hyperlink{spruch:34}{\textbf{34}} &  & \hyperlink{spruch:36}{\textbf{36}} & \hyperlink{spruch:35}{\textbf{35}} \\
-\mypair[0.5em]{Erde}{Feuer} & \hyperlink{spruch:28}{\textbf{28}} &  &  & \hyperlink{spruch:29}{\textbf{29}} & \hyperlink{spruch:30}{\textbf{30}} \\
-\mypair[0.5em]{Erde}{Metall} & \hyperlink{spruch:26}{\textbf{26}} & \hyperlink{spruch:27}{\textbf{27}} &  &  & \hyperlink{spruch:25}{\textbf{25}} \\
-\mypair[0.5em]{Erde}{Wasser} & \hyperlink{spruch:31}{\textbf{31}} & \hyperlink{spruch:33}{\textbf{33}} &  & \hyperlink{spruch:32}{\textbf{32}} &  \\
-\hline
-\mypair[0.5em]{Metall}{Holz} &  & \hyperlink{spruch:43}{\textbf{43}} & \hyperlink{spruch:45}{\textbf{45}} &  & \hyperlink{spruch:44}{\textbf{44}} \\
-\mypair[0.5em]{Metall}{Feuer} & \hyperlink{spruch:47}{\textbf{47}} &  & \hyperlink{spruch:46}{\textbf{46}} &  & \hyperlink{spruch:48}{\textbf{48}} \\
-\mypair[0.5em]{Metall}{Erde} & \hyperlink{spruch:42}{\textbf{42}} & \hyperlink{spruch:40}{\textbf{40}} &  &  & \hyperlink{spruch:41}{\textbf{41}} \\
-\mypair[0.5em]{Metall}{Wasser} & \hyperlink{spruch:37}{\textbf{37}} & \hyperlink{spruch:38}{\textbf{38}} & \hyperlink{spruch:39}{\textbf{39}} &  &  \\
-\hline
-\mypair[0.5em]{Wasser}{Holz} &  & \hyperlink{spruch:49}{\textbf{49}} & \hyperlink{spruch:50}{\textbf{50}} & \hyperlink{spruch:51}{\textbf{51}} &  \\
-\mypair[0.5em]{Wasser}{Feuer} & \hyperlink{spruch:56}{\textbf{56}} &  & \hyperlink{spruch:55}{\textbf{55}} & \hyperlink{spruch:57}{\textbf{57}} &  \\
-\mypair[0.5em]{Wasser}{Erde} & \hyperlink{spruch:60}{\textbf{60}} & \hyperlink{spruch:59}{\textbf{59}} &  & \hyperlink{spruch:58}{\textbf{58}} &  \\
-\mypair[0.5em]{Wasser}{Metall} & \hyperlink{spruch:53}{\textbf{53}} & \hyperlink{spruch:54}{\textbf{54}} & \hyperlink{spruch:52}{\textbf{52}} &  &  \\
-\end{tabular}
-\end{center}
 
-% Anhang (eigene Datei); zum Abschalten ein % vor die nächste Zeile setzen
-\include{anhang}
+
 
 \newpage
 

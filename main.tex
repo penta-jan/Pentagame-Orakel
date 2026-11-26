@@ -169,6 +169,7 @@
 
 % \beziehungsbrett{Schritte}: dieselbe Beziehung zweimal, ab Ecke 0 (schwarz) und ab Kreuzung 0a (rot)
 \newcommand{\beziehungsbrett}[1]{{%
+  \expandafter\def\csname pp@lw\endcsname{1.0pt}% nach dem Verkleinern mit \diagbox rund 1.3pt, wie im Wandlungskreis daneben
   \boardwhite
   \renewcommand{\mywhite}{\mustergrau}\renewcommand{\myblue}{\mustergrau}%
   \renewcommand{\mygreen}{\mustergrau}\renewcommand{\myred}{\mustergrau}%
@@ -502,6 +503,7 @@
 \newcommand{\rzeichen}[2]{\begin{tabular}[t]{@{}c@{}}\raisebox{-0.35ex}{\Large\cjk #1}\\[-0.1ex]{\scriptsize #2}\end{tabular}}
 \newcommand{\diagbox}[1]{\resizebox{0.4\textwidth}{!}{#1}}
 % \richtungskreis{1..4}: Wandlungskreis mit allen fünf Pfeilen einer Richtung (s = 1 nährt, 2 bändigt, 3 stellt sich, 4 nimmt an)
+% Pfeile 1.36pt: nach dem Verkleinern mit \diagbox rund 1.3pt, wie in allen Schaubildern des Richtungen-Kapitels
 \newcommand{\richtungskreis}[1]{{%
   \pgfmathsetmacro{\R}{2.0}\pgfmathsetmacro{\rk}{0.40}%
   \pgfmathsetmacro{\db}{deg((\rk+0.1)/\R)}%
@@ -511,13 +513,13 @@
     \foreach \i in {0,...,4}{%
       \pgfmathsetmacro{\w}{90-72*\i}%
       \ifcase#1\or
-        \draw[-{Stealth[scale=1]}, thick] ({\w-\db}:\R) arc[start angle={\w-\db}, end angle={\w-72+\db}, radius=\R];
+        \draw[-{Stealth[scale=0.9]}, line width=1.36pt] ({\w-\db}:\R) arc[start angle={\w-\db}, end angle={\w-72+\db}, radius=\R];
       \or
-        \pgfmathtruncatemacro{\t}{mod(\i+2,5)}\draw[-{Stealth[scale=1]}, thick, pfeilinnen, shorten <=\rk cm+0.08cm, shorten >=\rk cm+0.08cm] (r\i) -- (r\t);
+        \pgfmathtruncatemacro{\t}{mod(\i+2,5)}\draw[-{Stealth[scale=0.9]}, line width=1.36pt, pfeilinnen, shorten <=\rk cm+0.08cm, shorten >=\rk cm+0.08cm] (r\i) -- (r\t);
       \or
-        \pgfmathtruncatemacro{\t}{mod(\i+3,5)}\draw[-{Stealth[scale=1]}, thick, pfeilinnen, shorten <=\rk cm+0.08cm, shorten >=\rk cm+0.08cm] (r\i) -- (r\t);
+        \pgfmathtruncatemacro{\t}{mod(\i+3,5)}\draw[-{Stealth[scale=0.9]}, line width=1.36pt, pfeilinnen, shorten <=\rk cm+0.08cm, shorten >=\rk cm+0.08cm] (r\i) -- (r\t);
       \or
-        \draw[-{Stealth[scale=1]}, thick] ({\w+\db}:\R) arc[start angle={\w+\db}, end angle={\w+72-\db}, radius=\R];
+        \draw[-{Stealth[scale=0.9]}, line width=1.36pt] ({\w+\db}:\R) arc[start angle={\w+\db}, end angle={\w+72-\db}, radius=\R];
       \fi}
     \foreach \e [count=\i from 0] in {Holz,Feuer,Erde,Metall,Wasser}{%
       \filldraw[fill=\e, draw=black!60, line width=0.5pt] (r\i) circle (\rk);
@@ -526,6 +528,8 @@
   \end{tikzpicture}}}
 % \wkpfeil: Stil der Pfeile im Wandlungskreis; im Kapitel „Die vier Richtungen“ so dick wie auf den Brettern
 \tikzset{wkpfeil/.style={thick}}
+% Schrift der Zyklus-Beschriftungen (生 shēng usw.) im Wandlungskreis; in den großen Bildern der Richtungen größer
+\newcommand{\wkzeichenfont}{\scriptsize}\newcommand{\wkumschriftfont}{\scriptsize}
 \newcommand{\wandlungskreis}[1][]{%
   \begin{tikzpicture}[>=latex]
     \pgfmathsetmacro{\R}{3*\wkscale}\pgfmathsetmacro{\RN}{\R+1.25}\pgfmathsetmacro{\RL}{\R+0.55}%
@@ -539,21 +543,21 @@
       \node at (\w:\RN cm) {\scriptsize\e};
       \ifx\art\artgegen
         \draw[<-, wkpfeil] ({\w-\d}:\myradius) arc[start angle={\w-\d}, end angle={\w-72+\d}, radius=\myradius];
-        \ifnum\i=1 \node[font=\scriptsize, fill=white, inner sep=1pt] at ({\w-36}:\RL cm) {{\cjk 泄} xiè};\fi
+        \ifnum\i=1 \node[fill=white, inner sep=1pt, anchor=south west] at ({\w-36}:\R cm+0.3cm) {{\wkzeichenfont\cjk 泄}\,{\wkumschriftfont xiè}};\fi
       \else
         \draw[->, wkpfeil] ({\w-\d}:\myradius) arc[start angle={\w-\d}, end angle={\w-72+\d}, radius=\myradius];
-        \ifnum\i=1 \node[font=\scriptsize, fill=white, inner sep=1pt] at ({\w-36}:\RL cm) {{\cjk 生} shēng};\fi
+        \ifnum\i=1 \node[fill=white, inner sep=1pt, anchor=south west] at ({\w-36}:\R cm+0.3cm) {{\wkzeichenfont\cjk 生}\,{\wkumschriftfont shēng}};\fi
       \fi
     }
     \ifx\art\artke
       \foreach \i/\ii in {1/3,2/4,3/5,4/1,5/2}
         \draw[->, wkpfeil, red!75!black] (w\i) -- (w\ii);
-      \node[inner sep=1pt, font=\scriptsize] at (0,0) {{\cjk 克} kè};
+      \node[inner sep=0pt, align=center] at (0,0) {{\wkzeichenfont\cjk 克}\\{\wkumschriftfont kè}};
     \fi
     \ifx\art\artgegen
       \foreach \i/\ii in {3/1,4/2,5/3,1/4,2/5}
         \draw[->, wkpfeil, red!75!black] (w\i) -- (w\ii);
-      \node[inner sep=1pt, font=\scriptsize] at (0,0) {{\cjk 侮} wǔ};
+      \node[inner sep=0pt, align=center] at (0,0) {{\wkzeichenfont\cjk 侮}\\{\wkumschriftfont wǔ}};
     \fi
   \end{tikzpicture}}
 
@@ -625,14 +629,14 @@
     \path (-\bwr pt-1.9cm,0) -- (\bwr pt+1.9cm,0);
     \ifx\bwart\bwplus
       \draw[-{Stealth[scale=1.2]}, line width=1.3pt, pfeilaussen] (84:\bwr pt) arc[start angle=84, end angle=-48, radius=\bwr pt]
-        node[pos=0.5, right=2pt, font=\footnotesize, fill=white, inner sep=1pt] {+1 +1 {\cjk 生生}};
+        node[pos=0.5, right=3pt, font=\small, fill=white, inner sep=1pt] {+1 +1 {\cjk 生生}};
       \plinie{0}{3a}{-{Stealth[scale=1.2]}, line width=1.3pt, pfeilaussen, shorten <=\cvar, shorten >=\jvar}
-        node[pos=0.5, left=2pt, font=\footnotesize, fill=white, inner sep=1pt] {+2 {\cjk 克}};
+        node[pos=0.4, anchor=east, xshift=-7pt, font=\small, fill=white, inner sep=1pt] {+2 {\cjk 克}};
     \else
       \draw[-{Stealth[scale=1.2]}, line width=1.3pt, pfeilaussen] (96:\bwr pt) arc[start angle=96, end angle=228, radius=\bwr pt]
-        node[pos=0.5, left=2pt, font=\footnotesize, fill=white, inner sep=1pt] {−1 −1 {\cjk 泄泄}};
+        node[pos=0.5, left=3pt, font=\small, fill=white, inner sep=1pt] {−1 −1 {\cjk 泄泄}};
       \plinie{0}{2a}{-{Stealth[scale=1.2]}, line width=1.3pt, pfeilaussen, shorten <=\cvar, shorten >=\jvar}
-        node[pos=0.5, right=2pt, font=\footnotesize, fill=white, inner sep=1pt] {−2 {\cjk 侮}};
+        node[pos=0.4, anchor=west, xshift=7pt, font=\small, fill=white, inner sep=1pt] {−2 {\cjk 侮}};
     \fi
   \end{pentdiag}}}
 
@@ -644,6 +648,8 @@
 % \richtungsfaktor: Maßstab der Bilder im Kapitel „Die vier Richtungen“. Der Wandlungskreis wird damit skaliert,
 % die Bretter bekommen denselben Kreisradius (3 cm * \wkscale * \richtungsfaktor), damit Kreis und Ring gleich groß sind.
 \newcommand{\richtungsfaktor}{0.6}
+% \wkgross: Maßstab, mit dem der Wandlungskreis so groß wird wie der Ring von \brettwechsel (Radius 0.18\textwidth)
+\newcommand{\wkgross}{\fpeval{round(0.18*\textwidth/(3*\wkscale*1cm),4)}}
 \newcommand{\richtungsradius}{\fpeval{3*\wkscale*\richtungsfaktor}cm}
 \newcommand{\richtungspaar}[2][0.19\textwidth]{{%
   \ifx\rpzeige\rpbeide
@@ -766,7 +772,16 @@
 
 Pentagame ist ein Brettspiel, das auf einem Fünfstern gespielt wird, einem Pentagramm, dessen Spitzen ein Kreis verbindet. Darin ist es einzigartig: Alle fünf Seiten des Bretts sind gleichberechtigt, keine Ecke und keine Farbe steht über einer anderen. Pentagame ist zuerst und vor allem ein Spiel. Seine fünf Farben und seine Linien folgen aber genau dem Schema einer alten chinesischen Lehre, und so lässt sich das Brett auch als Schaubild dieser Lehre lesen. Davon handelt dieses Buch.
 
-Wer Pentagame spielt, kennt diesen Moment: Die dritte Figur erreicht ihr Ziel und zieht heraus, die Partie ist gewonnen, und im Zentrum stehen drei Figuren verschiedener Farbe in einer bestimmten Reihenfolge. Jede Farbe steht für eine der fünf Wandlungsphasen des Wu Xing: \element*{Holz}, \element*{Feuer}, \element*{Erde}, \element*{Metall} und \element*{Wasser}. Dieses Buch erzählt, was solche Reihenfolgen bedeuten können, und es baut diese Bedeutung Schritt für Schritt aus den fünf Elementen auf.
+Die fünf Farben stehen für die fünf Wandlungsphasen des Wu Xing: \element*{Holz}, \element*{Feuer}, \element*{Erde}, \element*{Metall} und \element*{Wasser}. Dieses Buch liest sie als Elemente eines Orakels. Eine Farbe, zwei oder drei in einer bestimmten Reihenfolge ergeben eine Antwort, und das Buch baut ihre Bedeutung Schritt für Schritt aus den fünf Elementen auf.
+
+\subsection*{Herkunft}
+
+Das bekannteste Orakel Chinas ist das \textit{Yijing} ({\cjk 易經}), bei uns als \textit{I Ging} oder \textit{Buch der Wandlungen} bekannt. Seine ältesten Teile sind fast dreitausend Jahre alt. Es besteht aus 64 Zeichen von je sechs ganzen oder geteilten Linien; zu jedem Zeichen gehören ein Urteil und ein Bild. In Europa wurde es vor allem durch die deutsche Übersetzung von Richard Wilhelm (1924) bekannt. Mit den fünf Elementen hat das I Ging ursprünglich nichts zu tun. Dieses Buch übernimmt von ihm die beiden Teile Urteil und Bild, stellt aber das Bild voran.
+
+Das unmittelbare Vorbild ist das \href{https://en.wikipedia.org/wiki/Lingqijing}{Lingqijing} ({\cjk 靈棋經}, „Klassiker der göttlichen Spielsteine“), ein chinesisches Orakel, das wohl in der frühen Wei-Jin-Zeit entstanden ist. Dort ergeben drei Positionen (Himmel, Mensch, Erde) mit je fünf Zuständen 125 Sprüche. Beim Pentagame-Orakel kommt keine Farbe doppelt vor, deshalb sind es 60 Tripel.
+
+Die Sprüche sind keine Übersetzung eines alten Textes, sondern eine moderne Deutung entlang der Wu-Xing-Zyklen. Überliefert sind die fünf Elemente und ihre Reihenfolge, die beiden Zyklen des Hervorbringens ({\cjk 生} shēng) und des Bändigens ({\cjk 克} kè) mit ihren Gegenrichtungen xiè und wǔ sowie die Zuordnungen von Jahreszeit, Himmelsrichtung, Tugend und Gemütsbewegung, Organ, Geschmack und Planet. Nähren und Bändigen sind auch im Deutschen gebräuchliche Namen; Annehmen und Sich stellen sind für dieses Buch gewählt. Die Zählung +1, −1, +2, −2 stammt aus der Notation des \textit{Pentagame Compendium}. Neu sind die zwölf Wendungen mit ihren Namen, die Übertragung auf das Pentagame und alle Sprüche.
+
 
 \subsection*{Vom Element zum Tripel}
 
@@ -793,61 +808,31 @@ Wer Pentagame spielt, kennt diesen Moment: Die dritte Figur erreicht ihr Ziel un
 \end{tabular}
 \end{center}
 
+\addsec{Sprüche und Bilder}\markright{Sprüche und Bilder}
+
 Zu jeder Erscheinung gibt es einen Spruch: zu jedem Element, jeder Richtung, jedem Paar, jeder Wendung und jedem Tripel. Ein Spruch besteht aus einem knappen Urteil, fett gesetzt, und einer Deutung darunter. Die Deutung zeigt immer beide Seiten: das Licht und den Schatten. Vor dem Urteil stehen bei den Tripeln ein Bild und sein Sinn; bei den Paaren folgt der Sinn dem Urteil.
 
 Die Bilder der Sprüche bauen aufeinander auf. Jedes Paar hat ein eigenes Geschehen aus Natur und Handwerk, wie es tatsächlich vorkommt: Holz brennt, der Wall hält das Wasser, die Klinge schneidet das Holz. Die Ordnung stammt aus China, die Bilder aber aus dem vorindustriellen Europa: Meiler und Hammerwerk, Fass und Einbaum, Burgtor und Badstube. Jede Wendung ist eine Art der Bewegung aus zwei Schritten, etwa das Ausholen oder das Standhalten. Ein Tripel fügt die Geschehen seiner beiden Paare zu einer Szene zusammen, dem Bild, und sein Urteil fasst ihren Sinn in einen Satz. Wer die Paare kennt, erkennt sie in den Tripeln wieder.
 
-Das bekannteste Orakel Chinas ist das \textit{Yijing} ({\cjk 易經}), bei uns als \textit{I Ging} oder \textit{Buch der Wandlungen} bekannt. Seine ältesten Teile sind fast dreitausend Jahre alt. Es besteht aus 64 Zeichen von je sechs ganzen oder geteilten Linien; zu jedem Zeichen gehören ein Urteil und ein Bild. In Europa wurde es vor allem durch die deutsche Übersetzung von Richard Wilhelm (1924) bekannt. Mit den fünf Elementen hat das I Ging ursprünglich nichts zu tun. Dieses Buch übernimmt von ihm die beiden Teile Urteil und Bild, stellt aber das Bild voran.
+\addsec{Befragung}\markright{Befragung}\label{kap:schluessel}
 
-Das unmittelbare Vorbild ist das \href{https://en.wikipedia.org/wiki/Lingqijing}{Lingqijing} ({\cjk 靈棋經}, „Klassiker der göttlichen Spielsteine“), ein chinesisches Orakel, das wohl in der frühen Wei-Jin-Zeit entstanden ist. Dort ergeben drei Positionen (Himmel, Mensch, Erde) mit je fünf Zuständen 125 Sprüche. Beim Pentagame-Orakel kommt keine Farbe doppelt vor, deshalb sind es 60 Tripel.
+Lege fünf Figuren in einen Beutel, je eine jeder Farbe, also ein komplettes Figurenset. Stelle deine Frage und ziehe, ohne hinzusehen, eine, zwei oder drei Figuren nacheinander. Die Reihenfolge zählt. Jede weitere Figur fügt eine Stufe hinzu: Eine Farbe nennt das Thema, zwei zeigen eine Bewegung, drei einen ganzen Vorgang. Nach jeder Stufe folgt ihr Schlüssel; die Nummer darin führt zum Spruch.
 
-Die Sprüche sind keine Übersetzung eines alten Textes, sondern eine moderne Deutung entlang der Wu-Xing-Zyklen. Überliefert sind die fünf Elemente und ihre Reihenfolge, die beiden Zyklen des Hervorbringens ({\cjk 生} shēng) und des Bändigens ({\cjk 克} kè) mit ihren Gegenrichtungen xiè und wǔ sowie die Zuordnungen von Jahreszeit, Himmelsrichtung, Tugend und Gemütsbewegung, Organ, Geschmack und Planet. Nähren und Bändigen sind auch im Deutschen gebräuchliche Namen; Annehmen und Sich stellen sind für dieses Buch gewählt. Die Zählung +1, −1, +2, −2 stammt aus der Notation des \textit{Pentagame Compendium}. Neu sind die zwölf Wendungen mit ihren Namen, die Positionen Wurzel, Weg und Frucht, die Übertragung auf das Pentagame und alle Sprüche.
+\subsection*{Eine Figur: ein Element}\label{sec:elementschluessel}
 
+Die gezogene Farbe ist ein \hyperref[kap:elemente]{Element}. Es nennt das Thema deiner Frage, mit seinem Licht und seinem Schatten. Elemente kommen auf jeder Stufe vor, denn jedes Paar und jedes Tripel ist aus ihnen gebaut.
 
-\addsec{Befragung}\markright{Befragung}
-
-Am einfachsten befragst du das Orakel mit einem Beutel. Lege je eine Figur jeder Farbe hinein, etwa eine ganze Mannschaft, formuliere deine Frage und ziehe, ohne hinzusehen:
-
-\begin{enumerate}[leftmargin=*]
-  \item \textbf{Zwei Figuren:} Schlag das Paar im \hyperref[sec:paarschluessel]{Schlüssel} nach. Jedes Paar ist gleich wahrscheinlich (1 von 20).
-  \item \textbf{Drei Figuren:} Schlag das Tripel im \hyperref[sec:tripelschluessel]{Schlüssel} nach. Jedes Tripel ist gleich wahrscheinlich (1 von 60).
-\end{enumerate}
-
-Die Reihenfolge, in der du die Figuren ziehst, ist wichtig, denn jede Position hat ihre eigene Bedeutung:
-
-\begin{center}
-\begin{tabular}{lll}
-\toprule
-\textbf{Position} & \textbf{Bedeutung} & \textbf{Frage dazu} \\
-\midrule
-1.\ Farbe & \textbf{Wurzel:} die Ausgangslage & Wo stehe ich? \\
-2.\ Farbe & \textbf{Weg:} die Wandlung & Was bewegt sich? \\
-3.\ Farbe & \textbf{Frucht:} das Ergebnis & Wohin führt es? \\
-\bottomrule
+\begin{center}\setlength{\tabcolsep}{8pt}
+\begin{tabular}{ccccc}
+\hyperlink{element:Holz}{\kreis[1.1em]{Holz}} & \hyperlink{element:Feuer}{\kreis[1.1em]{Feuer}} & \hyperlink{element:Erde}{\kreis[1.1em]{Erde}} & \hyperlink{element:Metall}{\kreis[1.1em]{Metall}} & \hyperlink{element:Wasser}{\kreis[1.1em]{Wasser}} \\[2pt]
+\small\hyperlink{element:Holz}{Holz} & \small\hyperlink{element:Feuer}{Feuer} & \small\hyperlink{element:Erde}{Erde} & \small\hyperlink{element:Metall}{Metall} & \small\hyperlink{element:Wasser}{Wasser} \\
 \end{tabular}
 \end{center}
 
-Beim Paar fallen Weg und Frucht zusammen: Die zweite Farbe zeigt, wohin die Wurzel führt.
+\subsection*{Zwei Figuren: ein Paar}\label{sec:paarschluessel}
 
-Der Beutel ist aber nur der kürzeste Weg. Brett und Buch beruhen auf denselben fünf Farben und denselben Linien. Deshalb lässt sich fast alles, was in einer Partie Pentagame geschieht, hier nachschlagen und deuten:
+Zwei Farben in ihrer Reihenfolge sind ein \hyperref[kap:paare]{Paar}: Die erste ist der Ursprung, die zweite das Ziel. Zwischen beiden liegt eine der vier \hyperref[kap:beziehungen]{Richtungen}, und das Paar zeigt, was zwischen ihnen geschieht. Suche die erste Farbe in der linken Spalte und die zweite in der Kopfzeile. Jedes Paar ist gleich wahrscheinlich (1 von 20).
 
-\begin{itemize}[leftmargin=*]
-  \item \textbf{Richtungen:} Jeder Zug, der auf einem farbigen Feld beginnt, einer Ecke oder einer Kreuzung, und auf einem andersfarbigen endet, ist eine Bewegung in eine der vier \hyperref[kap:beziehungen]{Richtungen}. Welche es ist, hängt nur von den beiden Farben ab.
-  \item \textbf{Paare:} Ein solcher Zug verbindet zwei Farben in fester Reihenfolge, von wo nach wohin, und ist damit schon ein \hyperref[kap:paare]{Paar}. Ebenso bilden zwei Figuren verschiedener Farbe ein Paar, etwa wenn sie beim Schlagen ihre Plätze tauschen.
-  \item \textbf{Wendungen:} Ein Doppelzug mit derselben Figur besteht aus zwei Bewegungen; ihre Richtungen ergeben eine der zwölf \hyperref[kap:muster]{Wendungen}.
-  \item \textbf{Tripel:} Die drei Figuren, mit denen eine Partie gewonnen wird, ergeben in der Reihenfolge, in der sie herausgezogen wurden, ein \hyperref[kap:tripel]{Tripel}. So wird jede Partie zu einem Spruch. Ebenso lassen sich die ersten drei geschlagenen Blöcke lesen, nach der Farbe der Felder, auf denen sie standen: Sie zeigen, unter welchem Zeichen das Spiel beginnt.
-\end{itemize}
-
-Zum Deuten lies zuerst den Spruch. Von dort aus kannst du auf jeder Stufe weitergehen, denn jeder Eintrag verweist auf die verwandten Einträge der anderen Stufen: das Tripel auf seine Wendung und seine beiden Paare, das Paar auf seine Elemente, seine Richtung und seine Tripel. Am schnellsten findest du eine Kombination über den \hyperref[kap:schluessel]{Schlüssel} gleich im Anschluss.
-
-Die Sprüche geben Orientierung, keine Vorhersage.
-
-\newpage
-\addsec{Schlüssel}\markright{Schlüssel}\label{kap:schluessel}
-
-Mit diesen beiden Tafeln findest du jede Kombination, ohne zu blättern. Suche die erste Farbe in der linken Spalte und die nächste in der Kopfzeile; die Nummer im Schnittpunkt führt zum Paar oder zum Tripel.
-
-\addsec*{Paare nachschlagen}\label{sec:paarschluessel}
 \begin{center}\renewcommand{\arraystretch}{1.6}\setlength{\tabcolsep}{5pt}
 \begin{tabular}{r|ccccc}
 {\footnotesize 1.\ \textbackslash\ 2.} & \kopfel{Holz} & \kopfel{Feuer} & \kopfel{Erde} & \kopfel{Metall} & \kopfel{Wasser} \kopfende \hline
@@ -859,8 +844,13 @@ Mit diesen beiden Tafeln findest du jede Kombination, ohne zu blättern. Suche d
 \end{tabular}
 \end{center}
 
+
+
+\subsection*{Drei Figuren: ein Tripel}\label{sec:tripelschluessel}
+
+Drei Farben sind ein \hyperref[kap:tripel]{Tripel}: ein Vorgang in zwei Schritten, vom Ausgang über die Wandlung zum Ergebnis, wie Wurzel, Weg und Frucht. Suche die ersten beiden Farben in der linken Spalte und die dritte in der Kopfzeile. Jedes Tripel ist gleich wahrscheinlich (1 von 60).
+
 \newpage
-\addsec*{Tripel nachschlagen}\label{sec:tripelschluessel}
 \begin{center}\renewcommand{\arraystretch}{1.25}\setlength{\tabcolsep}{6pt}
 \begin{tabular}{r|ccccc}
 {\footnotesize 1.\,2.\ \textbackslash\ 3.} & \kopfel{Holz} & \kopfel{Feuer} & \kopfel{Erde} & \kopfel{Metall} & \kopfel{Wasser} \kopfende \hline
@@ -890,6 +880,23 @@ Mit diesen beiden Tafeln findest du jede Kombination, ohne zu blättern. Suche d
 \zeilepaar{Wasser}{Metall} & \hyperlink{spruch:53}{\textbf{53}} & \hyperlink{spruch:54}{\textbf{54}} & \hyperlink{spruch:52}{\textbf{52}} &  &  \\
 \end{tabular}
 \end{center}
+
+
+\addsec{Im Spiel}\markright{Im Spiel}
+
+Der Beutel ist nur der kürzeste Weg. Weil Brett und Buch auf denselben Farben und Linien beruhen, lässt sich fast alles, was in einer Partie geschieht, hier nachschlagen:
+
+\begin{itemize}[leftmargin=*, itemsep=0pt, parsep=0pt, topsep=2pt]
+  \item \textbf{Richtungen:} Jeder Zug, der auf einem farbigen Feld beginnt, einer Ecke oder einer Kreuzung, und auf einem andersfarbigen endet, ist eine Bewegung in eine der vier \hyperref[kap:beziehungen]{Richtungen}.
+  \item \textbf{Paare:} Ein solcher Zug verbindet zwei Farben in fester Reihenfolge, von wo nach wohin, und ist damit schon ein \hyperref[kap:paare]{Paar}. Ebenso bilden zwei Figuren verschiedener Farbe ein Paar, etwa wenn sie beim Schlagen ihre Plätze tauschen.
+  \item \textbf{Wendungen:} Ein Doppelzug mit derselben Figur besteht aus zwei Bewegungen; ihre Richtungen ergeben eine der zwölf \hyperref[kap:muster]{Wendungen}.
+  \item \textbf{Tripel:} Gewonnen ist eine Partie, sobald die dritte Figur ihr Ziel erreicht und herauszieht. Die drei Figuren ergeben in der Reihenfolge, in der sie herausgezogen wurden, ein \hyperref[kap:tripel]{Tripel}. So wird jede Partie zu einem Spruch. Ebenso lassen sich die ersten drei geschlagenen Blöcke lesen, nach der Farbe der Felder, auf denen sie standen: Sie zeigen, unter welchem Zeichen das Spiel beginnt.
+\end{itemize}
+
+\addsec{Deuten}\markright{Deuten}\enlargethispage{\baselineskip}
+
+Lies zuerst den Spruch, beim Tripel also Bild, Sinn und Urteil. Licht und Schatten nennen die beiden Seiten: was gelingt, wenn das Geschehen sein Maß hält, und was droht, wenn es das Maß verliert. Welche Seite passt zu deiner Lage? Verweise führen weiter zu den anderen Stufen. Die Sprüche geben Orientierung, keine Vorhersage.
+
 
 \newpage
 \begingroup
@@ -1243,21 +1250,30 @@ Dieses Buch folgt dem Pentagame: Es nimmt das überlieferte Schema, verdoppelt e
 \begin{einleitung}
 Von jedem Element führt eine Bewegung zu jedem der vier anderen. Diese Bewegungen gehen in vier Richtungen: einen oder zwei Schritte im Wandlungskreis, vorwärts oder zurück. In diesem Buch heißen sie kurz +1, −1, +2 und −2; die Zahl sagt, wie weit, das Vorzeichen, ob vor oder zurück. Geht man eine Richtung von allen fünf Elementen aus, schließt sich der Kreis; die Tradition spricht deshalb von Zyklen.
 
-Ein Schritt vorwärts (+1) ist das Nähren ({\cjk 生} shēng), zwei Schritte vorwärts (+2), über ein Element hinweg, das Bändigen ({\cjk 克} kè). Diese beiden Richtungen ergeben bereits das vollständige Bild des Wu Xing: außen den Kreis, innen das Pentagramm. Zu jeder gibt es ein Gegenstück in der Gegenrichtung. Einen Schritt zurück (−1) liegt das Annehmen ({\cjk 泄} xiè), bei dem das Kind von der Mutter nimmt; zwei Schritte zurück (−2) das Sich stellen ({\cjk 侮} wǔ), mit dem sich das Gebändigte gegen seinen Bändiger wendet.
+Die beiden ältesten Zyklen sind das Hervorbringen und das Bändigen. Zou Yan deutete im 3.~Jahrhundert v.\,Chr. die Folge der Dynastien nach dem Bändigen: Jede neue Dynastie besiegte die alte, wie Wasser das Feuer löscht. Der Erste Kaiser von Qin wählte deshalb das Wasser als Element seiner Herrschaft, denn die Zhou, die er ablöste, hatten unter dem Feuer gestanden (\textit{Shiji} 6). Erst gegen Ende der Han-Zeit setzte sich die Reihe des Hervorbringens durch: Nun ging eine Dynastie aus der vorigen hervor wie das Kind aus der Mutter. Die Gegenrichtungen beschreibt vor allem die Medizin, die nach dem Gleichgewicht und seinen Störungen fragt.
 \end{einleitung}
 
-\begin{center}
-\begin{minipage}[t]{0.48\linewidth}\centering
-{\tikzset{wkpfeil/.style={line width=\fpeval{1.3/\richtungsfaktor}pt, >={Stealth[scale=1.25]}}}\scalebox{\richtungsfaktor}{\wandlungskreis[ke]}}\par
+\newpage
+\begin{einleitung}
+Ein Schritt vorwärts (+1) ist das Nähren ({\cjk 生} shēng). Geht man ihn von allen fünf Elementen aus, entsteht der Sheng-Zyklus, der Kreis des Hervorbringens: Holz nährt Feuer, Feuer Erde, Erde Metall, Metall Wasser und Wasser Holz. Zwei Schritte vorwärts (+2), über ein Element hinweg, ist das Bändigen ({\cjk 克} kè). Seine fünf Pfeile bilden den Ke-Zyklus: Holz bändigt Erde, Erde Wasser, Wasser Feuer, Feuer Metall und Metall Holz. Diese beiden Zyklen sind das überlieferte Grundgerüst des Wu Xing, außen der Kreis, innen das Pentagramm. Sie halten einander im Gleichgewicht.
+\end{einleitung}
+
+\begin{center}\begin{minipage}{\linewidth}\centering
+{\tikzset{wkpfeil/.style={line width=\fpeval{1.3/\wkgross}pt, >={Stealth[scale=1.25]}}}\renewcommand{\wkzeichenfont}{\LARGE}\renewcommand{\wkumschriftfont}{\normalsize}\scalebox{\wkgross}{\wandlungskreis[ke]}}\par
 \smallskip
-{\small\itshape +1 Nähren ({\cjk 生} shēng)\\und +2 Bändigen ({\cjk 克} kè)\par}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.48\linewidth}\centering
-{\tikzset{wkpfeil/.style={line width=\fpeval{1.3/\richtungsfaktor}pt, >={Stealth[scale=1.25]}}}\scalebox{\richtungsfaktor}{\wandlungskreis[gegen]}}\par
+{\small\itshape +1 Nähren ({\cjk 生} shēng) und +2 Bändigen ({\cjk 克} kè):\\außen der Sheng-Zyklus, innen der Ke-Zyklus.\par}
+\end{minipage}\end{center}
+
+\newpage
+\begin{einleitung}
+Zu beiden Richtungen gibt es ein Gegenstück in der Gegenrichtung. Einen Schritt zurück (−1) liegt das Annehmen ({\cjk 泄} xiè): Das Kind nimmt von der Mutter, das Feuer vom Holz, das Holz vom Wasser. Läuft man so den Kreis rückwärts, ergibt sich der Xie-Zyklus. Zwei Schritte zurück (−2) liegt das Sich-Stellen ({\cjk 侮} wǔ): Das Gebändigte wendet sich gegen seinen Bändiger, die Erde gegen das Holz, das Holz gegen das Metall. Diese fünf Pfeile bilden den Wu-Zyklus, das Pentagramm in Gegenrichtung. Die Namen Xie-Zyklus und Wu-Zyklus sind weniger geläufig als Sheng und Ke, aber ebenso gebildet; dieses Buch verwendet alle vier gleichberechtigt.
+\end{einleitung}
+
+\begin{center}\begin{minipage}{\linewidth}\centering
+{\tikzset{wkpfeil/.style={line width=\fpeval{1.3/\wkgross}pt, >={Stealth[scale=1.25]}}}\renewcommand{\wkzeichenfont}{\LARGE}\renewcommand{\wkumschriftfont}{\normalsize}\scalebox{\wkgross}{\wandlungskreis[gegen]}}\par
 \smallskip
-{\small\itshape −1 Annehmen ({\cjk 泄} xiè)\\und −2 Sich stellen ({\cjk 侮} wǔ)\par}
-\end{minipage}
-\end{center}
+{\small\itshape −1 Annehmen ({\cjk 泄} xiè) und −2 Sich stellen ({\cjk 侮} wǔ):\\außen der Xie-Zyklus, innen der Wu-Zyklus.\par}
+\end{minipage}\end{center}
 
 \newpage
 \begin{einleitung}
@@ -1368,7 +1384,7 @@ Die Medizin spricht von Mutter und Kind ({\cjk 母子} mǔ zǐ): Das nährende E
 {\cjk 泄}~xiè\par
 \smallskip
 
-\textit{Im Wandlungskreis: ein Schritt zurück, gegen den Sheng-Zyklus.}\\
+\textit{Im Wandlungskreis: ein Schritt zurück, der Xie-Zyklus.}\\
 \textit{Im Pentagame: gegen den Uhrzeigersinn außen auf dem Ring oder innen auf dem Pentagon zurück.}\par
 \medskip
 \begin{minipage}{\textwidth}\small\setlength{\parindent}{0pt}\setlength{\parskip}{0.5ex}
@@ -1436,7 +1452,7 @@ Wird das Bändigen selbst maßlos, spricht die Tradition von {\cjk 乘} chéng, 
 {\cjk 侮}~wǔ\par
 \smallskip
 
-\textit{Im Wandlungskreis: zwei Schritte zurück, gegen den Ke-Zyklus.}\\
+\textit{Im Wandlungskreis: zwei Schritte zurück, der Wu-Zyklus.}\\
 \textit{Im Pentagame: im Uhrzeigersinn vom Ring nach innen oder von innen zum Ring.}\par
 \medskip
 \begin{minipage}{\textwidth}\small\setlength{\parindent}{0pt}\setlength{\parskip}{0.5ex}
@@ -1470,6 +1486,19 @@ Ein Element und eine Richtung ergeben ein Paar: zwei Elemente in fester Reihenfo
 \textbf{Gleichgewicht.} Dong Zhongshu fasst das Schema in einen Satz: „Benachbarte bringen einander hervor, übernächste besiegen einander“ ({\cjk 比相生而間相勝}; \textit{Chunqiu fanlu} 58). Der \textit{Neijing} ergänzt: „Übermaß schadet; was folgt, setzt ihm eine Grenze; durch die Grenze entstehen Wachsen und Wandlung“ ({\cjk 亢則害，承乃制，制則生化}; \textit{Suwen} 68). Auch das Nähren kann zu viel sein: Zu viel Wasser lässt das Holz faulen. Und das Bändigen ist nicht nur Zwang: Erst im Feuer wird das Eisen formbar, erst unter der Axt der Baum zum Balken. Darum zeigt sich in jedem Paar beides, das Gelingen und die Gefahr.
 
 \textbf{Bilder.} Das Urteil eines Paares ist sein Bild (siehe \hyperref[kap:einfuehrung]{Einführung}): Holz brennt, der Keim bricht durch die Erde, hartes Holz macht die Klinge stumpf. Der Satz darunter nennt seinen Sinn in den Themen der beiden Elemente, etwa: Der Plan entfacht die Begeisterung. Was es für dich bedeutet, sagen Licht und Schatten. Dieselben Bilder kehren in den Tripeln wieder.
+
+\textbf{Richtungen.} Jedes Paar hat eine \hyperref[kap:beziehungen]{Richtung}. Sie hängt nur davon ab, ob das Ziel im Wandlungskreis einen oder zwei Schritte vor oder zurück liegt: Nähren (+1), Annehmen (−1), Bändigen (+2) oder Sich stellen (−2). Die Tafel zeigt sie für alle zwanzig Paare: das erste Element links, das zweite oben.
+
+\begin{center}\renewcommand{\arraystretch}{1.6}\setlength{\tabcolsep}{5pt}
+\begin{tabular}{r|ccccc}
+{\footnotesize 1.\ \textbackslash\ 2.} & \kopfel{Holz} & \kopfel{Feuer} & \kopfel{Erde} & \kopfel{Metall} & \kopfel{Wasser} \kopfende \hline
+\zeilel{Holz} & -- & \hyperlink{beziehung:1}{\textbf{+1}\,{\cjk 生}} & \hyperlink{beziehung:2}{\textbf{+2}\,{\cjk 克}} & \hyperlink{beziehung:3}{\textbf{−2}\,{\cjk 侮}} & \hyperlink{beziehung:4}{\textbf{−1}\,{\cjk 泄}} \\
+\zeilel{Feuer} & \hyperlink{beziehung:4}{\textbf{−1}\,{\cjk 泄}} & -- & \hyperlink{beziehung:1}{\textbf{+1}\,{\cjk 生}} & \hyperlink{beziehung:2}{\textbf{+2}\,{\cjk 克}} & \hyperlink{beziehung:3}{\textbf{−2}\,{\cjk 侮}} \\
+\zeilel{Erde} & \hyperlink{beziehung:3}{\textbf{−2}\,{\cjk 侮}} & \hyperlink{beziehung:4}{\textbf{−1}\,{\cjk 泄}} & -- & \hyperlink{beziehung:1}{\textbf{+1}\,{\cjk 生}} & \hyperlink{beziehung:2}{\textbf{+2}\,{\cjk 克}} \\
+\zeilel{Metall} & \hyperlink{beziehung:2}{\textbf{+2}\,{\cjk 克}} & \hyperlink{beziehung:3}{\textbf{−2}\,{\cjk 侮}} & \hyperlink{beziehung:4}{\textbf{−1}\,{\cjk 泄}} & -- & \hyperlink{beziehung:1}{\textbf{+1}\,{\cjk 生}} \\
+\zeilel{Wasser} & \hyperlink{beziehung:1}{\textbf{+1}\,{\cjk 生}} & \hyperlink{beziehung:2}{\textbf{+2}\,{\cjk 克}} & \hyperlink{beziehung:3}{\textbf{−2}\,{\cjk 侮}} & \hyperlink{beziehung:4}{\textbf{−1}\,{\cjk 泄}} & -- \\
+\end{tabular}
+\end{center}
 \end{einleitung}
 
 \newpage
@@ -1696,7 +1725,7 @@ Eine Wendung ist an kein Element gebunden. Erst wenn sie bei einem bestimmten El
 Die zwölf Wendungen sind nach ihrem ersten und dann nach ihrem zweiten Schritt geordnet, jeweils in der Folge +1, −1, +2, −2. In jeder Zeile bleibt ein Feld leer, weil der zweite Schritt den ersten nicht aufheben darf. Auf der Diagonale steht der Gleichschritt; unter dem Namen steht, ob die Wendung ein Yin- oder ein Yang-Dreieck bildet (dazu unten mehr).
 \end{einleitung}
 
-\begin{center}
+\begin{center}\phantomsection\label{fig:wendungstafel}
 \colorlet{wtgleich}{black!16}\colorlet{wtgegen}{black!7}\colorlet{wtwechsel}{white}
 \tikzset{wtlinie/.style={draw=black!60, line width=0.4pt}}
 \newcommand{\wtz}{2.2cm}
@@ -1918,12 +1947,14 @@ Die beiden Arten von Dreiecken legen einen Vergleich mit Yin und Yang nahe. Das 
 
 \addchap{Die 60 Tripel}\markboth{Die 60 Tripel}{\mbox{}}\label{kap:tripel}\verzkap{Die 60 Tripel}
 
-\begin{einleitung}
+\begin{einleitung}\enlargethispage{\baselineskip}
 Schließt an ein Paar ein zweites an, das mit dessen zweitem Element beginnt, entsteht ein Tripel: drei verschiedene Elemente in fester Reihenfolge. In ihm kommt alles zusammen, was die vorigen Kapitel beschreiben: Das erste und das zweite Element bilden ein Paar, das zweite und das dritte ein zweites. Die Richtungen dieser beiden Paare ergeben zusammen eine der zwölf Wendungen. So steht zum Beispiel im Tripel Holz, Feuer, Erde zweimal das Nähren (\textit{Holz nährt Feuer}, \textit{Feuer nährt Erde}): Wendung I, Fortschreiten.
 
 Fünf Elemente für den Anfang und zwölf Wendungen für den Weg ergeben die 60 Tripel. Jedes Element, jede Richtung, jedes Paar und jede Wendung kommt darin vor, und jeder Spruch zeigt das Ganze von einer anderen Seite, im Licht und im Schatten.
 
 Vorn steht das Bild, die Szene aus den Geschehen der beiden Paare. Darunter nennt der Sinn, was die Szene in den Themen der drei Elemente bedeutet: zwei Sätze, einer für jeden Schritt der Wendung, verbunden durch das mittlere Element. Dann folgt das Urteil, ein knapper Satz, der den Sinn zusammenfasst. Im Bild handelt meist eine Gestalt: eine Frau, wenn die Wendung ein Yin-Dreieck bildet, und ein Mann beim Yang-Dreieck (siehe \hyperref[kap:muster]{„Die zwölf Wendungen“}). Die Tripel sind nach ihrem ersten Element geordnet, und innerhalb jeder Gruppe folgen sie den Wendungen I bis XII.
+
+\textbf{Wendungen.} Die Richtungen der beiden Schritte ergeben die Wendung; welche zu welcher Folge gehört, zeigt die \hyperref[fig:wendungstafel]{Tafel in der Einleitung der Wendungen}. Einfacher ist es, das Tripel selbst nachzuschlagen; dort steht ein Verweis auf die zugehörige Wendung.
 \end{einleitung}
 
 \newpage
